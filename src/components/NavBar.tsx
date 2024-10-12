@@ -1,0 +1,27 @@
+import logo from "../assets/logo1.png";
+import Button from "../components/Button";
+import navLinks from "../utils/navLinks";
+
+const NavBar = () => {
+  return (
+    <nav className="flex justify-between items-center px-4 py-2 min-w-sm:flex-col">
+    <div className="logo">
+      <img src={logo} alt="logo" className="w-10" />
+    </div>
+    <div className="right-nav flex justify-between items-center">
+      <ul className="flex space-x-4 mr-10">
+        {navLinks.map((link,index) => (
+          <li key={index} className="hover:text-purple-300 text-white hover:cursor-pointer hover:underline hover:transition-all">{link.name}</li>
+        ))}
+        
+      </ul>
+      <Button
+        name="Sign In"
+        className={`bg-purple-500 px-4 py-2 rounded-md text-white hover:bg-purple-700`}
+      />
+    </div>
+  </nav>
+  )
+}
+
+export default NavBar
