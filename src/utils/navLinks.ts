@@ -5,11 +5,11 @@ const navLinks = [
   },
   {
     name: "Service",
-    link: "#Home",
+    link: "#service",
   },
   {
     name: "Contact",
-    link: "#Home",
+    link: "#contact",
   },
 ];
 

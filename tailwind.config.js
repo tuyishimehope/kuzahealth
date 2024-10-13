@@ -6,6 +6,9 @@ export default {
       backgroundImage: {
         heroImage: 'url(./assets/image.png) !important',
       },
+      backgroundColor:{
+        primaryColor: "D3D3FF"
+      }
     },
   },
   plugins: [],

@@ -7,7 +7,7 @@ import ctn from "../assets/ctn.png";
 const Home = () => {
   return (
     <div>
-      <div className="h-screen w-full bg-heroImage bg-center">
+      <div className="h-screen w-full bg-heroImage bg-center" id="Home">
         <NavBar />
         <div className="flex-col space-y-6 mx-10 my-56">
           <h1 className="text-4xl text-white font-bold">
@@ -67,7 +67,7 @@ const Home = () => {
           <img src={about} alt="about" />
         </div>
       </div>
-      <div className="services m-4 my-8">
+      <div className="services m-4 my-8" id="service">
         <p className="text-center font-bold text-xl underline pb-10">
           Our Services
         </p>
@@ -118,7 +118,7 @@ const Home = () => {
           <img src={ctn} alt="ctn" />
         </div>
       </div>
-      <div className="contact my-10">
+      <div className="contact my-10" id="contact">
         <div>
           <p className="text-center text-4xl">Contact Our Team</p>
           <p className="text-center text-xl">Let us know how we can help.</p>
