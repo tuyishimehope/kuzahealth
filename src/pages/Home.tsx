@@ -10,10 +10,10 @@ const Home = () => {
       <div className="h-screen w-full bg-heroImage bg-center" id="Home">
         <NavBar />
         <div className="flex-col space-y-6 mx-10 my-56">
-          <h1 className="text-4xl text-white font-bold">
+          <h1 className="text-6xl text-white font-bold">
             A Path to Healthier Futures
           </h1>
-          <p className="text-white">
+          <p className="text-white text-2xl">
             Our mission is to reduce maternal and child mortality by raising
             awareness, <br />
             improving healthcare access, and providing essential education.
@@ -23,7 +23,7 @@ const Home = () => {
           </p>
           <Button
             name="Read More"
-            className="bg-purple-800 hover:bg-purple-500 px-8 py-3 rounded-full text-white"
+            className="bg-btnHero hover:bg-purple-500 px-8 py-3 rounded-full text-white"
           />
         </div>
       </div>
@@ -38,7 +38,7 @@ const Home = () => {
       </div>
       <div className="Aboutus flex justify-between items-center space-y-4 bg-[F4F8FF] px-4 py-2">
         <div className="w-[50vw] ">
-          <div className="bg-purple-600 text-blue-500 bg-opacity-25 rounded-full w-fit px-4 py-2">
+          <div className="bg-purple-600 text-blue-600 bg-opacity-25 rounded-full w-fit px-4 py-2">
             <p>Our Mission</p>
           </div>
           <div className="space-y-4 mt-4">
@@ -59,7 +59,7 @@ const Home = () => {
             </p>
             <Button
               name="More Services "
-              className="text-white bg-purple-600 px-6 py-2 rounded-md"
+              className="text-white bg-purple-600 px-6 py-2 rounded-full"
             />
           </div>
         </div>
@@ -72,8 +72,10 @@ const Home = () => {
           Our Services
         </p>
         <div className="flex space-x-6 max-sm:flex-col max-sm:space-y-6 max-sm:justify-center">
-          <div className="bg-[F7F7F7] ">
+          <div className="bg-gray-200 rounded-md bg-opacity-40 ">
             <img src={vaccination} alt="vaccination" />
+            <div className="p-2">
+
             <p className="py-4 text-xl">Vaccinations</p>
             <p className="text-md">
               Immunization is a key step in protecting both mothers and children
@@ -81,6 +83,7 @@ const Home = () => {
               vaccines that safeguard against preventable illnesses, ensuring
               healthier pregnancies and stronger starts for newborns.{" "}
             </p>
+            </div>
           </div>
           <div className="bg-[F7F7F7]">
             <img src={vaccination} alt="vaccination" />
@@ -104,7 +107,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className="ctn flex space-x-6 justify-between items-center m-4">
+      <div className="ctn flex space-x-6 justify-between items-center m-4 mx-10">
         <div className="pt-10 space-y-6">
           <p>Join HealVirtue</p>
           <p className="text-4xl">Every life matters, Every child thrives.</p>
@@ -118,26 +121,26 @@ const Home = () => {
           <img src={ctn} alt="ctn" />
         </div>
       </div>
-      <div className="contact my-10" id="contact">
-        <div>
+      <div className="contact my-10 bg-bgCtn py-20" id="contact">
+        <div className="space-y-2 text-white">
           <p className="text-center text-4xl">Contact Our Team</p>
           <p className="text-center text-xl">Let us know how we can help.</p>
         </div>
-        <div className="flex justify-between space-y-6 px-10 py-10 bg-gray-200 bg-opacity-65 max-sm:flex-col" >
+        <div className="flex justify-between space-y-6 px-10 py-10  bg-opacity-65 max-sm:flex-col" >
         <div className="space-y-8">
           <div >
             <div className="flex flex-col space-y-4">
-              <label htmlFor="Email">Email</label>
-              <input type="email" placeholder="Enter Your Email" className="bg-gray-300 bg-opacity-15 rounded-full px-4 py-2" />
+              <label htmlFor="Email" className="text-white">Email</label>
+              <input type="email" placeholder="Enter Your Email" className="bg-gray-300 bg-opacity-15 rounded-full px-4 py-2 text-white placeholder:text-white" />
             </div>
           </div>
           <div>
             <div  className="flex flex-col space-y-4">
-              <label htmlFor="message">Message</label>
-              <input type="message" placeholder="Enter Your Message" className="bg-gray-300 bg-opacity-15 rounded-full px-4 py-2"/>
+              <label htmlFor="message" className="text-white">Message</label>
+              <input type="message" placeholder="Enter Your Message" className="bg-gray-300 bg-opacity-15 rounded-full px-4 py-2 text-white placeholder:text-white"/>
             </div>
           </div>
-          <Button name="Submit" className="bg-purple-500 px-6 py-2 text-white rounded-md mt-6" />
+          <Button name="Submit" className="bg-bgContact w-full px-6 py-2 text-white rounded-full mt-6" />
         </div>
         <div className="space-y-4">
           <div className="bg-white p-4 rounded-md">

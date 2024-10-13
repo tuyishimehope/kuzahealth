@@ -34,7 +34,11 @@ const SignUp = () => {
           </div>
           <div className="flex flex-col space-y-1">
             <label htmlFor="">Gender</label>
-            <Input type="boolean" placeholder="Enter Your Gender" />
+            <select className="bg-slate-100 px-4 py-2 rounded-md">
+              <option>Choose Gender</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
           </div>
           <div className="flex flex-col space-y-1">
             <label htmlFor="">Phone Number</label>
@@ -42,7 +46,14 @@ const SignUp = () => {
           </div>
           <div className="flex flex-col space-y-1">
             <label htmlFor="">Province/State</label>
-            <Input type="text" placeholder="Enter Your Province" />
+            <select className="bg-slate-100 px-4 py-2 rounded-md">
+              <option>Choose Province</option>
+              <option>Kigali City</option>
+              <option>Western Province</option>
+              <option>Southern Province</option>
+              <option>Eastern Province</option>
+              <option>Northern Province</option>
+            </select>
           </div>
           <div className="flex flex-col space-y-1">
             <label htmlFor="">Title/Post</label>
@@ -51,7 +62,14 @@ const SignUp = () => {
           <div>
             <div className="flex flex-col space-y-1">
               <label htmlFor="">District/City</label>
-              <Input type="text" placeholder="Enter Your City" />
+              <select className="bg-slate-100 px-4 py-2 rounded-md">
+              <option>Choose District</option>
+              <option>Kigali City</option>
+              <option>Western Province</option>
+              <option>Southern Province</option>
+              <option>Eastern Province</option>
+              <option>Northern Province</option>
+            </select>
             </div>
             <div className="flex flex-col space-y-1">
               <label htmlFor="">Password</label>

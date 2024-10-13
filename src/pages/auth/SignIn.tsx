@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import image from "../../assets/signin.png";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
+import google from "../../assets/google.png"
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -50,13 +51,15 @@ const SignIn = () => {
           <div>
             <Button
               name="Sign In"
-              className="bg-purple-500   w-full my-4 px-6 py-2 text-white rounded-md"
+              className="bg-btnSignIn  w-full  my-4 px-6 py-2 text-white rounded-full"
               onClick={() => navigate("/auth/signin")}
             />
             <p className="text-gray-400 text-center">or</p>
+            
             <Button
               name="Sign In With Google"
-              className="bg-purple-500 w-full my-4 px-6 py-2 text-white rounded-md"
+              className="bg-white flex items-center justify-center w-full my-4 px-6 py-2 text-black rounded-full border-2 border-slate-100 "
+              icon={google}
             />
           </div>
           <p>
