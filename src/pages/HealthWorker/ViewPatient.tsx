@@ -1,8 +1,7 @@
-import React from "react";
 import { useState } from "react";
 
 const ViewPatient = () => {
-  const [patients, setPatients] = useState([
+  const [patients] = useState([
     // Sample data (replace this with real data)
     { profile: "profile1.png", name: "Alice Johnson", phone1: "+250 123456789", phone2: "+250 987654321", birthdate: "1990-01-01", nationalId: "123456789", actions: "View/Edit" },
     { profile: "profile2.png", name: "Bob Smith", phone1: "+250 123456789", phone2: "+250 987654321", birthdate: "1985-05-12", nationalId: "987654321", actions: "View/Edit" },
