@@ -24,7 +24,7 @@ const Home = () => {
         </video>
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
         <NavBar />
-        <div className=" absolute z-10 flex-col space-y-10 px-10 py-10 w-content mt-[25vh] ">
+        {/* <div className=" absolute z-10 flex-col space-y-10 px-10 py-10 w-content mt-[25vh] ">
           <h1 className="text-6xl text-green-900 font-bold">
             A Path to Healthier Futures
           </h1>
@@ -40,7 +40,7 @@ const Home = () => {
             name="Read More"
             className="bg-btnHero hover:bg-purple-500 px-8 py-3 rounded-full text-white"
           />
-        </div>
+        </div> */}
       </div>
       <div className="partnersm flex-col items-center justify-center py-6 space-y-4">
         <p className="items-center text-center text-2xl font-bold">Partners</p>

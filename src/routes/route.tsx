@@ -7,7 +7,14 @@ import OtpVerification from "../pages/auth/OtpVerification";
 import CreateNewPassword from "../pages/auth/CreateNewPassword";
 import Dashboard from "../pages/HealthWorker/Dashboard";
 import Layout from "./Layout";
- // Import the Layout component
+import AddPatient from "../pages/HealthWorker/AddPatient";
+import Nutrition from "../pages/HealthWorker/Nutrition";
+import Vaccination from "../pages/HealthWorker/Vaccination";
+import AddSchedule from "../pages/HealthWorker/AddSchedule";
+import Profile from "../pages/HealthWorker/Profile";
+import EditProfile from "../pages/HealthWorker/EditProfile";
+import ViewSchedule from "../pages/HealthWorker/ViewSchedule";
+import ViewPatient from "../pages/HealthWorker/ViewPatient";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +48,46 @@ const router = createBrowserRouter([
         <Dashboard />
       </Layout>
     ),
+    children: [
+      {
+        path: "",
+        element: <Dashboard />,
+      },
+      {
+        path: "patient",
+        element: <AddPatient />,
+      },
+      {
+        path: "view-patient",
+        element: <ViewPatient />,
+      },
+      {
+        path: "nutrition",
+        element: <Nutrition />,
+      },
+      {
+        path: "vaccination",
+        element: <Vaccination />,
+      },
+      {
+        path: "schedule",
+        element: <AddSchedule />,
+      },
+      {
+        path: "view-schedule",
+        element: <ViewSchedule />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+        children: [
+          {
+            path: "edit",
+            element: <EditProfile />,
+          },
+        ],
+      },
+    ],
   },
 ]);
 

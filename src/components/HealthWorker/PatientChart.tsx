@@ -9,8 +9,8 @@ interface PatientChartProps {
 
 const PatientChart: React.FC<PatientChartProps> = ({ series, options }) => {
   return (
-    <div id="chart">
-      <ReactApexChart options={options} series={series} type="area" height={350} />
+    <div id="chart" className='w-full'>
+      <ReactApexChart options={options} series={series} type="area" height={300} />
     </div>
   );
 };
