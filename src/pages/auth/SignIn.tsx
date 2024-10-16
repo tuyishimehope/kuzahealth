@@ -52,7 +52,7 @@ const SignIn = () => {
             <Button
               name="Sign In"
               className="bg-btnSignIn  w-full  my-4 px-6 py-2 text-white rounded-full"
-              onClick={() => navigate("/auth/signin")}
+              onClick={() => navigate("/healthworker/dashboard")}
             />
             <p className="text-gray-400 text-center">or</p>
             
@@ -62,7 +62,7 @@ const SignIn = () => {
               icon={google}
             />
           </div>
-          <p>
+          <p className="text-center">
             Dont't Have An Account?{" "}
             <span
               className="text-blue-600 underline hover:cursor-pointer"

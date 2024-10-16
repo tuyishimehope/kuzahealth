@@ -1,10 +1,11 @@
-import Input from "../../components/Input";
-import Button from "../../components/Button";
-import image from "../../assets/forgotpass.png";
 import { useNavigate } from "react-router-dom";
+import image from "../../assets/forgotpass.png";
+import Button from "../../components/Button";
+import NumberInput from "../../components/NumberInput";
 
 const OtpVerification = () => {
   const navigate = useNavigate();
+
   return (
     <div className="flex min-h-screen w-full">
       <div>
@@ -21,29 +22,14 @@ const OtpVerification = () => {
         </div>
         <div className="flex flex-col space-y-2 justify-center w-80">
           <div className="flex  space-x-4">
-            <Input
-              type="number"
-              placeholder="2"
-              className="custom-input w-12"
-            />
-            <Input
-              type="number"
-              placeholder="2"
-              className="custom-input w-12"
-            />{" "}
-            <Input
-              type="number"
-              placeholder="2"
-              className="custom-input w-12"
-            />{" "}
-            <Input
-              type="number"
-              placeholder="2"
-              className="custom-input w-12"
-            />
+           <NumberInput/>
+           <NumberInput/>
+           <NumberInput/>
+           <NumberInput/>
+           
           </div>
           <div className="pt-4">
-            <p className="text-gray-500">00:120 Sec</p>
+            <p className="text-gray-500">00:12 Sec</p>
             <p className="pt-6">
               Didn't receive code?{" "}
               <span className="text-blue-500">Resend Code</span>

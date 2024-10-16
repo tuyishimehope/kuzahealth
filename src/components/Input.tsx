@@ -1,7 +1,14 @@
+type inputProps = {
+  type?: string; // default type is text
+  placeholder?: string; // default placeholder is empty string
+  value?: string | number | readonly string[] | undefined; // value can be string or number
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // onChange handler takes an event
+  className?: string | undefined | null; // default className is empty string
+};
 
 
-const Input = ({
-  type = 'text', // default type is text
+const Input:React.FC<inputProps> = ({
+  type , // default type is text
   placeholder = '', // default placeholder is empty string
   value = '', // default value is empty string
   onChange = () => {}, // default onChange handler is a no-op

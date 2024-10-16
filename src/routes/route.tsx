@@ -6,6 +6,8 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import OtpVerification from "../pages/auth/OtpVerification";
 import CreateNewPassword from "../pages/auth/CreateNewPassword";
 import Dashboard from "../pages/HealthWorker/Dashboard";
+import Layout from "./Layout";
+ // Import the Layout component
 
 const router = createBrowserRouter([
   {
@@ -34,7 +36,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/healthworker/dashboard",
-    element: <Dashboard />,
+    element: (
+      <Layout>
+        <Dashboard />
+      </Layout>
+    ),
   },
 ]);
 
