@@ -48,7 +48,7 @@ const SignUp = () => {
           </div>
           <div className="flex flex-col space-y-1">
             <label htmlFor="">Phone Number</label>
-            <Input type="number" placeholder="Enter your phone number" />
+            <Input type="text" placeholder="Enter your phone number" />
           </div>
           <div className="flex flex-col space-y-1">
             <label htmlFor="">Province/State</label>

@@ -1,17 +1,38 @@
 import { useState } from "react";
+import profile from "../../assets/profile.png";
+import Button from "../../components/Button";
+import { IoIosAdd } from "react-icons/io";
 
 const ViewPatient = () => {
   const [patients] = useState([
     // Sample data (replace this with real data)
-    { profile: "profile1.png", name: "Alice Johnson", phone1: "+250 123456789", phone2: "+250 987654321", birthdate: "1990-01-01", nationalId: "123456789", actions: "View/Edit" },
-    { profile: "profile2.png", name: "Bob Smith", phone1: "+250 123456789", phone2: "+250 987654321", birthdate: "1985-05-12", nationalId: "987654321", actions: "View/Edit" },
+    {
+      profile: profile,
+      name: "Alice Johnson",
+      phone1: "+250 123456789",
+      phone2: "+250 987654321",
+      birthdate: "1990-01-01",
+      nationalId: "123456789",
+      actions: "View/Edit",
+    },
+    {
+      profile:profile,
+      name: "Bob Smith",
+      phone1: "+250 123456789",
+      phone2: "+250 987654321",
+      birthdate: "1985-05-12",
+      nationalId: "987654321",
+      actions: "View/Edit",
+    },
     // Add more patient data as needed
   ]);
-  
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-4xl font-bold mb-6 text-center text-primaryColor">View Patients</h1>
-      
+      <h1 className="text-4xl font-bold mb-6 text-center text-primaryColor">
+        View Patients
+      </h1>
+
       {/* Filter and Sort Section */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-4">
@@ -32,7 +53,18 @@ const ViewPatient = () => {
         </button>
       </div>
 
-     
+      <div className="pb-4 space-y-2">
+        <p className="text-xl">Recent Contacts</p>
+        <p>Send or request your contact list</p>
+        <div className="flex gap-2">
+          <img src={profile} alt="profile" className="w-10" />
+          <img src={profile} alt="profile" className="w-10" />
+          <img src={profile} alt="profile" className="w-10" />
+          <img src={profile} alt="profile" className="w-10" />
+          <img src={profile} alt="profile" className="w-10" />
+          <Button name="Add New" className="bg-btnSignIn text-white px-4 rounded-full" icon=<IoIosAdd /> />
+        </div>
+      </div>
 
       {/* Patient Table */}
       <div className="bg-white shadow-lg rounded-lg p-4">
@@ -52,15 +84,29 @@ const ViewPatient = () => {
             {patients.map((patient, index) => (
               <tr key={index} className="border-b">
                 <td className="py-3 px-4 text-center">
-                  <img src={patient.profile} alt="Profile" className="w-12 h-12 rounded-full mx-auto" />
+                  <img
+                    src={patient.profile}
+                    alt="Profile"
+                    className="w-12 h-12 rounded-full mx-auto"
+                  />
                 </td>
-                <td className="py-3 px-4 text-center">{patient.name}</td>
-                <td className="py-3 px-4 text-center">{patient.phone1}</td>
-                <td className="py-3 px-4 text-center">{patient.phone2}</td>
-                <td className="py-3 px-4 text-center">{patient.birthdate}</td>
-                <td className="py-3 px-4 text-center">{patient.nationalId}</td>
-                <td className="py-3 px-4 text-center">
-                  <button className="bg-bgBtnPurple text-white px-3 py-1 rounded-md transition duration-200 hover:bg-bgBtnPurpleHover">
+                <td className="py-3 px-4 text-center text-sm">
+                  {patient.name}
+                </td>
+                <td className="py-3 px-4 text-center text-sm">
+                  {patient.phone1}
+                </td>
+                <td className="py-3 px-4 text-center text-sm">
+                  {patient.phone2}
+                </td>
+                <td className="py-3 px-4 text-center text-sm">
+                  {patient.birthdate}
+                </td>
+                <td className="py-3 px-4 text-center text-sm">
+                  {patient.nationalId}
+                </td>
+                <td className="py-3 px-4 text-center text-sm">
+                  <button className="bg-bgBtnPurple text-white px-3 py-1 rounded-md transition duration-200 hover:bg-bgBtnPurpleHover text-sm">
                     {patient.actions}
                   </button>
                 </td>
@@ -71,7 +117,9 @@ const ViewPatient = () => {
 
         {/* Pagination */}
         <div className="mt-4 flex justify-between">
-          <span className="text-sm text-gray-500">Showing 1 to 10 of {patients.length} patients</span>
+          <span className="text-sm text-gray-500">
+            Showing 1 to 10 of {patients.length} patients
+          </span>
           <div className="flex gap-2">
             <button className="bg-bgBtnPurple text-white px-4 py-1 rounded-md transition duration-200 hover:bg-bgBtnPurpleHover">
               Previous

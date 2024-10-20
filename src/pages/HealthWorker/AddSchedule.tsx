@@ -28,7 +28,7 @@ const AddSchedule = () => {
   };
   return (
     <div className="flex flex-col min-h-screen items-center p-6">
-      <p className="text-2xl underline pb-10">Add Schedule</p>
+      <p className="text-2xl  pb-10">Add Schedule</p>
       <form className="space-y-4 w-full max-w-md" onSubmit={handleSubmit}>
         <div className="flex flex-col space-y-2">
           <label htmlFor="patientName">Patient Names</label>

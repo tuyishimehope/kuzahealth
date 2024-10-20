@@ -14,7 +14,7 @@ const NavBar = () => {
     <div className="right-nav flex justify-between items-center">
       <ul className="flex space-x-4 mr-10">
         {navLinks.map((link,index) => (
-          <li key={index} className="hover:text-purple-300 text-lg text-white hover:cursor-pointer hover:underline hover:transition-all">
+          <li key={index} className="hover:text-purple-300 text-lg text-black font-bold hover:cursor-pointer hover:underline hover:transition-all">
             <a href={link.link}>{link.name}</a></li>
         ))}
         

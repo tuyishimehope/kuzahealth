@@ -8,15 +8,16 @@ import Button from "../Button";
 import { CgProfile } from "react-icons/cg";
 import { TbVaccine } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router-dom"; // Import useLocation
+import { IoMdLogOut } from "react-icons/io";
 
-// Properly type the props
+
 type SidebarProps = {
   active: boolean;
   currentPath?: string;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ active, currentPath }) => {
-  const location = useLocation(); // Get the current path
+  const location = useLocation(); 
   const navigate = useNavigate();
 
   return (
@@ -88,18 +89,20 @@ const Sidebar: React.FC<SidebarProps> = ({ active, currentPath }) => {
               href={"/healthworker/dashboard/view-schedule"}  
             />
             <SidebarLink
-              name="Profile"
+              name="Update Profile"
               icon={<CgProfile className="w-8 h-10" />}
               status={location.pathname === "/healthworker/dashboard/profile"}
               currentPath={currentPath}
               href={"/healthworker/dashboard/profile"} 
             />
           </div>
-          <div className="pt-20">
+          <div className=" ">
+         
             <Button
               name="Logout"
               className="bg-btnSignIn text-white px-12 py-4 rounded-md"
               onClick={() => navigate("/auth/signin")}
+              icon={<IoMdLogOut />}
             />
           </div>
         </>
@@ -110,48 +113,59 @@ const Sidebar: React.FC<SidebarProps> = ({ active, currentPath }) => {
             <SidebarLink
               icon={<RiDashboardFill className="w-8 h-10" />}
               status={location.pathname === "/healthworker/dashboard"} // Active status
+              href="/healthworker/dashboard"
+
             />
             <SidebarLink
               icon={<IoAddOutline className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/patient"} // Active status for add patient
+              status={location.pathname === "/healthworker/dashboard/patient"} 
+               href="/healthworker/dashboard/patient"
             />
             <SidebarLink
               icon={<FaUsersGear className="w-8 h-10" />}
               status={
-                location.pathname === "/healthworker/dashboard/viewpatients"
-              } // Active status for view patients
+                location.pathname === "/healthworker/dashboard/view-patient"
+              } 
+               href="/healthworker/dashboard/view-patient"
             />
             <SidebarLink
               icon={<FaInfoCircle className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/nutrition"} // Active status for nutrition
+              status={location.pathname === "/healthworker/dashboard/nutrition"} 
+               href="/healthworker/dashboard/nutrition"
             />
             <SidebarLink
               icon={<TbVaccine className="w-8 h-10" />}
               status={
-                location.pathname === "/healthworker/dashboard/vaccinations"
-              } // Active status for vaccinations
+                location.pathname === "/healthworker/dashboard/vaccination"
+              } 
+               href="/healthworker/dashboard/vaccination"
             />
             <SidebarLink
               icon={<IoAddOutline className="w-8 h-10" />}
               status={
-                location.pathname === "/healthworker/dashboard/addschedule"
-              } // Active status for add schedule
+                location.pathname === "/healthworker/dashboard/schedule"
+              } 
+               href="/healthworker/dashboard/schedule"
             />
             <SidebarLink
               icon={<RiCalendarScheduleLine className="w-8 h-10" />}
               status={
-                location.pathname === "/healthworker/dashboard/viewschedule"
-              } // Active status for view schedule
+                location.pathname === "/healthworker/dashboard/view-schedule"
+              }
+               href="/healthworker/dashboard/view-schedule"
             />
             <SidebarLink
               icon={<CgProfile className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/profile"} // Active status for profile
+              status={location.pathname === "/healthworker/dashboard/profile"} 
+               href="/healthworker/dashboard/profile"
             />
           </div>
           <div className="pt-20 ">
             <Button
               name="Logout"
               className="bg-btnSignIn text-white px-4 py-4 rounded-md"
+              onClick={() => navigate("/auth/signin")}
+
             />
           </div>
         </>

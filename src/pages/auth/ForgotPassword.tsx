@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import image from "../../assets/forgotpass.png";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
+import auth from "../../assets/auth1.jpeg"
 
 const ForgotPassword = () => {
   const navigate = useNavigate()
@@ -17,6 +18,7 @@ const ForgotPassword = () => {
       <div className="flex flex-col items-center justify-center min-h-screen w-[50vw] py-4 align-center space-y-6 px-10">
         <div className="space-y-4">
           <p className="text-3xl text-center font-bold">Forgot Password ?</p>
+          <img src={auth} alt="auth" />
           <p className="text-gray-400">
             Don’t worry ! It happens. Please enter the phone number/email we
             will send you the OTP.

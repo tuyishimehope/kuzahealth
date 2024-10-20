@@ -4,7 +4,7 @@ const ViewSchedule = () => {
   return (
     <div className="p-6">
       {/* Header Section */}
-      <div className="mb-6">
+      <div className="mb-6 flex justify-between">
         <h1 className="text-3xl font-bold mb-2">View Schedule</h1>
         <div className="flex flex-col md:flex-row md:items-center">
           <input
