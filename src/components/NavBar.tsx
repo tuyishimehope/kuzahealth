@@ -7,14 +7,14 @@ import navLinks from "../utils/navLinks";
 const NavBar = () => {
   const navigate = useNavigate();
   return (
-    <nav className="flex relative z-100  justify-between items-center px-4 py-2 min-w-sm:flex-col">
+    <nav className="flex relative z-100  justify-between items-center px-4 py-2 min-w-sm:flex-col bg-white bg-opacity-10">
     <div className="logo">
       <img src={logo} alt="logo" className="w-10" />
     </div>
     <div className="right-nav flex justify-between items-center">
       <ul className="flex space-x-4 mr-10">
         {navLinks.map((link,index) => (
-          <li key={index} className="hover:text-purple-300 text-lg text-black font-bold hover:cursor-pointer hover:underline hover:transition-all">
+          <li key={index} className="hover:text-purple-500 text-lg text-white font-bold hover:cursor-pointer hover:underline hover:transition-all">
             <a href={link.link}>{link.name}</a></li>
         ))}
         

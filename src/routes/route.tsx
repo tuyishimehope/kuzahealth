@@ -15,6 +15,7 @@ import Profile from "../pages/HealthWorker/Profile";
 import EditProfile from "../pages/HealthWorker/EditProfile";
 import ViewSchedule from "../pages/HealthWorker/ViewSchedule";
 import ViewPatient from "../pages/HealthWorker/ViewPatient";
+import SuperAdmin from "../pages/SuperAdmin";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: "/auth/createnewpassword",
     element: <CreateNewPassword />,
+  },
+  {
+    path:"/superadmin",
+    element: <SuperAdmin/>
   },
   {
     path: "/healthworker/dashboard",

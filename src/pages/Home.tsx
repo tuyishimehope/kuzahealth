@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import about from "../assets/image 43.png";
 import vaccination from "../assets/vaccinations.png";
 import ctn from "../assets/ctn.png";
-import video from "../assets/video-hero.mp4";
+import video from "../assets/health101.mp4";
 import social from "../assets/social-service.png"
 import nutrition from "../assets/nutrition.png"
 const Home = () => {
@@ -24,11 +24,11 @@ const Home = () => {
         </video>
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
         <NavBar />
-        {/* <div className=" absolute z-10 flex-col space-y-10 px-10 py-10 w-content mt-[25vh] ">
-          <h1 className="text-6xl text-green-900 font-bold">
+        <div className=" absolute z-10 flex-col space-y-10 px-10 py-10 w-content mt-[25vh] ">
+          <h1 className="text-6xl text-white font-bold">
             A Path to Healthier Futures
           </h1>
-          <p className="text-green-900 text-2xl">
+          <p className="text-white text-xl">
             Our mission is to reduce maternal and child mortality by raising
             awareness, <br />
             improving healthcare access, and providing essential education.
@@ -40,7 +40,7 @@ const Home = () => {
             name="Read More"
             className="bg-btnHero hover:bg-purple-500 px-8 py-3 rounded-full text-white"
           />
-        </div> */}
+        </div>
       </div>
       <div className="partnersm flex-col items-center justify-center py-6 space-y-4">
         <p className="items-center text-center text-2xl font-bold">Partners</p>

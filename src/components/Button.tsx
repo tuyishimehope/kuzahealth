@@ -1,22 +1,23 @@
 import { ReactNode } from "react";
 
 interface ButtonProps {
-  name: string;
+  name: ReactNode; // Change from `string` to `ReactNode`
   className: string;
   onClick?: (() => void) | undefined | void;
-  icon?: ReactNode | string; 
+  icon?: ReactNode | string;
+  disabled?: boolean
 }
 
-const Button: React.FC<ButtonProps> = ({ name, className, onClick = () => { }, icon }) => {
+const Button: React.FC<ButtonProps> = ({ name, className, onClick = () => { }, icon,disabled }) => {
   return (
-    <button className={className} onClick={onClick}>
+    <button className={className} onClick={onClick} disabled={disabled}>
       <div className="flex space-x-4 items-center justify-center">
-        <span>{name}</span>
-        {icon && 
+        <span>{name}</span> {/* Now supports JSX elements */}
+        {icon &&
           (typeof icon === "string" ? (
             <img src={icon} alt="icon" className="w-6 object-cover" />
           ) : (
-            <>{icon}</> 
+            <>{icon}</>
           ))
         }
       </div>

@@ -1,31 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import profile from "../../assets/profile.png";
 import Button from "../../components/Button";
 import { IoIosAdd } from "react-icons/io";
 
+interface Patient {
+  profile?: string;
+  name: string;
+  phone1: string;
+  phone2: string;
+  birthdate: string;
+  nationalId: string;
+  actions?: string;
+}
+
 const ViewPatient = () => {
-  const [patients] = useState([
-    // Sample data (replace this with real data)
-    {
-      profile: profile,
-      name: "Alice Johnson",
-      phone1: "+250 123456789",
-      phone2: "+250 987654321",
-      birthdate: "1990-01-01",
-      nationalId: "123456789",
-      actions: "View/Edit",
-    },
-    {
-      profile:profile,
-      name: "Bob Smith",
-      phone1: "+250 123456789",
-      phone2: "+250 987654321",
-      birthdate: "1985-05-12",
-      nationalId: "987654321",
-      actions: "View/Edit",
-    },
-    // Add more patient data as needed
-  ]);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const url = import.meta.env.VITE_BASE_URL;
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const response = await fetch(`${url}/api/parents`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch patients");
+        }
+        const data = await response.json();
+        setPatients(data);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPatients();
+  }, []); // Only fetch data once when the component mounts
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -62,7 +81,11 @@ const ViewPatient = () => {
           <img src={profile} alt="profile" className="w-10" />
           <img src={profile} alt="profile" className="w-10" />
           <img src={profile} alt="profile" className="w-10" />
-          <Button name="Add New" className="bg-btnSignIn text-white px-4 rounded-full" icon=<IoIosAdd /> />
+          <Button
+            name="Add New"
+            className="bg-btnSignIn text-white px-4 rounded-full"
+            icon={<IoIosAdd />}
+          />
         </div>
       </div>
 
@@ -85,7 +108,7 @@ const ViewPatient = () => {
               <tr key={index} className="border-b">
                 <td className="py-3 px-4 text-center">
                   <img
-                    src={patient.profile}
+                    src={patient.profile || profile}
                     alt="Profile"
                     className="w-12 h-12 rounded-full mx-auto"
                   />

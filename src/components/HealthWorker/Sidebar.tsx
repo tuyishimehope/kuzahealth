@@ -7,7 +7,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import Button from "../Button";
 import { CgProfile } from "react-icons/cg";
 import { TbVaccine } from "react-icons/tb";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useLocation
+import { useLocation, useNavigate } from "react-router-dom"; 
 import { IoMdLogOut } from "react-icons/io";
 
 
@@ -20,9 +20,16 @@ const Sidebar: React.FC<SidebarProps> = ({ active, currentPath }) => {
   const location = useLocation(); 
   const navigate = useNavigate();
 
+
+  const handleLogout = () => {
+   navigate("/auth/signin");
+
+   localStorage.removeItem("token")
+  }
+
   return (
     <div
-      className={`bg-bgSidebar flex flex-col space-y-6 ${
+      className={`bg-bgSidebar  h-full flex flex-col space-y-6 ${
         active ? "w-20" : "w-56"
       } min-h-screen items-center`}
     >
@@ -101,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, currentPath }) => {
             <Button
               name="Logout"
               className="bg-btnSignIn text-white px-12 py-4 rounded-md"
-              onClick={() => navigate("/auth/signin")}
+              onClick={handleLogout}
               icon={<IoMdLogOut />}
             />
           </div>
