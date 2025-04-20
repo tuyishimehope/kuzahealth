@@ -11,12 +11,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = () => {
 
   useEffect(() => {
     // Check if token exists in localStorage
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
 
-    if (!token) {
+    // if (!token) {
       // Redirect to /auth/signin if no token is found
-      navigate("/auth/signin");
-    }
+      // navigate("/auth/signin");
+    // }
   }, [navigate]); // The useEffect hook runs only once on component mount
 
   return (

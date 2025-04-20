@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { AxiosError } from "axios";
+import  { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import image from "../../assets/signin.png";
 import Button from "../../components/Button";
@@ -29,7 +29,7 @@ const SignIn = () => {
   });
   const navigate = useNavigate();
 
-  const url = import.meta.env.VITE_BASE_URL;
+  // const url = import.meta.env.VITE_BASE_URL;
 
   const onSubmit = async (data: SignInFormData) => {
     try {
@@ -40,15 +40,15 @@ const SignIn = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       // Send OTP to the email
-      const response = await axios.post(`${url}/api/v1/auth/send-otp`, {
-        email: data.email,
-      });
+      // const response = await axios.post(`${url}/api/v1/auth/send-otp`, {
+      //   email: data.email,
+      // });
 
-      console.log("OTP sent:", response.data);
-      alert("OTP sent to your email");
-
+      // console.log("OTP sent:", response.data);
+      // alert("OTP sent to your email");
+      navigate("/healthworker/dashboard");
       // Navigate to OTP verification page
-      navigate("/auth/otpverification");
+      // navigate("/auth/otpverification");
     } catch (error) {
       const err = error as AxiosError; // Explicitly assert error type
       console.error("Error sending OTP:", err.response?.data || err.message);
@@ -103,7 +103,7 @@ const SignIn = () => {
           </div>
 
           <Button
-            name="Send OTP"
+            name="Signin"
             className="bg-btnSignIn w-full my-4 px-6 py-2 text-white rounded-full"
           />
         </form>
