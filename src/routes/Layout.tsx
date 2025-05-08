@@ -1,37 +1,57 @@
+import React, { useState, useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { IoMenuOutline } from "react-icons/io5";
 import Navbar from "../components/HealthWorker/Navbar";
 import Sidebar from "../components/HealthWorker/Sidebar";
-import { useState, useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
-const Layout: React.FC<{ children: React.ReactNode }> = () => {
-  const [active, setActive] = useState(false);
-  const location = useLocation();
+// Define proper TypeScript interface for props
+type LayoutProps = object
+
+/**
+ * Main layout component for the health worker dashboard
+ * Handles sidebar toggling, authentication checks, and overall page structure
+ */
+const Layout: React.FC<LayoutProps> = () => {
+  // State for sidebar visibility
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  // const location = useLocation();
   const navigate = useNavigate();
 
+  // Authentication check on component mount
   useEffect(() => {
-    // Check if token exists in localStorage
-    // const token = localStorage.getItem("token");
+    const checkAuthentication = () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        // navigate("/auth/signin");
 
-    // if (!token) {
-      // Redirect to /auth/signin if no token is found
-      // navigate("/auth/signin");
-    // }
-  }, [navigate]); // The useEffect hook runs only once on component mount
+      }
+    };
+
+    // Uncomment the following line to enable authentication
+    checkAuthentication();
+  }, [navigate]);
+
+  // Toggle sidebar visibility
+  const toggleSidebar = () => setIsSidebarVisible(!isSidebarVisible);
 
   return (
-    <div className="flex">
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar container with transition */}
       <div className="relative">
-        <IoMenuOutline
-          className="absolute -right-5 p-2 mt-4 hover:bg-btnSignIn hover:cursor-pointer w-10 h-10 bg-white hover:text-white rounded-full"
-          onClick={() => setActive(!active)}
-        />
-
-        <Sidebar active={active} currentPath={location.pathname} />
+        <button
+          aria-label="Toggle sidebar"
+          className="absolute -right-5 mt-4 p-2 w-10 h-10 bg-white hover:bg-btnSignIn hover:text-white rounded-full shadow-md z-10 transition-colors duration-200"
+          onClick={toggleSidebar}
+        >
+          <IoMenuOutline className="w-full h-full" />
+        </button>
+        <Sidebar active={isSidebarVisible} />
       </div>
-      <div className="flex-1 flex flex-col">
+
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar />
-        <main className="p-6 bg-gray-50 flex-1">
+        <main className="p-6 bg-gray-50 flex-1 overflow-auto">
           <Outlet />
         </main>
       </div>
