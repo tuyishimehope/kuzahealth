@@ -1,23 +1,21 @@
-import React from 'react';
 import {
-  Box,
-  Grid,
-  Paper,
-  Title,
-  Text,
-  Group,
-  Stack,
-  Button,
-  rem,
-  SimpleGrid,
+    Box,
+    Button,
+    Group,
+    Paper,
+    rem,
+    SimpleGrid,
+    Stack,
+    Text,
+    Title
 } from '@mantine/core';
 import {
-  IconUsers,
-  IconUserPlus,
-  IconUserCheck,
-  IconHospital,
-  IconActivity,
-  IconChartBar,
+    IconActivity,
+    IconChartBar,
+    IconHospital,
+    IconUserCheck,
+    IconUserPlus,
+    IconUsers,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 

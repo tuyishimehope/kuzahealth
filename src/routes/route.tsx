@@ -1,27 +1,25 @@
 import { createBrowserRouter } from "react-router-dom";
 import SuperAdminLayout from "../layouts/SuperAdminLayout";
-import SuperAdminDashboard from "../pages/superadmin/Dashboard";
-import AddHealthWorker from "../pages/superadmin/AddHealthWorker";
-import ViewHealthWorkers from "../pages/superadmin/ViewHealthWorkers";
+import { default as ForgotPassword, default as ResetPassword } from "../pages/auth/ForgotPassword";
 import Login from "../pages/auth/SignIn";
 import Register from "../pages/auth/SignUp";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ResetPassword from "../pages/auth/ForgotPassword";
-import HealthWorkerLayout from "../routes/Layout";
-import HealthWorkerDashboard from "../pages/HealthWorker/Dashboard";
-import Profile from "../pages/HealthWorker/Profile";
-import Patients from "../pages/HealthWorker/Patients";
-import Appointments from "../pages/HealthWorker/Appointments";
-import Reports from "../pages/HealthWorker/Reports";
-import Settings from "../pages/HealthWorker/Settings";
-import Home from "../pages/Home";
 import AnalyticsDashboard from "../pages/HealthWorker/Analytics";
+import Appointments from "../pages/HealthWorker/Appointments";
+import HealthWorkerDashboard from "../pages/HealthWorker/Dashboard";
+import InfantVaccination from "../pages/HealthWorker/infants/InfantVaccination";
+import ViewInfants from "../pages/HealthWorker/infants/ViewInfants";
 import AddPatient from "../pages/HealthWorker/Mother/AddPatient";
 import ViewPatient from "../pages/HealthWorker/Mother/ViewPatient";
-import ViewInfants from "../pages/HealthWorker/infants/ViewInfants";
-import InfantVaccination from "../pages/HealthWorker/infants/InfantVaccination";
+import Profile from "../pages/HealthWorker/Profile";
+import Reports from "../pages/HealthWorker/Reports";
 import AddSchedule from "../pages/HealthWorker/Schedule/AddSchedule";
 import ViewSchedule from "../pages/HealthWorker/Schedule/ViewSchedule";
+import Settings from "../pages/HealthWorker/Settings";
+import Home from "../pages/Home";
+import AddHealthWorker from "../pages/superadmin/AddHealthWorker";
+import SuperAdminDashboard from "../pages/superadmin/Dashboard";
+import ViewHealthWorkers from "../pages/superadmin/ViewHealthWorkers";
+import HealthWorkerLayout from "../routes/Layout";
 
 export const router = createBrowserRouter([
   {

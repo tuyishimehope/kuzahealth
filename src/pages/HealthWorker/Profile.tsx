@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
 import {
-  Box,
-  Title,
-  Text,
-  Paper,
+  ActionIcon,
   Avatar,
-  Group,
-  Stack,
+  Badge,
+  Box,
   Button,
+  FileButton,
+  Grid,
+  Group,
+  Paper,
+  Stack,
+  Tabs,
+  Text,
   TextInput,
   Textarea,
-  Grid,
-  Tabs,
-  Badge,
-  ActionIcon,
+  Title,
   rem,
-  FileButton,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import {
-  IconUser,
-  IconMail,
-  IconPhone,
-  IconMapPin,
   IconBriefcase,
-  IconEdit,
   IconCamera,
   IconCheck,
+  IconEdit,
+  IconMail,
+  IconMapPin,
+  IconPhone,
+  IconUser,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 interface ProfileFormValues {
   firstName: string;

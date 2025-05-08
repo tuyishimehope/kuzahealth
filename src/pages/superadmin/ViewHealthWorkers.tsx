@@ -1,38 +1,38 @@
-import React, { useState } from 'react';
 import {
-  Box,
-  Title,
-  TextInput,
-  Button,
-  Group,
-  Paper,
-  Table,
-  Badge,
-  ActionIcon,
-  Text,
-  Stack,
-  Select,
-  rem,
-  Menu,
-  Modal,
-  Avatar,
+    ActionIcon,
+    Avatar,
+    Badge,
+    Box,
+    Button,
+    Group,
+    Menu,
+    Modal,
+    Paper,
+    Select,
+    Stack,
+    Table,
+    Text,
+    TextInput,
+    Title,
+    rem,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import {
-  IconSearch,
-  IconPlus,
-  IconDotsVertical,
-  IconEdit,
-  IconTrash,
-  IconEye,
-  IconUser,
-  IconMail,
-  IconPhone,
-  IconMapPin,
-  IconBriefcase,
+    IconBriefcase,
+    IconDotsVertical,
+    IconEdit,
+    IconEye,
+    IconMail,
+    IconMapPin,
+    IconPhone,
+    IconPlus,
+    IconSearch,
+    IconTrash,
+    IconUser,
 } from '@tabler/icons-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 
 interface HealthWorker {
   id: string;
@@ -108,7 +108,7 @@ const ViewHealthWorkers = () => {
     open();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (_id: string) => {
     notifications.show({
       title: 'Success',
       message: 'Health worker deleted successfully',

@@ -56,7 +56,7 @@ const sampleInfants: Child[] = [
 ];
 
 const ViewInfants = () => {
-  const [data, setData] = useState<Child[]>(sampleInfants);
+  const [data] = useState<Child[]>(sampleInfants);
 
   const columns: MRT_ColumnDef<Child>[] = [
     {

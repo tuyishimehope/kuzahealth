@@ -1,28 +1,27 @@
-import React, { useState } from 'react';
 import {
-  Box,
-  Title,
-  Text,
-  Paper,
-  SimpleGrid,
-  Badge,
-  Group,
-  Tabs,
-  Timeline,
-  ThemeIcon,
-  Card,
-  Stack,
-  Button,
-  Modal,
+    Badge,
+    Box,
+    Button,
+    Card,
+    Group,
+    Modal,
+    SimpleGrid,
+    Stack,
+    Tabs,
+    Text,
+    ThemeIcon,
+    Timeline,
+    Title
 } from '@mantine/core';
 import {
-  IconVaccine,
-  IconCalendar,
-  IconInfoCircle,
-  IconCheck,
-  IconAlertCircle,
-  IconClock,
+    IconAlertCircle,
+    IconCalendar,
+    IconCheck,
+    IconClock,
+    IconInfoCircle,
+    IconVaccine,
 } from '@tabler/icons-react';
+import { useState } from 'react';
 
 interface VaccinationSchedule {
   id: string;

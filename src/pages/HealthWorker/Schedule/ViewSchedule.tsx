@@ -90,7 +90,7 @@ const ViewSchedule = () => {
     open();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (_id: string) => {
     notifications.show({
       title: 'Success',
       message: 'Schedule deleted successfully',

@@ -1,82 +1,16 @@
-import React, { useState } from 'react';
 import {
   AppShell,
-  Navbar,
-  Header,
-  Text,
-  MediaQuery,
   Burger,
-  useMantineTheme,
-  Group,
-  Avatar,
-  UnstyledButton,
-  Stack,
-  rem,
-  Box,
-  Divider,
-  Badge,
-  Menu,
-  ActionIcon,
-  Tooltip,
-  TextInput,
+  Header,
+  MediaQuery,
+  Navbar,
+  Text,
+  useMantineTheme
 } from '@mantine/core';
-import { useNavigate, useLocation, Outlet } from 'react-router-dom';
-import {
-  IconDashboard,
-  IconUsers,
-  IconUserPlus,
-  IconSettings,
-  IconLogout,
-  IconChevronLeft,
-  IconChevronRight,
-  IconBell,
-  IconSearch,
-  IconHelp,
-  IconReportAnalytics,
-  IconBuildingHospital,
-  IconUserCircle,
-} from '@tabler/icons-react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/superadmin/Sidebar';
 
-interface NavbarLinkProps {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  onClick?: () => void;
-  badge?: string;
-}
-
-const NavbarLink = ({ icon, label, active, onClick, badge }: NavbarLinkProps) => {
-  return (
-    <UnstyledButton
-      onClick={onClick}
-      sx={(theme) => ({
-        display: 'block',
-        width: '100%',
-        padding: theme.spacing.xs,
-        borderRadius: theme.radius.sm,
-        color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-        backgroundColor: active ? theme.colors.blue[0] : 'transparent',
-        '&:hover': {
-          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-        },
-      })}
-    >
-      <Group position="apart">
-        <Group>
-          {icon}
-          <Text size="sm">{label}</Text>
-        </Group>
-        {badge && (
-          <Badge size="sm" color="blue" variant="light">
-            {badge}
-          </Badge>
-        )}
-      </Group>
-    </UnstyledButton>
-  );
-};
 
 const SuperAdminLayout = () => {
   const theme = useMantineTheme();
