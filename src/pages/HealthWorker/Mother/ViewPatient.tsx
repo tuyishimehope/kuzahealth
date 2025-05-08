@@ -1,30 +1,30 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Group,
+  Paper,
+  Progress,
+  Stack,
+  Text,
+  Title,
+  useMantineTheme,
+} from '@mantine/core';
+import {
+  IconAnchor,
+  IconDownload,
+  IconEye,
+  IconPlus,
+  IconShip,
+  IconWaveSine,
+} from '@tabler/icons-react';
 import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
 } from 'mantine-react-table';
-import {
-  Box,
-  Group,
-  Paper,
-  Text,
-  Title,
-  Button,
-  Badge,
-  Avatar,
-  useMantineTheme,
-  Stack,
-  Progress,
-} from '@mantine/core';
-import {
-  IconWaveSine,
-  IconAnchor,
-  IconShip,
-  IconEye,
-  IconDownload,
-  IconPlus,
-} from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Define Patient interface
@@ -68,8 +68,8 @@ const MaritimePatientDashboard = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<'all' | Patient['status']>('all');
+  const [globalFilter] = useState('');
+  const [selectedStatus] = useState<'all' | Patient['status']>('all');
   const [rowSelection, setRowSelection] = useState({});
 
   // Fetch sample patients

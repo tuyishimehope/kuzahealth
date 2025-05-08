@@ -1,36 +1,34 @@
-import React, { useState } from 'react';
 import {
-  Box,
-  Group,
-  Card,
-  Text,
-  Title,
-  Button,
-  Badge,
   Avatar,
-  SimpleGrid,
-  ThemeIcon,
-  useMantineTheme,
-  Tabs,
-  Stack,
-  TextInput,
-  Select,
-  NumberInput,
-  Grid,
+  Badge,
+  Box,
+  Button,
+  Card,
   Divider,
-  Paper
+  Grid,
+  Group,
+  Paper,
+  Select,
+  SimpleGrid,
+  Stack,
+  Tabs,
+  Text,
+  TextInput,
+  Title,
+  useMantineTheme
 } from '@mantine/core';
 import {
-  IconUserCircle,
+  IconArrowRight,
+  IconBabyCarriage,
   IconCalendar,
   IconChartBar,
-  IconArrowRight,
   IconEdit,
   IconId,
-  IconBabyCarriage,
-  IconPlus
+  IconPlus,
+  IconUserCircle
 } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
 
 // Extend the Patient type to include children
 type Patient = {
@@ -275,7 +273,7 @@ const PatientDetailPage = ({
   onBack: () => void;
 }) => {
   const theme = useMantineTheme();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
   // State for children records
   const [children, setChildren] = useState<Child[]>(patient.children || []);
@@ -359,9 +357,9 @@ const PatientDetailPage = ({
             </Tabs.List>
 
             {/* Existing Tab Panels */}
-            <Tabs.Panel value="information">
+            {/* <Tabs.Panel value="information"> */}
               {/* Existing Information Tab Content */}
-            </Tabs.Panel>
+            {/* </Tabs.Panel> */}
 
             <Tabs.Panel value="medical">
               <Text color="dimmed" align="center">Medical history information would appear here.</Text>

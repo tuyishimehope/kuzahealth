@@ -17,7 +17,17 @@ const AnalyticsDashboard = () => {
 //   const [activeTab, setActiveTab] = useState('overview');
   
   // Card component for summary metrics
-  const MetricCard = ({ title, value, color, hasLegend = true }) => (
+  const MetricCard = ({ 
+    title, 
+    value, 
+    color, 
+    hasLegend = true 
+  }: {
+    title: string;
+    value: number;
+    color: string;
+    hasLegend?: boolean;
+  }) => (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-gray-700 font-medium text-sm">{title}</h3>
@@ -63,7 +73,17 @@ const AnalyticsDashboard = () => {
   );
   
   // Chart component for monthly data
-  const ChartCard = ({ title, dataKey, color, secondaryColor }) => (
+  const ChartCard = ({ 
+    title, 
+    dataKey, 
+    color, 
+    secondaryColor 
+  }: {
+    title: string;
+    dataKey: string;
+    color: string;
+    secondaryColor: string;
+  }) => (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-gray-700 font-medium text-sm">{title}</h3>
@@ -169,10 +189,10 @@ const AnalyticsDashboard = () => {
         
         {/* Top row - Summary metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <MetricCard title="Total number of mothers registered." value="1456" color="#4299E1" />
-          <MetricCard title="Number of ongoing pregnancies." value="343" color="#68D391" />
-          <MetricCard title="Birth outcomes" value="12" color="#805AD5" />
-          <MetricCard title="Average maternal age" value="1456" color="#F56565" />
+          <MetricCard title="Total number of mothers registered." value={1456} color="#4299E1" />
+          <MetricCard title="Number of ongoing pregnancies." value={343} color="#68D391" />
+          <MetricCard title="Birth outcomes" value={12} color="#805AD5" />
+          <MetricCard title="Average maternal age" value={1456} color="#F56565" />
         </div>
         
         {/* Bottom row - Charts and Gauge */}
