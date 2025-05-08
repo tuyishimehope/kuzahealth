@@ -1,183 +1,254 @@
-import { RiCalendarScheduleLine, RiDashboardFill } from "react-icons/ri";
-import logo from "../../assets/logo1.png";
-import SidebarLink from "./SidebarLink";
-import { IoAddOutline } from "react-icons/io5";
-import { FaUsersGear } from "react-icons/fa6";
-import { FaInfoCircle } from "react-icons/fa";
-import Button from "../Button";
-import { CgProfile } from "react-icons/cg";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { RiDashboardLine, RiSettings4Line } from "react-icons/ri";
+import { IoEyeOutline, IoAddOutline, IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
 import { TbVaccine } from "react-icons/tb";
-import { useLocation, useNavigate } from "react-router-dom"; 
+// import { FaInfoCircle } from "react-icons/fa";
 import { IoMdLogOut } from "react-icons/io";
-
+import logo from "../../assets/logo1.png";
 
 type SidebarProps = {
   active: boolean;
-  currentPath?: string;
+  toggleSidebar?: () => void;
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ active, currentPath }) => {
-  const location = useLocation(); 
-  const navigate = useNavigate();
+type MenuSectionProps = {
+  title: string;
+  expanded: boolean;
+  toggleExpanded: () => void;
+  children: React.ReactNode;
+  isCollapsed: boolean;
+};
 
+type SidebarItemProps = {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+  isActive: boolean;
+  isCollapsed: boolean;
+};
 
-  const handleLogout = () => {
-   navigate("/auth/signin");
-
-   localStorage.removeItem("token")
+const MenuSection = ({ title, expanded, toggleExpanded, children, isCollapsed }: MenuSectionProps): JSX.Element => {
+  if (isCollapsed) {
+    return <>{children}</>;
   }
 
   return (
-    <div
-      className={`bg-bgSidebar  h-full flex flex-col space-y-6 ${
-        active ? "w-20" : "w-56"
-      } min-h-screen items-center`}
-    >
-      <div>
-        <img src={logo} alt="logo" className="w-20 object-cover" />
+    <div className="w-full mb-6">
+      <div 
+        className="flex items-center justify-between px-4 py-2 cursor-pointer"
+        onClick={toggleExpanded}
+      >
+        <h3 className="text-gray-700 font-medium text-sm uppercase tracking-wider">{title}</h3>
+        {expanded ? (
+          <IoChevronUpOutline className="w-4 h-4 text-gray-500" />
+        ) : (
+          <IoChevronDownOutline className="w-4 h-4 text-gray-500" />
+        )}
       </div>
-      {!active ? (
-        <>
-          <div className="flex-col pt-20 w-full flex space-y-6">
-            <SidebarLink
-              name="Dashboard"
-              href="/healthworker/dashboard"
-              status={location.pathname === "/healthworker/dashboard"} 
-            />
-            <SidebarLink
-              name="Add Patient"
-              icon={<IoAddOutline className="w-8 h-10" />}
-              href={"/healthworker/dashboard/patient"} 
-              currentPath={currentPath}
-            />
-
-            <SidebarLink
-              name="View Patients"
-              icon={<FaUsersGear className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/view-patient"
-              } 
-              href={"/healthworker/dashboard/view-patient"} 
-              currentPath={currentPath}
-            />
-            <SidebarLink
-              name="Nutrition Info"
-              icon={<FaInfoCircle className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/nutrition"}
-              currentPath={currentPath}
-              href={"/healthworker/dashboard/nutrition"} 
-
-            />
-            <SidebarLink
-              name="Vaccinations"
-              icon={<TbVaccine className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/vaccination"
-              } 
-              currentPath={currentPath}
-              href={"/healthworker/dashboard/vaccination"} 
-            />
-            <SidebarLink
-              name="Add Schedule"
-              icon={<IoAddOutline className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/schedule"
-              } 
-              currentPath={currentPath}
-              href={"/healthworker/dashboard/schedule"} 
-            />
-            <SidebarLink
-              name="View Schedule"
-              icon={<RiCalendarScheduleLine className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/view-schedule"
-              }
-              currentPath={currentPath}
-              href={"/healthworker/dashboard/view-schedule"}  
-            />
-            <SidebarLink
-              name="Update Profile"
-              icon={<CgProfile className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/profile"}
-              currentPath={currentPath}
-              href={"/healthworker/dashboard/profile"} 
-            />
-          </div>
-          <div className=" ">
-         
-            <Button
-              name="Logout"
-              className="bg-btnSignIn text-white px-12 py-4 rounded-md"
-              onClick={handleLogout}
-              icon={<IoMdLogOut />}
-            />
-          </div>
-        </>
-      ) : (
-        <>
-          {" "}
-          <div className="flex-col pt-20 w-full flex space-y-6">
-            <SidebarLink
-              icon={<RiDashboardFill className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard"} // Active status
-              href="/healthworker/dashboard"
-
-            />
-            <SidebarLink
-              icon={<IoAddOutline className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/patient"} 
-               href="/healthworker/dashboard/patient"
-            />
-            <SidebarLink
-              icon={<FaUsersGear className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/view-patient"
-              } 
-               href="/healthworker/dashboard/view-patient"
-            />
-            <SidebarLink
-              icon={<FaInfoCircle className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/nutrition"} 
-               href="/healthworker/dashboard/nutrition"
-            />
-            <SidebarLink
-              icon={<TbVaccine className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/vaccination"
-              } 
-               href="/healthworker/dashboard/vaccination"
-            />
-            <SidebarLink
-              icon={<IoAddOutline className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/schedule"
-              } 
-               href="/healthworker/dashboard/schedule"
-            />
-            <SidebarLink
-              icon={<RiCalendarScheduleLine className="w-8 h-10" />}
-              status={
-                location.pathname === "/healthworker/dashboard/view-schedule"
-              }
-               href="/healthworker/dashboard/view-schedule"
-            />
-            <SidebarLink
-              icon={<CgProfile className="w-8 h-10" />}
-              status={location.pathname === "/healthworker/dashboard/profile"} 
-               href="/healthworker/dashboard/profile"
-            />
-          </div>
-          <div className="pt-20 ">
-            <Button
-              name="Logout"
-              className="bg-btnSignIn text-white px-4 py-4 rounded-md"
-              onClick={() => navigate("/auth/signin")}
-
-            />
-          </div>
-        </>
+      {expanded && (
+        <div className="mt-1">
+          {children}
+        </div>
       )}
     </div>
+  );
+};
+
+const SidebarItem = ({ icon, label, href, isActive, isCollapsed }: SidebarItemProps): JSX.Element => {
+  const navigate = useNavigate();
+  
+  return (
+    <motion.div
+      whileHover={{ x: 4 }}
+      onClick={() => navigate(href)}
+      className={`flex items-center px-4 py-3 cursor-pointer
+        ${isActive 
+          ? "bg-purple-500 text-white rounded-md mx-2" 
+          : "text-gray-700 hover:bg-purple-100 hover:text-purple-600 rounded-md mx-2"
+        }
+        ${isCollapsed ? "justify-center" : ""}
+      `}
+    >
+      <div className={`${isActive ? "text-white" : "text-purple-500"}`}>
+        {icon}
+      </div>
+      {!isCollapsed && (
+        <span className={`ml-3 font-medium ${isActive ? "text-white" : ""}`}>
+          {label}
+        </span>
+      )}
+    </motion.div>
+  );
+};
+
+const Sidebar = ({ active: isCollapsed }: SidebarProps): JSX.Element => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const [motherInfoExpanded, setMotherInfoExpanded] = useState(true);
+  const [infantInfoExpanded, setInfantInfoExpanded] = useState(true);
+  const [schedulesExpanded, setSchedulesExpanded] = useState(true);
+  const [settingsExpanded, setSettingsExpanded] = useState(true);
+
+  const handleLogout = (): void => {
+    localStorage.removeItem("token");
+    navigate("/auth/signin");
+  };
+
+  return (
+    <motion.div
+      initial={{ width: isCollapsed ? 80 : 250 }}
+      animate={{ width: isCollapsed ? 80 : 250 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className={`bg-purple-100 min-h-screen flex flex-col py-6 overflow-hidden shadow-md`}
+    >
+      {/* Logo */}
+      <div className="flex justify-center items-center mb-8">
+        <img src={logo} alt="Kuza Health" className={`${isCollapsed ? "w-12" : "w-16"} transition-all duration-300`} />
+      </div>
+
+      {/* Navigation Items */}
+      <div className="flex-1 flex flex-col overflow-y-auto">
+        <div className="px-2 mb-6">
+          <SidebarItem
+            icon={<RiDashboardLine className="w-5 h-5" />}
+            label="Dashboard"
+            href="/healthworker/dashboard"
+            isActive={location.pathname === "/healthworker/dashboard"}
+            isCollapsed={isCollapsed}
+          />
+          
+          <SidebarItem
+            icon={<div className="flex items-center justify-center w-5 h-5 text-lg">📊</div>}
+            label="Analytics"
+            href="/healthworker/analytics"
+            isActive={location.pathname === "/healthworker/dashboard/analytics"}
+            isCollapsed={isCollapsed}
+          />
+        </div>
+
+        {/* Mother Information Section */}
+        <MenuSection 
+          title="Mother Information" 
+          expanded={motherInfoExpanded} 
+          toggleExpanded={() => setMotherInfoExpanded(!motherInfoExpanded)}
+          isCollapsed={isCollapsed}
+        >
+          <SidebarItem
+            icon={<IoAddOutline className="w-5 h-5" />}
+            label="Add Patient"
+            href="/healthworker/patient"
+            isActive={location.pathname === "/healthworker/dashboard/patient"}
+            isCollapsed={isCollapsed}
+          />
+          
+          <SidebarItem
+            icon={<IoEyeOutline className="w-5 h-5" />}
+            label="View Patients"
+            href="/healthworker/view-patient"
+            isActive={location.pathname === "/healthworker/dashboard/view-patient"}
+            isCollapsed={isCollapsed}
+          />
+          
+          {/* <SidebarItem
+            icon={<FaInfoCircle className="w-5 h-5" />}
+            label="Nutrition Info"
+            href="/healthworker/dashboard/nutrition"
+            isActive={location.pathname === "/healthworker/dashboard/nutrition"}
+            isCollapsed={isCollapsed}
+          /> */}
+        </MenuSection>
+
+        {/* Infant Information */}
+        <MenuSection 
+          title="Infant Information" 
+          expanded={infantInfoExpanded} 
+          toggleExpanded={() => setInfantInfoExpanded(!infantInfoExpanded)}
+          isCollapsed={isCollapsed}
+        >
+          <SidebarItem
+            icon={<IoEyeOutline className="w-5 h-5" />}
+            label="View Infants"
+            href="/healthworker/view-infants"
+            isActive={location.pathname === "/healthworker/dashboard/view-infants"}
+            isCollapsed={isCollapsed}
+          />
+          
+          <SidebarItem
+            icon={<TbVaccine className="w-5 h-5" />}
+            label="Vaccinations"
+            href="/healthworker/infant-vaccination"
+            isActive={location.pathname === "/healthworker/dashboard/infant-vaccination"}
+            isCollapsed={isCollapsed}
+          />
+        </MenuSection>
+
+        {/* Schedules */}
+        <MenuSection 
+          title="Schedules" 
+          expanded={schedulesExpanded} 
+          toggleExpanded={() => setSchedulesExpanded(!schedulesExpanded)}
+          isCollapsed={isCollapsed}
+        >
+          <SidebarItem
+            icon={<IoAddOutline className="w-5 h-5" />}
+            label="Add Schedule"
+            href="/healthworker/schedule"
+            isActive={location.pathname === "/healthworker/schedule"}
+            isCollapsed={isCollapsed}
+          />
+          
+          <SidebarItem
+            icon={<IoEyeOutline className="w-5 h-5" />}
+            label="View Schedules"
+            href="/healthworker/view-schedule"
+            isActive={location.pathname === "/healthworker/view-schedule"}
+            isCollapsed={isCollapsed}
+          />
+        </MenuSection>
+
+        {/* Settings */}
+        <MenuSection 
+          title="Settings" 
+          expanded={settingsExpanded} 
+          toggleExpanded={() => setSettingsExpanded(!settingsExpanded)}
+          isCollapsed={isCollapsed}
+        >
+          <SidebarItem
+            icon={<RiSettings4Line className="w-5 h-5" />}
+            label="Update Profile"
+            href="/healthworker/profile"
+            isActive={location.pathname === "/healthworker/profile"}
+            isCollapsed={isCollapsed}
+          />
+          
+          {/* <SidebarItem
+            icon={<div className="flex items-center justify-center w-5 h-5 text-lg">🔔</div>}
+            label="Alerts"
+            href="/healthworker/dashboard/alerts"
+            isActive={location.pathname === "/healthworker/dashboard/alerts"}
+            isCollapsed={isCollapsed}
+          /> */}
+        </MenuSection>
+      </div>
+
+      {/* Logout Button */}
+      <div className="mt-auto px-4">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleLogout}
+          className={`flex items-center justify-center w-full py-3 bg-purple-600 text-white rounded-lg
+            hover:bg-purple-700 transition-colors duration-200
+            ${isCollapsed ? "px-0" : "px-4"}`}
+        >
+          <IoMdLogOut className="w-5 h-5" />
+          {!isCollapsed && <span className="ml-2">Logout</span>}
+        </motion.button>
+      </div>
+    </motion.div>
   );
 };
 

@@ -1,62 +1,108 @@
 import { createBrowserRouter } from "react-router-dom";
-import Home from "../pages/Home";
-import SignUp from "../pages/auth/SignUp";
-import SignIn from "../pages/auth/SignIn";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import OtpVerification from "../pages/auth/OtpVerification";
-import CreateNewPassword from "../pages/auth/CreateNewPassword";
-import Dashboard from "../pages/HealthWorker/Dashboard";
-import Layout from "./Layout";
-import AddPatient from "../pages/HealthWorker/AddPatient";
-import Nutrition from "../pages/HealthWorker/Nutrition";
-import Vaccination from "../pages/HealthWorker/Vaccination";
-import AddSchedule from "../pages/HealthWorker/AddSchedule";
+import SuperAdminLayout from "../layouts/SuperAdminLayout";
+import { default as ForgotPassword, default as ResetPassword } from "../pages/auth/ForgotPassword";
+import Login from "../pages/auth/SignIn";
+import Register from "../pages/auth/SignUp";
+import AnalyticsDashboard from "../pages/HealthWorker/Analytics";
+import Appointments from "../pages/HealthWorker/Appointments";
+import HealthWorkerDashboard from "../pages/HealthWorker/Dashboard";
+import InfantVaccination from "../pages/HealthWorker/infants/InfantVaccination";
+import ViewInfants from "../pages/HealthWorker/infants/ViewInfants";
+import AddPatient from "../pages/HealthWorker/Mother/AddPatient";
+import ViewPatient from "../pages/HealthWorker/Mother/ViewPatient";
 import Profile from "../pages/HealthWorker/Profile";
-import EditProfile from "../pages/HealthWorker/EditProfile";
-import ViewSchedule from "../pages/HealthWorker/ViewSchedule";
-import ViewPatient from "../pages/HealthWorker/ViewPatient";
-import SuperAdmin from "../pages/SuperAdmin";
+import Reports from "../pages/HealthWorker/Reports";
+import AddSchedule from "../pages/HealthWorker/Schedule/AddSchedule";
+import ViewSchedule from "../pages/HealthWorker/Schedule/ViewSchedule";
+import Settings from "../pages/HealthWorker/Settings";
+import Home from "../pages/Home";
+import AddHealthWorker from "../pages/superadmin/AddHealthWorker";
+import SuperAdminDashboard from "../pages/superadmin/Dashboard";
+import ViewHealthWorkers from "../pages/superadmin/ViewHealthWorkers";
+import HealthWorkerLayout from "../routes/Layout";
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
   },
   {
-    path: "/auth/signup",
-    element: <SignUp />,
-  },
-  {
     path: "/auth/signin",
-    element: <SignIn />,
+    element: <Login />,
   },
   {
-    path: "/auth/forgotpassword",
+    path: "/auth/signup",
+    element: <Register />,
+  },
+  {
+    path: "/auth/forgot-password",
     element: <ForgotPassword />,
   },
   {
-    path: "/auth/otpverification",
-    element: <OtpVerification />,
+    path: "/auth/reset-password",
+    element: <ResetPassword />,
   },
   {
-    path: "/auth/createnewpassword",
-    element: <CreateNewPassword />,
-  },
-  {
-    path:"/superadmin",
-    element: <SuperAdmin/>
-  },
-  {
-    path: "/healthworker/dashboard",
-    element: (
-      <Layout>
-        <Dashboard />
-      </Layout>
-    ),
+    path: "/superadmin",
+    element: <SuperAdminLayout />,
     children: [
       {
-        path: "",
-        element: <Dashboard />,
+        path: "dashboard",
+        element: <SuperAdminDashboard />,
+      },
+      {
+        path: "health-workers",
+        element: <ViewHealthWorkers />,
+      },
+      {
+        path: "health-workers/active",
+        element: <ViewHealthWorkers />,
+      },
+      {
+        path: "health-workers/inactive",
+        element: <ViewHealthWorkers />,
+      },
+      {
+        path: "add-health-worker",
+        element: <AddHealthWorker />,
+      },
+      {
+        path: "facilities",
+        element: <div>Facilities Management</div>, // TODO: Create Facilities component
+      },
+      {
+        path: "reports",
+        element: <div>Reports Overview</div>, // TODO: Create Reports component
+      },
+      {
+        path: "reports/analytics",
+        element: <div>Analytics Dashboard</div>, // TODO: Create Analytics component
+      },
+      {
+        path: "reports/activity",
+        element: <div>Activity Logs</div>, // TODO: Create ActivityLogs component
+      },
+      {
+        path: "settings",
+        element: <div>Settings</div>, // TODO: Create Settings component
+      },
+    ],
+  },
+  {
+    path: "/healthworker",
+    element: <HealthWorkerLayout />,
+    children: [
+      {
+        path: "dashboard",
+        element: <HealthWorkerDashboard />,
+      },
+      {
+        path: "analytics",
+        element: <AnalyticsDashboard />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       },
       {
         path: "patient",
@@ -67,12 +113,12 @@ const router = createBrowserRouter([
         element: <ViewPatient />,
       },
       {
-        path: "nutrition",
-        element: <Nutrition />,
+        path: "view-infants",
+        element: <ViewInfants />,
       },
       {
-        path: "vaccination",
-        element: <Vaccination />,
+        path: "infant-vaccination",
+        element: <InfantVaccination />,
       },
       {
         path: "schedule",
@@ -83,17 +129,17 @@ const router = createBrowserRouter([
         element: <ViewSchedule />,
       },
       {
-        path: "profile",
-        element: <Profile />,
-        children: [
-          {
-            path: "edit",
-            element: <EditProfile />,
-          },
-        ],
+        path: "appointments",
+        element: <Appointments />,
+      },
+      {
+        path: "reports",
+        element: <Reports />,
+      },
+      {
+        path: "settings",
+        element: <Settings />,
       },
     ],
   },
 ]);
-
-export default router;

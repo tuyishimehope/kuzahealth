@@ -1,11 +1,10 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import  { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import image from "../../assets/signin.png";
-import Button from "../../components/Button";
-import Input from "../../components/Input";
 import google from "../../assets/google.png";
 
 // Define the Zod schema
@@ -19,6 +18,90 @@ const signInSchema = z.object({
 
 type SignInFormData = z.infer<typeof signInSchema>;
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 24 }
+  },
+};
+
+// Custom Input component with animation
+const AnimatedInput = ({ 
+  label, 
+  error, 
+  ...props 
+}: { 
+  label: string; 
+  error?: string; 
+  [key: string]: unknown 
+}) => {
+  return (
+    <motion.div 
+      className="flex flex-col space-y-2"
+      variants={itemVariants}
+    >
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <div className="relative">
+        <input
+          className={`w-full px-4 py-3 bg-gray-50 border ${
+            error ? "border-red-300" : "border-gray-200"
+          } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200`}
+          {...props}
+        />
+      </div>
+      {error && (
+        <motion.p 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          className="text-red-500 text-xs mt-1"
+        >
+          {error}
+        </motion.p>
+      )}
+    </motion.div>
+  );
+};
+
+// Custom Button component with animation
+const AnimatedButton = ({ 
+  children, 
+  className, 
+  icon, 
+  ...props 
+}: { 
+  children: React.ReactNode; 
+  className?: string; 
+  icon?: string;
+  [key: string]: unknown 
+}) => {
+  return (
+    <motion.button
+      className={`flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all ${className}`}
+      whileHover={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)" }}
+      whileTap={{ scale: 0.98 }}
+      variants={itemVariants}
+      {...props}
+    >
+      {icon && <img src={icon} alt="icon" className="w-5 h-5 mr-2" />}
+      {children}
+    </motion.button>
+  );
+};
+
 const SignIn = () => {
   const {
     register,
@@ -29,8 +112,6 @@ const SignIn = () => {
   });
   const navigate = useNavigate();
 
-  // const url = import.meta.env.VITE_BASE_URL;
-
   const onSubmit = async (data: SignInFormData) => {
     try {
       // Create the user object
@@ -39,90 +120,135 @@ const SignIn = () => {
       // Save the user object to localStorage
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Send OTP to the email
-      // const response = await axios.post(`${url}/api/v1/auth/send-otp`, {
-      //   email: data.email,
-      // });
-
-      // console.log("OTP sent:", response.data);
-      // alert("OTP sent to your email");
+      // Add success animation before navigation
       navigate("/healthworker/dashboard");
-      // Navigate to OTP verification page
-      // navigate("/auth/otpverification");
     } catch (error) {
-      const err = error as AxiosError; // Explicitly assert error type
-      console.error("Error sending OTP:", err.response?.data || err.message);
-      alert("Failed to send OTP. Please try again.");
+      const err = error as AxiosError;
+      console.error("Error processing sign in:", err.response?.data || err.message);
+      // Show error alert
     }
   };
 
   return (
-    <div className="flex min-h-screen w-full">
-      <div>
+    <div className="flex min-h-screen w-full bg-gray-50">
+      {/* Left side - Image with animation */}
+      <motion.div 
+        className="hidden md:block w-1/2 relative overflow-hidden"
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+      >
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-indigo-600/30 to-transparent"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+        />
         <img
           src={image}
           alt="Sign In"
-          className="h-screen object-cover w-[50vw]"
+          className="h-screen object-cover w-full"
         />
-      </div>
-      <div className="flex flex-col items-center justify-center min-h-screen w-[50vw] py-4 space-y-6 px-10">
-        <div className="space-y-4">
-          <p className="text-3xl text-center font-bold">Sign In</p>
-          <p className="text-gray-500 text-sm">
-            Enter your email and password to receive an OTP
-          </p>
-        </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-4 w-80"
+        <motion.div 
+          className="absolute bottom-10 left-10 text-white"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
         >
-          {/* Email Input */}
-          <div className="flex flex-col space-y-1">
-            <label htmlFor="email">Email</label>
-            <Input
+          <h2 className="text-3xl font-bold drop-shadow-lg">Welcome Back</h2>
+          <p className="text-lg mt-2 max-w-md drop-shadow-lg">Sign in to continue to your healthcare dashboard</p>
+        </motion.div>
+      </motion.div>
+
+      {/* Right side - Form with animations */}
+      <motion.div 
+        className="flex flex-col items-center justify-center p-8 md:p-16 w-full md:w-1/2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div 
+          className="w-full max-w-md"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div className="text-center mb-10" variants={itemVariants}>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Sign In</h1>
+            <p className="text-gray-500">Enter your credentials to access your account</p>
+          </motion.div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <AnimatedInput
+              label="Email Address"
               type="email"
-              placeholder="Enter your email"
+              placeholder="you@example.com"
+              error={errors.email?.message}
               {...register("email")}
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
 
-          {/* Password Input */}
-          <div className="flex flex-col space-y-1">
-            <label htmlFor="password">Password</label>
-            <Input
+            <AnimatedInput
+              label="Password"
               type="password"
-              placeholder="Enter your password"
+              placeholder="••••••••"
+              error={errors.password?.message}
               {...register("password")}
             />
-            {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password.message}</p>
-            )}
-          </div>
 
-          <Button
-            name="Signin"
-            className="bg-btnSignIn w-full my-4 px-6 py-2 text-white rounded-full"
-          />
-        </form>
-        <p className="text-gray-400 text-center">or</p>
-        <Button
-          name="Sign In With Google"
-          className="bg-white flex items-center justify-center w-full my-4 px-6 py-2 text-black rounded-full border-2 border-slate-100"
-          icon={google}
-        />
-        <p className="text-center">
-          Don’t Have An Account?{" "}
-          <span
-            className="text-blue-600 underline hover:cursor-pointer"
-            onClick={() => navigate("/auth/signup")}
+            <motion.div 
+              className="flex justify-end"
+              variants={itemVariants}
+            >
+              <a href="#" className="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">
+                Forgot password?
+              </a>
+            </motion.div>
+
+            <AnimatedButton
+              type="submit"
+              className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
+            >
+              Sign In
+            </AnimatedButton>
+
+            <motion.div 
+              className="relative my-6"
+              variants={itemVariants}
+            >
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-4 bg-gray-50 text-sm text-gray-500">or continue with</span>
+              </div>
+            </motion.div>
+
+            <AnimatedButton
+              type="button"
+              icon={google}
+              className="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              Sign in with Google
+            </AnimatedButton>
+          </form>
+
+          <motion.div 
+            className="text-center mt-8"
+            variants={itemVariants}
           >
-            Sign Up
-          </span>
-        </p>
-      </div>
+            <p className="text-gray-600">
+              Don't have an account?{" "}
+              <motion.span
+                className="text-indigo-600 font-medium hover:text-indigo-800 cursor-pointer"
+                onClick={() => navigate("/auth/signup")}
+                whileHover={{ scale: 1.05 }}
+              >
+                Sign Up
+              </motion.span>
+            </p>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
