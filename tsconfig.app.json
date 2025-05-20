@@ -26,10 +26,11 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     
-    /* Paths and Baseurl for better imports */
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],

@@ -68,29 +68,29 @@ export const router = createBrowserRouter([
       },
       {
         path: "facilities",
-        element: <div>Facilities Management</div>, // TODO: Create Facilities component
+        element: <div>Facilities Management</div>, 
       },
       {
         path: "reports",
-        element: <div>Reports Overview</div>, // TODO: Create Reports component
+        element: <div>Reports Overview</div>, 
       },
       {
         path: "reports/analytics",
-        element: <div>Analytics Dashboard</div>, // TODO: Create Analytics component
+        element: <div>Analytics Dashboard</div>, 
       },
       {
         path: "reports/activity",
-        element: <div>Activity Logs</div>, // TODO: Create ActivityLogs component
+        element: <div>Activity Logs</div>, 
       },
       {
         path: "settings",
-        element: <div>Settings</div>, // TODO: Create Settings component
+        element: <div>Settings</div>, 
       },
     ],
   },
   {
     path: "/healthworker",
-    element: <HealthWorkerLayout />,
+    element: <HealthWorkerLayout children={undefined} />,
     children: [
       {
         path: "dashboard",
