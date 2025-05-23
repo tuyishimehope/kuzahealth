@@ -23,6 +23,7 @@
     "@tabler/icons-react": "^3.31.0",
     "apexcharts": "^4.7.0",
     "axios": "^1.7.9",
+    "caniuse-lite": "^1.0.30001718",
     "chart.js": "^4.4.5",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
