@@ -38,7 +38,12 @@ const ForgotPassword = () => {
             <Button
               name="Continue"
               className="bg-purple-500  hover:cursor-pointer w-full my-4 px-6 py-2 text-white rounded-md"
-              onClick={() => navigate("/auth/otpverification")}
+              onClick={() => navigate("/auth/reset-password")}
+            />
+              <Button
+              name="Back to Login"
+              className="bg-purple-500  hover:cursor-pointer w-full my-4 px-6 py-2 text-white rounded-md"
+              onClick={() => navigate("/auth/signin")}
             />
           </div>
           
