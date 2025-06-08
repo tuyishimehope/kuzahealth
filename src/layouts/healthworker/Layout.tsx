@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { IoMenuOutline } from "react-icons/io5";
-import Navbar from "../components/HealthWorker/Navbar";
-import Sidebar from "../components/HealthWorker/Sidebar";
+import Navbar from "../../components/HealthWorker/Navbar";
+import Sidebar from "../../components/HealthWorker/Sidebar";
 
 // Define proper TypeScript interface for props
 type LayoutProps = object
@@ -11,7 +11,7 @@ type LayoutProps = object
  * Main layout component for the health worker dashboard
  * Handles sidebar toggling, authentication checks, and overall page structure
  */
-const Layout: React.FC<LayoutProps> = () => {
+const HealthWorkerLayout: React.FC<LayoutProps> = () => {
   // State for sidebar visibility
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   // const location = useLocation();
@@ -59,4 +59,4 @@ const Layout: React.FC<LayoutProps> = () => {
   );
 };
 
-export default Layout;
+export default HealthWorkerLayout;

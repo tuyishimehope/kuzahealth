@@ -199,7 +199,7 @@ const SignIn = () => {
               className="flex justify-end"
               variants={itemVariants}
             >
-              <a href="#" className="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">
+              <a href="/auth/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">
                 Forgot password?
               </a>
             </motion.div>

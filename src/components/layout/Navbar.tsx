@@ -18,11 +18,11 @@ const Navbar = () => {
   const location = useLocation();
   
   // Navigation links configuration
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Services', path: '/services' },
-    { name: 'Contact', path: '/contact' },
+  const navLinks: any[] = [
+    // { name: 'Home', path: '/' },
+    // { name: 'About', path: '/about' },
+    // { name: 'Services', path: '/services' },
+    // { name: 'Contact', path: '/contact' },
   ];
 
   // Handle scroll to change navbar appearance

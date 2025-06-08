@@ -1,67 +1,61 @@
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
-import Section from '../components/layout/Section';
-import SectionHeader from '../components/layout/SectionHeader';
-import Button from '../components/common/Button';
-import ServiceCard from '../components/layout/ServiceCard';
-import ContactForm from '../components/layout/ContactForm';
-import ContactInfoCard from '../components/layout/ContactInfoCard';
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import Section from "../components/layout/Section";
+import SectionHeader from "../components/layout/SectionHeader";
+import Button from "../components/common/Button";
+import ServiceCard from "../components/layout/ServiceCard";
+import ContactForm from "../components/layout/ContactForm";
+import ContactInfoCard from "../components/layout/ContactInfoCard";
 
 // Import assets
-import heroVideo from '../assets/health101.mp4';
-import aboutImage from '../assets/image 43.png';
-import vaccinationImage from '../assets/vaccinations.png';
-import socialImage from '../assets/social-service.png';
-import nutritionImage from '../assets/nutrition.png';
-import ctnImage from '../assets/ctn.png';
-import { useNavigate } from 'react-router-dom';
+import heroVideo from "../assets/health101.mp4";
+import aboutImage from "../assets/image 43.png";
+import vaccinationImage from "../assets/vaccinations.png";
+import socialImage from "../assets/social-service.png";
+import nutritionImage from "../assets/nutrition.png";
+import ctnImage from "../assets/ctn.png";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Home page component with sections for hero, about, services, etc.
  */
 const Home = () => {
-  // Track active section for navigation highlighting
-  // const activeSection = useSectionHighlight([
-  //   'home',
-  //   'about',
-  //   'services',
-  //   'cta',
-  //   'contact',
-  // ]);
-
   const navigate = useNavigate();
 
   // Services data
   const services = [
     {
-      id: 'vaccinations',
+      id: "vaccinations",
       image: vaccinationImage,
-      title: 'Vaccinations',
-      description: 'Immunization is a key step in protecting both mothers and children from life-threatening diseases. We provide access to vital vaccines that safeguard against preventable illnesses, ensuring healthier pregnancies and stronger starts for newborns.',
-      link: '/services/vaccinations',
+      title: "Vaccinations",
+      description:
+        "Immunization is a key step in protecting both mothers and children from life-threatening diseases. We provide access to vital vaccines that safeguard against preventable illnesses, ensuring healthier pregnancies and stronger starts for newborns.",
+      link: "/services/vaccinations",
     },
     {
-      id: 'social',
+      id: "social",
       image: socialImage,
-      title: 'Social Services',
-      description: 'We understand that comprehensive care goes beyond medical treatment. Our social services offer support to mothers and families in need, addressing critical issues such as mental health, childcare, and access to healthcare.',
-      link: '/services/social',
+      title: "Social Services",
+      description:
+        "We understand that comprehensive care goes beyond medical treatment. Our social services offer support to mothers and families in need, addressing critical issues such as mental health, childcare, and access to healthcare.",
+      link: "/services/social",
     },
     {
-      id: 'nutrition',
+      id: "nutrition",
       image: nutritionImage,
-      title: 'Nutrition',
-      description: 'Proper nutrition is essential for the well-being of both mothers and children. Our nutrition services focus on educating families about healthy eating practices, ensuring access to nutrient-rich foods, and providing supplementation when necessary.',
-      link: '/services/nutrition',
+      title: "Nutrition",
+      description:
+        "Proper nutrition is essential for the well-being of both mothers and children. Our nutrition services focus on educating families about healthy eating practices, ensuring access to nutrient-rich foods, and providing supplementation when necessary.",
+      link: "/services/nutrition",
     },
   ];
 
   return (
     <div className="font-sans bg-gray-50">
       {/* Hero Section */}
-      <Section 
-        id="home" 
-        paddingY="py-0" 
+      <Section
+        id="home"
+        paddingY="py-0"
         className="relative h-screen w-full overflow-hidden py-56"
         fullWidth
       >
@@ -157,16 +151,18 @@ const Home = () => {
           <div className="w-20 h-1 bg-purple-500 mx-auto rounded-full"></div>
         </div>
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
-          {['Company A', 'Company B', 'Company C', 'Company D'].map((company) => (
-            <div
-              key={company}
-              className="flex items-center justify-center p-4 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
-            >
-              <span className="text-xl font-bold text-gray-500 hover:text-purple-600 transition-colors">
-                {company}
-              </span>
-            </div>
-          ))}
+          {["Company A", "Company B", "Company C", "Company D"].map(
+            (company) => (
+              <div
+                key={company}
+                className="flex items-center justify-center p-4 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
+              >
+                <span className="text-xl font-bold text-gray-500 hover:text-purple-600 transition-colors">
+                  {company}
+                </span>
+              </div>
+            )
+          )}
         </div>
       </Section>
 
@@ -182,19 +178,18 @@ const Home = () => {
             </h2>
             <div className="w-20 h-1 bg-purple-500 rounded-full"></div>
             <p className="text-gray-600 leading-relaxed">
-              We provide an extensive array of health services designed to
-              cater to your unique health needs.
+              We provide an extensive array of health services designed to cater
+              to your unique health needs.
             </p>
             <p className="text-gray-700 text-lg leading-relaxed">
               At HealVritue, we are dedicated to improving maternal and child
-              health outcomes by leveraging technology and innovative
-              solutions. Our goal is to provide essential resources,
-              education, and support to healthcare providers and communities
-              to help reduce preventable deaths. By collaborating with experts
-              and using data-driven approaches, we aim to create a sustainable
-              impact in the fight against maternal and child mortality,
-              ensuring that every mother and child has the opportunity to
-              thrive.
+              health outcomes by leveraging technology and innovative solutions.
+              Our goal is to provide essential resources, education, and support
+              to healthcare providers and communities to help reduce preventable
+              deaths. By collaborating with experts and using data-driven
+              approaches, we aim to create a sustainable impact in the fight
+              against maternal and child mortality, ensuring that every mother
+              and child has the opportunity to thrive.
             </p>
             <div className="pt-4">
               <Button
@@ -275,10 +270,7 @@ const Home = () => {
               >
                 Get Started
               </Button>
-              <Button
-                variant="outline"
-                size="lg"
-              >
+              <Button variant="outline" size="lg">
                 Contact Us
               </Button>
             </div>
