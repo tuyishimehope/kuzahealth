@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import image from "../../assets/signup.png";
 import AnimatedInput from "@/components/form/AnimatedInput";
@@ -51,7 +52,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants:Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,

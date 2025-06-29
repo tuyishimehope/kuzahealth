@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import image from "../../assets/signin.png";
 // import google from "../../assets/google.png";
@@ -34,7 +35,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants:Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
