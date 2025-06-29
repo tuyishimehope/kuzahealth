@@ -1,3 +1,4 @@
+/* eslint-disable tsdoc/syntax */
 // src/hooks/useMediaQuery.js
 import { useState, useEffect } from 'react';
 

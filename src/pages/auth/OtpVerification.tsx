@@ -3,14 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import axios from "axios";
 import image from "../../assets/forgotpass.png";
 import Button from "../../components/Button";
 import NumberInput from "../../components/NumberInput";
 import auth from "../../assets/auth2.jpeg";
-import { axiosInstance } from "@/utils/axiosInstance";
-import extractToken from "@/utils/extractToken";
 import { toast, Toaster } from "sonner";
+import axios from "axios";
 
 // Zod Schema for OTP validation
 const otpSchema = z.object({
@@ -73,7 +71,7 @@ const OtpVerification = () => {
 
       // Submit OTP for verification
       const otp = data.otp;
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `/api/v1/auth/login?otp=${otp}`,
         { email, password }
       );

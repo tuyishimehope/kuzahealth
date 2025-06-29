@@ -7,7 +7,7 @@ import {
   RiArrowRightLine,
   RiCloseLine
 } from "react-icons/ri";
-import { ApexOptions } from "apexcharts";
+import type { ApexOptions } from "apexcharts";
 import PatientChart from "../../components/HealthWorker/PatientChart";
 import Map from "../../components/HealthWorker/Map";
 

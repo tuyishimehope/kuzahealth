@@ -82,6 +82,7 @@ const AddHealthWorker = () => {
       form.reset();
       setProfileImage(null);
     } catch (error) {
+      console.log("error",error)
       notifications.show({
         title: 'Error',
         message: 'Failed to add health worker',

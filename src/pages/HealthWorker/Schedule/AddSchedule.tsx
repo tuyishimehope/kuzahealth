@@ -65,6 +65,7 @@ const AddSchedule = () => {
       
       form.reset();
     } catch (error) {
+      console.error("error",error)
       notifications.show({
         title: 'Error',
         message: 'Failed to create schedule',

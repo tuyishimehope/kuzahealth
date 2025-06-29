@@ -75,7 +75,8 @@ const Profile = () => {
       });
       
       setIsEditing(false);
-    } catch (error) {
+    } catch (error:any) {
+      console.error("error",error)
       notifications.show({
         title: 'Error',
         message: 'Failed to update profile',

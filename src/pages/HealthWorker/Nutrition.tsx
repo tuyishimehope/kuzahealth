@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { CiSearch } from "react-icons/ci";
+import type {
+  FontSpec} from "chart.js";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,8 +10,7 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend,
-  FontSpec, // Import FontSpec
+  Legend // Import FontSpec
 } from "chart.js";
 import { nutrients } from "../../utils/nutrition";
 import Input from "../../components/Input";
