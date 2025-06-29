@@ -143,7 +143,7 @@ const Home = () => {
       </Section>
 
       {/* Partners Section */}
-      <Section background="white" paddingY="py-12">
+      {/* <Section background="white" paddingY="py-12">
         <div className="text-center mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
             Trusted by Leading Organizations
@@ -164,7 +164,7 @@ const Home = () => {
             )
           )}
         </div>
-      </Section>
+      </Section> */}
 
       {/* About us Section */}
       <Section id="about" background="gradient">

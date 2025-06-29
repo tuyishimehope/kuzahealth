@@ -8,6 +8,9 @@ import image from "../../assets/forgotpass.png";
 import Button from "../../components/Button";
 import NumberInput from "../../components/NumberInput";
 import auth from "../../assets/auth2.jpeg";
+import { axiosInstance } from "@/utils/axiosInstance";
+import extractToken from "@/utils/extractToken";
+import { toast, Toaster } from "sonner";
 
 // Zod Schema for OTP validation
 const otpSchema = z.object({
@@ -21,7 +24,11 @@ type OtpFormData = {
 const OtpVerification = () => {
   const navigate = useNavigate();
   const [inputValues, setInputValues] = useState(["", "", "", "", "", ""]);
-  const { handleSubmit, setValue, formState: { errors } } = useForm<OtpFormData>({
+  const {
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<OtpFormData>({
     resolver: zodResolver(otpSchema),
   });
 
@@ -36,7 +43,9 @@ const OtpVerification = () => {
 
     // Focus next input when current input is filled
     if (value !== "" && index < 5) {
-      const nextInput = document.getElementById(`otp-input-${index + 1}`) as HTMLInputElement;
+      const nextInput = document.getElementById(
+        `otp-input-${index + 1}`
+      ) as HTMLInputElement;
       nextInput?.focus();
     }
   };
@@ -50,7 +59,8 @@ const OtpVerification = () => {
 
       if (storedUser) {
         try {
-          const { email: storedEmail, password: storedPassword } = JSON.parse(storedUser);
+          const { email: storedEmail, password: storedPassword } =
+            JSON.parse(storedUser);
           email = storedEmail || "";
           password = storedPassword || "";
         } catch (error) {
@@ -63,26 +73,41 @@ const OtpVerification = () => {
 
       // Submit OTP for verification
       const otp = data.otp;
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/v1/auth/login?otp=${otp}`,
+      const response = await axiosInstance.post(
+        `/api/v1/auth/login?otp=${otp}`,
         { email, password }
       );
 
       if (response.status === 200) {
-        localStorage.removeItem("user");
-        localStorage.setItem("token",JSON.stringify(response.data));
+        // localStorage.removeItem("user");
+        console.log("OTP verified successfully:", response.data);
+        localStorage.setItem("token", JSON.stringify(response.data.token));
+        //  const token = extractToken(response.data);
+        // console.log("Extracted Token:", token);
+
+        toast.success("OTP verified successfully!");
+        if (response.data.userType === "ADMIN") {
+          navigate("/superadmin/dashboard");
+          console.log("Redirecting to admin dashboard", response.data.userType);
+          return;
+        }
         navigate("/healthworker/dashboard");
+        console.log(
+          "Redirecting to health worker dashboard",
+          response.data.userType
+        );
       } else {
-        alert("Invalid OTP, please try again.");
+        toast.error("Invalid OTP, please try again.");
       }
     } catch (error) {
       console.error("Error during OTP verification:", error);
-      alert("There was an error verifying the OTP.");
+      toast.error("There was an error verifying the OTP.");
     }
   };
 
   return (
     <div className="flex min-h-screen w-full">
+      <Toaster />
       <div>
         <img
           src={image}
