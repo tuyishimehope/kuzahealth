@@ -93,7 +93,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
         </div>
       )}
       
-      <h2 className={`font-bold text-gray-800 mb-4 ${TITLE_CLASSES[titleSize]}`}>
+      <h2 className={`font-bold text-gray-200 mb-4 ${TITLE_CLASSES[titleSize]}`}>
         {title}
       </h2>
       
@@ -106,7 +106,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
       )}
       
       {subtitle && (
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-300 text-lg">
           {subtitle}
         </p>
       )}

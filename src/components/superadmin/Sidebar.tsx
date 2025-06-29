@@ -12,7 +12,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo1.png";
 
 // Link configuration with icons and metadata
@@ -69,6 +69,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -186,6 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
           )}
           onClick={() => {
             // Handle logout logic
+            navigate('/')
             console.log("Logout clicked");
           }}
         >

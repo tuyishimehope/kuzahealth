@@ -1,27 +1,46 @@
-import Login from "../../pages/auth/SignIn";
-import Register from "../../pages/auth/SignUp";
+import React from "react";
 import {
-  default as ForgotPassword
-} from "../../pages/auth/ForgotPassword";
-import CreateNewPassword from "@/pages/auth/CreateNewPassword";
+  SignIn,
+  SignUp,
+  ForgotPassword,
+  CreateNewPassword,
+} from "../../pages/auth";
+import OtpVerification from "@/pages/auth/OtpVerification";
 
-const AuthRoutes = [
+interface RouteConfig {
+  path: string;
+  element: React.ReactNode;
+}
+
+const AUTH_ROUTES = {
+  SIGNIN: "/auth/signin",
+  SIGNUP: "/auth/signup",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  CREATE_NEW_PASSWORD: "/auth/reset-password",
+  OTP_VERIFICATION: "/auth/otp-verification",
+};
+
+const AuthRoutes: RouteConfig[] = [
   {
-    path: "/auth/signin",
-    element: <Login />,
+    path: AUTH_ROUTES.SIGNIN,
+    element: <SignIn />,
   },
   {
-    path: "/auth/signup",
-    element: <Register />,
+    path: AUTH_ROUTES.SIGNUP,
+    element: <SignUp />,
   },
   {
-    path: "/auth/forgot-password",
+    path: AUTH_ROUTES.FORGOT_PASSWORD,
     element: <ForgotPassword />,
   },
   {
-    path: "/auth/reset-password",
+    path: AUTH_ROUTES.CREATE_NEW_PASSWORD,
     element: <CreateNewPassword />,
   },
+  {
+    path: AUTH_ROUTES.OTP_VERIFICATION,
+    element: <OtpVerification/>
+  }
 ];
 
 export default AuthRoutes;
