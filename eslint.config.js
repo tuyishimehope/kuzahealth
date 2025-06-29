@@ -24,6 +24,7 @@ export default tseslint.config(
       parserOptions: {
         // Point to the app configuration instead of the root config
         project: ['./tsconfig.app.json', './tsconfig.node.json'],
+        // project:["tsconfig.json"],
         // Add explicit tsconfigRootDir to ensure correct path resolution
         tsconfigRootDir: __dirname,
         ecmaFeatures: {

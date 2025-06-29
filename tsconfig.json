@@ -1,9 +1,20 @@
+// {
+//   "compilerOptions": {
+//     "jsx": "react-jsx",
+//     "baseUrl": ".",
+//     "allowImportingTsExtensions": true,
+//     "noEmit": true,
+//     "moduleResolution": "bundler",
+//     "module": "esnext", // <--- Add this line
+//     "paths": {
+//       "@/*": ["./src/*"]
+//     }
+//   }
+// }
 {
-  "extends": "./tsconfig.app.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }
