@@ -182,10 +182,10 @@ const SignIn = () => {
               Sign In
             </AnimatedButton>
             <AnimatedButton
-              type="submit"
               className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
+              onClick={() => navigate("/")}
             >
-              Back to login
+              Back to Home
             </AnimatedButton>
 
             {/* <motion.div 

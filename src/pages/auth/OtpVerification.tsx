@@ -8,7 +8,7 @@ import Button from "../../components/Button";
 import NumberInput from "../../components/NumberInput";
 import auth from "../../assets/auth2.jpeg";
 import { toast, Toaster } from "sonner";
-import axios from "axios";
+import { axiosInstance } from "@/utils/axiosInstance";
 
 // Zod Schema for OTP validation
 const otpSchema = z.object({
@@ -71,9 +71,12 @@ const OtpVerification = () => {
 
       // Submit OTP for verification
       const otp = data.otp;
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `/api/v1/auth/login?otp=${otp}`,
-        { email, password }
+        {
+          email: email,
+          password: password,
+        }
       );
 
       if (response.status === 200) {
