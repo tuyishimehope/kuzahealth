@@ -8,18 +8,16 @@ export const axiosInstance = (() => {
     },
   });
 
-
   instance.interceptors.request.use(
     (config: any) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token'); 
       if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
+        const parsedToken = JSON.parse(token)
+        config.headers['Authorization'] = `Bearer ${parsedToken}`;
       }
       return config;
     },
-    (error: any) => {
-      return Promise.reject(error);
-    }
+    (error: any) => Promise.reject(error)
   );
 
   return instance;

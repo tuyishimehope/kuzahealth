@@ -168,6 +168,13 @@ const Sidebar = ({ active: isCollapsed }: SidebarProps): JSX.Element => {
           toggleExpanded={() => setInfantInfoExpanded(!infantInfoExpanded)}
           isCollapsed={isCollapsed}
         >
+           <SidebarItem
+            icon={<IoEyeOutline className="w-5 h-5" />}
+            label="Add Infant"
+            href="/healthworker/add-infant"
+            isActive={location.pathname === "/healthworker/dashboard/add-infant"}
+            isCollapsed={isCollapsed}
+          />
           <SidebarItem
             icon={<IoEyeOutline className="w-5 h-5" />}
             label="View Infants"

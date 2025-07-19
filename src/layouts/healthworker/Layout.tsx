@@ -22,8 +22,7 @@ const HealthWorkerLayout: React.FC<LayoutProps> = () => {
     const checkAuthentication = () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        // navigate("/auth/signin");
-
+        navigate("/auth/signin");
       }
     };
 

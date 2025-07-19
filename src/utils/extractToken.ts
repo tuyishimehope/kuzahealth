@@ -1,7 +1,15 @@
 import { jwtDecode } from "jwt-decode"
+interface JwtPayloadResult {
+    email: string
+    exp: number
+    iat: number
+    role: string
+    sub: string
+    username: string
+}
 
-const extractToken = (token:string) => {
-    const decode = jwtDecode(token)
+const extractToken = (token:string): JwtPayloadResult => {
+    const decode:JwtPayloadResult = jwtDecode(token)
     return decode;
 }
 
