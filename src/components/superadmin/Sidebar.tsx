@@ -1,21 +1,22 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
-  Users,
-  Calendar,
-  Building2,
   BarChart3,
-  Settings,
-  LogOut,
+  Building2,
+  Calendar,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Users,
+  Users2,
 } from "lucide-react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo1.png";
+import { motion } from "framer-motion";
 
-// Link configuration with icons and metadata
 const sidebarLinks = [
   {
     href: "/superadmin/dashboard",
@@ -23,7 +24,7 @@ const sidebarLinks = [
     icon: LayoutDashboard,
     description: "Overview & Analytics",
   },
-   {
+  {
     href: "/superadmin/add-health-workers",
     label: "Health Workers",
     icon: Users,
@@ -40,6 +41,12 @@ const sidebarLinks = [
     label: "Schedules",
     icon: Calendar,
     description: "Shift Planning",
+  },
+  {
+    href: "/superadmin/parents",
+    label: "Parents",
+    icon: Users2,
+    description: "View Parents",
   },
   {
     href: "/superadmin/facilities",
@@ -72,10 +79,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
   const navigate = useNavigate();
 
   return (
-    <div
+    <motion.div
+      animate={{ width: collapsed ? 64 : 256 }} // 16rem = 256px
+      initial={false}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
       className={cn(
-        "h-full bg-gradient-to-b from-slate-50 to-white flex flex-col shadow-lg border-r border-slate-200 transition-all duration-300 ease-in-out relative",
-        collapsed ? "w-16" : "w-64"
+        "h-full bg-gradient-to-b from-slate-50 to-white flex flex-col shadow-lg border-r border-slate-200 relative"
       )}
     >
       {/* Brand Header */}
@@ -83,12 +92,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
         <div className="flex items-center justify-center">
           {collapsed ? (
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-md">
-              <img src={logo} alt="logo"/>
+              <img src={logo} alt="logo" />
             </div>
           ) : (
             <div className="flex items-center space-x-3">
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-md">
-                <img src={logo} alt="logo"/>
+                <img src={logo} alt="logo" />
               </div>
               <div>
                 <h2 className="text-lg font-bold text-slate-800">
@@ -187,7 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
           )}
           onClick={() => {
             // Handle logout logic
-            navigate('/')
+            navigate("/");
             console.log("Logout clicked");
           }}
         >
@@ -221,7 +230,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
           <ChevronLeft className="h-3 w-3 text-slate-600" />
         )}
       </Button>
-    </div>
+    </motion.div>
   );
 };
 
