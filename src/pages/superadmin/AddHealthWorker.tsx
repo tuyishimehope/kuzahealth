@@ -1,305 +1,315 @@
-import  { useState } from 'react';
-import {
-  Box,
-  Title,
-  TextInput,
-  Button,
-  Group,
-  Paper,
-  Select,
-  Textarea,
-  Stack,
-  Grid,
-  rem,
-  FileButton,
-  Avatar,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
-import {
-  IconUser,
-  IconMail,
-  IconPhone,
-  IconMapPin,
-  IconBriefcase,
-  IconCamera,
-  IconCheck,
-} from '@tabler/icons-react';
-import { motion } from 'framer-motion';
+import AnimatedButton from "@/components/form/AnimatedButton";
+import AnimatedInput from "@/components/form/AnimatedInput";
+import AnimatedSelect from "@/components/form/AnimatedSelect";
+import { axiosInstance } from "@/utils/axiosInstance";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Variants } from "framer-motion";
+import { motion } from "framer-motion";
 
-interface HealthWorkerFormValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  location: string;
-  specialization: string;
-  facility: string;
-  role: string;
-  bio: string;
-}
+import { Phone, Shield, User } from "lucide-react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
-const AddHealthWorker = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-
-  const form = useForm<HealthWorkerFormValues>({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      location: '',
-      specialization: '',
-      facility: '',
-      role: '',
-      bio: '',
-    },
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      phone: (value) => (/^\+?[\d\s-]{10,}$/.test(value) ? null : 'Invalid phone number'),
-      firstName: (value) => (!value ? 'First name is required' : null),
-      lastName: (value) => (!value ? 'Last name is required' : null),
-      specialization: (value) => (!value ? 'Specialization is required' : null),
-      facility: (value) => (!value ? 'Facility is required' : null),
-      role: (value) => (!value ? 'Role is required' : null),
-    },
+// Define the Zod schema
+const signUpSchema = z
+  .object({
+    firstName: z.string().nonempty("Name is required"),
+    lastName: z.string().nonempty("Name is required"),
+    username: z.string().nonempty("username is required").optional(),
+    dateOfBirth: z.string().nonempty("Date of birth is required"),
+    email: z
+      .string()
+      .email("Invalid email format")
+      .nonempty("Email is required"),
+    gender: z.string().nonempty("Gender is required"),
+    phoneNumber: z.string().nonempty("Phone number is required"),
+    province: z.string().nonempty("Province is required"),
+    title: z.string().nonempty("Title is required"),
+    district: z.string().nonempty("District is required"),
+    sector: z.string().nonempty("Sector is required"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .nonempty("Password is required"),
+    confirmPassword: z.string().nonempty("Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
   });
 
-  const handleSubmit = async (values: HealthWorkerFormValues) => {
-    setIsSubmitting(true);
+type SignUpFormData = z.infer<typeof signUpSchema>;
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 24 },
+  },
+};
+
+const AddHealthWorker = (): JSX.Element => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+  });
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: SignUpFormData): Promise<void> => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Health worker added:', values);
-      
-      notifications.show({
-        title: 'Success',
-        message: 'Health worker has been added successfully',
-        color: 'green',
-      });
-      
-      form.reset();
-      setProfileImage(null);
+      const username = `${data.firstName}${data.lastName}`;
+      const role = "HEALTH_WORKER";
+      console.log("username", username);
+      const payload = { ...data, username, role };
+      console.log("payload", payload);
+
+      console.log("Form submitted:", data);
+      axiosInstance
+        .post("/api/v1/auth/register", payload)
+        .then((response) => {
+          console.log("User signed up successfully:", response.data);
+          toast.success(
+            "Sign up successful! Please check your email for verification."
+          );
+
+          navigate("/auth/signin");
+        })
+        .catch((error) => {
+          console.error("Error signing up:", error);
+          toast.error(
+            `Sign up failed. Please try again,${error.response.data}`
+          );
+        });
     } catch (error) {
-      console.log("error",error)
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to add health worker',
-        color: 'red',
-      });
-    } finally {
-      setIsSubmitting(false);
+      console.error("Error processing sign up:", error);
+      toast.error("An error occurred during sign up. Please try again.");
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.5,
-        staggerChildren: 0.1
-      }
-    }
-  };
+  // Gender options
+  const genderOptions = [
+    { value: "", label: "Choose Gender" },
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+  ];
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: {
-        duration: 0.3
-      }
-    }
-  };
+  // Province options
+  const provinceOptions = [
+    { value: "", label: "Choose Province" },
+    { value: "kigali", label: "Kigali City" },
+    { value: "western", label: "Western Province" },
+    { value: "southern", label: "Southern Province" },
+    { value: "eastern", label: "Eastern Province" },
+    { value: "northern", label: "Northern Province" },
+  ];
+
+  // District options
+  const districtOptions = [
+    { value: "", label: "Choose District" },
+    { value: "bugesera", label: "Bugesera" },
+    { value: "gatsibo", label: "Gatsibo" },
+    { value: "kayonza", label: "Kayonza" },
+    { value: "kirehe", label: "Kirehe" },
+    { value: "ngoma", label: "Ngoma" },
+    { value: "nyagatare", label: "Nyagatare" },
+    { value: "rwamagana", label: "Rwamagana" },
+    { value: "nyarugenge", label: "Nyarugenge" },
+    { value: "kicukiro", label: "Kicukiro" },
+    { value: "gasabo", label: "Gasabo" },
+    { value: "huye", label: "Huye" },
+    { value: "ruhango", label: "Ruhango" },
+    { value: "nyamagabe", label: "Nyamagabe" },
+    { value: "gisagara", label: "Gisagara" },
+    { value: "muhanga", label: "Muhanga" },
+    // Additional districts can be added
+  ];
 
   return (
-    <Box p="md">
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
-        <Group position="apart" mb="xl">
-          <Title order={2}>Add New Health Worker</Title>
-        </Group>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+            <User className="w-8 h-8 text-blue-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Register Health Worker
+          </h1>
+          <p className="text-gray-600 max-w-md mx-auto">
+            Create a new account for healthcare professionals to access the
+            system
+          </p>
+        </div>
 
-        <Paper shadow="sm" p="xl" radius="md" withBorder>
-          <form onSubmit={form.onSubmit(handleSubmit)}>
-            <Stack spacing="md">
-              <motion.div variants={itemVariants}>
-                <Group position="center" mb="md">
-                  <Box pos="relative">
-                    <Avatar
-                      size={120}
-                      radius={120}
-                      src={profileImage ? URL.createObjectURL(profileImage) : null}
-                    />
-                    <FileButton onChange={setProfileImage} accept="image/png,image/jpeg">
-                      {(props) => (
-                        <Button
-                          {...props}
-                          variant="filled"
-                          color="blue"
-                          radius="xl"
-                          size="sm"
-                          pos="absolute"
-                          bottom={0}
-                          right={0}
-                          leftIcon={<IconCamera size={rem(16)} />}
-                        >
-                          Upload
-                        </Button>
-                      )}
-                    </FileButton>
-                  </Box>
-                </Group>
-              </motion.div>
+        {/* Form Container */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <div className="px-8 py-6 border-b border-gray-100 bg-gray-50">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Personal Information
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Please fill in all required fields marked with *
+              </p>
+            </div>
 
-              <Grid>
-                <Grid.Col span={12} md={6}>
-                  <motion.div variants={itemVariants}>
-                    <TextInput
-                      required
-                      label="First Name"
-                      placeholder="Enter first name"
-                      icon={<IconUser size={rem(16)} />}
-                      {...form.getInputProps('firstName')}
-                    />
-                  </motion.div>
-                </Grid.Col>
-                <Grid.Col span={12} md={6}>
-                  <motion.div variants={itemVariants}>
-                    <TextInput
-                      required
-                      label="Last Name"
-                      placeholder="Enter last name"
-                      icon={<IconUser size={rem(16)} />}
-                      {...form.getInputProps('lastName')}
-                    />
-                  </motion.div>
-                </Grid.Col>
-              </Grid>
-
-              <motion.div variants={itemVariants}>
-                <TextInput
-                  required
-                  label="Email"
-                  placeholder="Enter email"
-                  icon={<IconMail size={rem(16)} />}
-                  {...form.getInputProps('email')}
+            <div className="p-8">
+              {/* Personal Details Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <AnimatedInput
+                  label="First Name"
+                  type="text"
+                  placeholder="John "
+                  error={errors.firstName?.message}
+                  {...register("firstName")}
                 />
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <TextInput
-                  required
-                  label="Phone"
-                  placeholder="Enter phone number"
-                  icon={<IconPhone size={rem(16)} />}
-                  {...form.getInputProps('phone')}
+                <AnimatedInput
+                  label="Last Name"
+                  type="text"
+                  placeholder=" Doe"
+                  error={errors.lastName?.message}
+                  {...register("lastName")}
                 />
-              </motion.div>
 
-              <motion.div variants={itemVariants}>
-                <TextInput
-                  required
-                  label="Location"
-                  placeholder="Enter location"
-                  icon={<IconMapPin size={rem(16)} />}
-                  {...form.getInputProps('location')}
+                <AnimatedInput
+                  label="Date of Birth"
+                  type="date"
+                  error={errors.dateOfBirth?.message}
+                  {...register("dateOfBirth")}
                 />
-              </motion.div>
 
-              <Grid>
-                <Grid.Col span={12} md={6}>
-                  <motion.div variants={itemVariants}>
-                    <Select
-                      required
-                      label="Specialization"
-                      placeholder="Select specialization"
-                      icon={<IconBriefcase size={rem(16)} />}
-                      data={[
-                        { value: 'pediatrician', label: 'Pediatrician' },
-                        { value: 'nurse', label: 'Nurse' },
-                        { value: 'midwife', label: 'Midwife' },
-                        { value: 'general_practitioner', label: 'General Practitioner' },
-                      ]}
-                      {...form.getInputProps('specialization')}
-                    />
-                  </motion.div>
-                </Grid.Col>
-                <Grid.Col span={12} md={6}>
-                  <motion.div variants={itemVariants}>
-                    <Select
-                      required
-                      label="Facility"
-                      placeholder="Select facility"
-                      icon={<IconBriefcase size={rem(16)} />}
-                      data={[
-                        { value: 'facility_1', label: 'Main Hospital' },
-                        { value: 'facility_2', label: 'Community Clinic' },
-                        { value: 'facility_3', label: 'Health Center' },
-                      ]}
-                      {...form.getInputProps('facility')}
-                    />
-                  </motion.div>
-                </Grid.Col>
-              </Grid>
-
-              <motion.div variants={itemVariants}>
-                <Select
-                  required
-                  label="Role"
-                  placeholder="Select role"
-                  data={[
-                    { value: 'doctor', label: 'Doctor' },
-                    { value: 'nurse', label: 'Nurse' },
-                    { value: 'midwife', label: 'Midwife' },
-                    { value: 'health_officer', label: 'Health Officer' },
-                  ]}
-                  {...form.getInputProps('role')}
+                <AnimatedInput
+                  label="Email Address"
+                  type="email"
+                  placeholder="you@example.com"
+                  error={errors.email?.message}
+                  {...register("email")}
                 />
-              </motion.div>
+              </div>
 
-              <motion.div variants={itemVariants}>
-                <Textarea
-                  label="Bio"
-                  placeholder="Enter bio"
-                  minRows={4}
-                  {...form.getInputProps('bio')}
-                />
-              </motion.div>
+              {/* Contact & Location Section */}
+              <div className="border-t border-gray-100 pt-8 mb-8">
+                <h3 className="text-lg font-medium text-gray-800 mb-6 flex items-center gap-2">
+                  <Phone size={20} className="text-gray-500" />
+                  Contact & Location Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <AnimatedSelect
+                    label="Gender"
+                    options={genderOptions}
+                    error={errors.gender?.message}
+                    {...register("gender")}
+                  />
 
-              <motion.div variants={itemVariants}>
-                <Group position="right" mt="xl">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      form.reset();
-                      setProfileImage(null);
-                    }}
-                    disabled={isSubmitting}
-                  >
-                    Reset
-                  </Button>
-                  <Button
+                  <AnimatedInput
+                    label="Phone Number"
+                    type="tel"
+                    placeholder="+250 ..."
+                    error={errors.phoneNumber?.message}
+                    {...register("phoneNumber")}
+                  />
+
+                  <AnimatedSelect
+                    label="Province/State"
+                    options={provinceOptions}
+                    error={errors.province?.message}
+                    {...register("province")}
+                  />
+
+                  <AnimatedInput
+                    label="Title/Post"
+                    type="text"
+                    placeholder="Your Position"
+                    error={errors.title?.message}
+                    {...register("title")}
+                  />
+
+                  <AnimatedSelect
+                    label="District/City"
+                    options={districtOptions}
+                    error={errors.district?.message}
+                    {...register("district")}
+                  />
+                  <AnimatedInput
+                    label="Sector"
+                    error={errors.district?.message}
+                    {...register("sector")}
+                  />
+                </div>
+              </div>
+
+              {/* Security Section */}
+              <div className="border-t border-gray-100 pt-8 mb-8">
+                <h3 className="text-lg font-medium text-gray-800 mb-6 flex items-center gap-2">
+                  <Shield size={20} className="text-gray-500" />
+                  Security Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <AnimatedInput
+                    label="Password"
+                    type="password"
+                    placeholder="••••••••"
+                    error={errors.password?.message}
+                    {...register("password")}
+                  />
+
+                  <AnimatedInput
+                    label="Confirm Password"
+                    type="password"
+                    placeholder="••••••••"
+                    error={errors.confirmPassword?.message}
+                    {...register("confirmPassword")}
+                  />
+                </div>
+              </div>
+
+              {/* Password Requirements */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">
+                  Password Requirements:
+                </h4>
+                <ul className="text-xs text-blue-700 space-y-1">
+                  <li>• At least 6 characters long</li>
+                  <li>• Include both letters and numbers</li>
+                  <li>• Use special characters for added security</li>
+                </ul>
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-100 ">
+                <motion.div className="flex-1 pt-4" variants={itemVariants}>
+                  <AnimatedButton
                     type="submit"
-                    loading={isSubmitting}
-                    leftIcon={<IconCheck size={rem(16)} />}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
-                    Add Health Worker
-                  </Button>
-                </Group>
-              </motion.div>
-            </Stack>
-          </form>
-        </Paper>
-      </motion.div>
-    </Box>
+                    Create Health Worker Account
+                  </AnimatedButton>
+                </motion.div>
+                <button
+                  type="button"
+                  className=" px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+        {/* Footer */}
+        <div className="text-center mt-8 text-sm text-gray-500">
+          <p>
+            By creating an account, you agree to our Terms of Service and
+            Privacy Policy
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 

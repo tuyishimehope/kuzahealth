@@ -5,7 +5,6 @@ import { Outlet } from "react-router-dom";
 import Navbar from "@/components/superadmin/Navbar";
 import { cn } from "@/lib/utils";
 
-
 const SuperAdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -40,14 +39,8 @@ const SuperAdminLayout = () => {
         <Navbar />
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto px-4 md:px-6 py-6">
-          <div className="mx-auto max-w-7xl">
-            <div className="pb-4 mb-6 border-b border-gray-200">
-              <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Welcome back to Kuza Health admin portal
-              </p>
-            </div>
-            {/* Router outlet */}
+          <div className="">
+           
             <div className="outlet-container">
               <Outlet />
             </div>
