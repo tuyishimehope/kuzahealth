@@ -3,15 +3,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import image from "../../assets/signin.png";
-// import google from "../../assets/google.png";
 import { axiosInstance } from "@/utils/axiosInstance";
 import AnimatedInput from "@/components/form/AnimatedInput";
 import AnimatedButton from "@/components/form/AnimatedButton";
 import { Toaster, toast } from "sonner";
-// import extractToken from "@/utils/extractToken";
-import { useState } from "react";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email format").nonempty("Email is required"),
@@ -34,7 +32,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
@@ -47,16 +45,14 @@ const SignIn = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isLoading },
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
   });
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      setIsLoading(true);
       // Create the user object
       const user = { email: data.email, password: data.password };
 
@@ -64,16 +60,17 @@ const SignIn = () => {
       axiosInstance
         .post("/api/v1/auth/send-otp", user)
         .then((response: { data: any }) => {
-          setIsLoading(false);
           console.log("OTP sent successfully:", response.data);
           toast.success("OTP sent successfully! Please check your email.");
 
           navigate("/auth/otp-verification");
         })
         .catch((error: any) => {
-          setIsLoading(false);
           console.error("Error sending OTP:", error);
-          toast.error(error.response.data.message || "Failed to send OTP. Please try again.");
+          toast.error(
+            error.response.data.message ||
+              "Failed to send OTP. Please try again."
+          );
           // Handle error (e.g., show alert)
         });
 
@@ -82,7 +79,6 @@ const SignIn = () => {
       // Add success animation before navigation
       // navigate("/healthworker/dashboard");
     } catch (error) {
-      setIsLoading(false);
       const err = error as AxiosError;
       console.error(
         "Error processing sign in:",
@@ -181,10 +177,10 @@ const SignIn = () => {
               Sign In
             </AnimatedButton>
             <AnimatedButton
-              type="submit"
               className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
+              onClick={() => navigate("/")}
             >
-              Back to login
+              Back to Home
             </AnimatedButton>
 
             {/* <motion.div 

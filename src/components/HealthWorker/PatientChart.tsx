@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
-import { ApexOptions } from 'apexcharts'; // Import ApexOptions for TypeScript type
+import type { ApexOptions } from 'apexcharts'; // Import ApexOptions for TypeScript type
 
 interface PatientChartProps {
   series: { name: string; data: number[] }[];

@@ -7,7 +7,7 @@ import {
   RiArrowRightLine,
   RiCloseLine
 } from "react-icons/ri";
-import { ApexOptions } from "apexcharts";
+import type { ApexOptions } from "apexcharts";
 import PatientChart from "../../components/HealthWorker/PatientChart";
 import Map from "../../components/HealthWorker/Map";
 
@@ -111,7 +111,7 @@ const ProgressBar = ({ label, percentage, color }: { label: string; percentage: 
 };
 
 const Dashboard = (): JSX.Element => {
-  const [showAlert, setShowAlert] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
   
   // Chart data setup
   const [series] = useState([

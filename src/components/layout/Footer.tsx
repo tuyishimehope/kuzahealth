@@ -1,5 +1,6 @@
 // src/components/layout/Footer.tsx
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../common/Button';
 

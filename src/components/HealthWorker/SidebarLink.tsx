@@ -1,5 +1,5 @@
 import { RiDashboardFill } from "react-icons/ri";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 type SidebarLinkProps = {

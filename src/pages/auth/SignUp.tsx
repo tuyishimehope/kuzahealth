@@ -2,19 +2,21 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import image from "../../assets/signup.png";
 import AnimatedInput from "@/components/form/AnimatedInput";
 import AnimatedButton from "@/components/form/AnimatedButton";
 import AnimatedSelect from "@/components/form/AnimatedSelect";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { toast, Toaster } from "sonner";
+import toast,{Toaster} from "react-hot-toast"
 
 // Define the Zod schema
 const signUpSchema = z
   .object({
     firstName: z.string().nonempty("Name is required"),
     lastName: z.string().nonempty("Name is required"),
+    username: z.string().nonempty("username is required").optional(),
     dateOfBirth: z.string().nonempty("Date of birth is required"),
     email: z
       .string()
@@ -51,7 +53,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants:Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
@@ -72,9 +74,15 @@ const SignUp = (): JSX.Element => {
 
   const onSubmit = async (data: SignUpFormData): Promise<void> => {
     try {
+      const username =`${data.firstName}${data.lastName}`;
+      const role = "HEALTH_WORKER"
+      console.log("username",username)
+      const payload = {...data,username,role}
+      console.log("payload",payload)
+
       console.log("Form submitted:", data);
       axiosInstance
-        .post("/api/v1/auth/register", data)
+        .post("/api/v1/auth/register", payload)
         .then((response) => {
           console.log("User signed up successfully:", response.data);
           toast.success(
@@ -85,7 +93,7 @@ const SignUp = (): JSX.Element => {
         })
         .catch((error) => {
           console.error("Error signing up:", error);
-          toast.error("Sign up failed. Please try again.");
+          toast.error(`Sign up failed. Please try again,${error.response.data}`);
         });
     } catch (error) {
       console.error("Error processing sign up:", error);
@@ -134,7 +142,9 @@ const SignUp = (): JSX.Element => {
   return (
     <div className="flex min-h-screen w-full bg-gray-50">
       {/* Left side - Image with animation */}
-      <Toaster />
+      {/* <Toaster /> */}
+      <Toaster/>
+
       <motion.div
         className="hidden md:block w-1/2 relative overflow-hidden"
         initial={{ x: -100, opacity: 0 }}

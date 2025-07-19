@@ -1,22 +1,23 @@
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { axiosInstance } from "@/utils/axiosInstance";
 import {
+  Affix,
   Avatar,
   Badge,
   Box,
   Button,
-  Card,
-  Divider,
-  Grid,
   Group,
   Paper,
   Select,
   SimpleGrid,
-  Stack,
   Tabs,
   Text,
   TextInput,
   Title,
-  useMantineTheme
-} from '@mantine/core';
+  useMantineTheme,
+} from "@mantine/core";
 import {
   IconArrowRight,
   IconBabyCarriage,
@@ -24,22 +25,45 @@ import {
   IconChartBar,
   IconEdit,
   IconId,
-  IconPlus,
-  IconUserCircle
-} from '@tabler/icons-react';
-import { useState } from 'react';
+  IconUserCircle,
+} from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { showNotification } from "@mantine/notifications";
+
 // import { useNavigate } from 'react-router-dom';
 
 // Extend the Patient type to include children
 type Patient = {
   id: string;
-  name: string;
-  status: string;
-  lastVisit: string;
-  birthdate: string;
-  nationalId: string;
-  phone1: string;
+  name?: string;
+  status?: string;
+  lastVisit?: string;
+  birthdate?: string;
+  nationalId?: string;
+  phone1?: string;
   phone2?: string;
+  createdAt: string;
+  updatedAt: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  expectedDeliveryDate: string;
+  bloodGroup: string;
+  maritalStatus: string;
+  emergencyContactNumber: string;
+  emergencyContactFullName: string;
+  emergencyContactRelationship: string;
+  district: string;
+  sector: string;
+  cell: string;
+  village: string;
+  pregnancyRecord: [];
+  highRisk: false;
   children?: Child[]; // Add children array
 };
 
@@ -60,193 +84,145 @@ type Child = {
 // Rest of the existing components...
 
 // New Child Form Component
-const AddChildForm = ({ 
-  onAddChild, 
-  motherLastName 
-}: { 
-  onAddChild: (child: Omit<Child, 'id'>) => void;
+
+const childSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  gender: z.enum(["male", "female", "other"]),
+  deliveryDate: z.string().min(1, "Delivery date is required"),
+  birthWeight: z.string().optional(),
+  birthHeight: z.string().optional(),
+  birthTime: z.string().optional(),
+  deliveryLocation: z.string().optional(),
+  assignedDoctor: z.string().optional(),
+});
+
+type ChildFormData = z.infer<typeof childSchema>;
+
+const AddChildForm = ({
+  motherLastName,
+  onAddChild,
+  onCancel,
+}: {
   motherLastName: string;
+  onAddChild: (data: ChildFormData) => void;
+  onCancel: () => void;
 }) => {
-  // Form state
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState(motherLastName); // Default to mother's last name
-  const [gender, setGender] = useState('');
-  const [deliveryDate, setDeliveryDate] = useState('');
-  const [birthWeight, setBirthWeight] = useState('');
-  const [birthHeight, setBirthHeight] = useState('');
-  const [birthTime, setBirthTime] = useState('');
-  const [deliveryLocation, setDeliveryLocation] = useState('');
-  const [assignedDoctor, setAssignedDoctor] = useState('');
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ChildFormData>({
+    resolver: zodResolver(childSchema),
+    defaultValues: {
+      lastName: motherLastName,
+    },
+  });
 
-  const handleSubmit = () => {
-    // Validate form fields
-    if (!firstName || !lastName || !gender || !deliveryDate) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
-    // Create new child object
-    const newChild = {
-      firstName,
-      lastName,
-      gender,
-      deliveryDate,
-      birthWeight,
-      birthHeight,
-      birthTime,
-      deliveryLocation,
-      assignedDoctor
-    };
-
-    // Call parent handler
-    onAddChild(newChild);
-
-    // Reset form (except lastName which defaults to mother's)
-    setFirstName('');
-    setGender('');
-    setDeliveryDate('');
-    setBirthWeight('');
-    setBirthHeight('');
-    setBirthTime('');
-    setDeliveryLocation('');
-    setAssignedDoctor('');
+  const onSubmit = (data: ChildFormData) => {
+    onAddChild(data);
   };
 
   return (
-    <Box>
-      <Title order={4} mb="md">Add New Child</Title>
-      <Grid>
-        <Grid.Col span={6}>
-          <TextInput
-            label="Child's First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-            mb="md"
-          />
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <TextInput
-            label="Child's Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-            mb="md"
-          />
-        </Grid.Col>
-      </Grid>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <TextInput
+        label="First Name"
+        {...register("firstName")}
+        error={errors.firstName?.message}
+      />
+      <TextInput
+        label="Last Name"
+        {...register("lastName")}
+        error={errors.lastName?.message}
+      />
 
-      <Grid>
-        <Grid.Col span={4}>
+      <Controller
+        name="gender"
+        control={control} // make sure you get this from useForm()
+        render={({ field }) => (
           <Select
             label="Gender"
-            placeholder="Select gender"
             data={[
-              { value: 'male', label: 'Male' },
-              { value: 'female', label: 'Female' },
-              { value: 'other', label: 'Other' }
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
             ]}
-            value={gender}
-            onChange={(value) => setGender(value || '')}
-            required
-            mb="md"
+            {...field}
+            error={errors.gender?.message}
           />
-        </Grid.Col>
-        <Grid.Col span={4}>
-          <TextInput
-            label="Delivery Date"
-            type="date"
-            value={deliveryDate}
-            onChange={(e) => setDeliveryDate(e.target.value)}
-            required
-            mb="md"
-          />
-        </Grid.Col>
-        <Grid.Col span={4}>
-          <TextInput
-            label="Birth Time"
-            type="time"
-            value={birthTime}
-            onChange={(e) => setBirthTime(e.target.value)}
-            mb="md"
-          />
-        </Grid.Col>
-      </Grid>
+        )}
+      />
 
-      <Grid>
-        <Grid.Col span={6}>
-          <TextInput
-            label="Birth Weight"
-            placeholder="e.g., 3.5 kg"
-            value={birthWeight}
-            onChange={(e) => setBirthWeight(e.target.value)}
-            mb="md"
-          />
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <TextInput
-            label="Birth Height"
-            placeholder="e.g., 50 cm"
-            value={birthHeight}
-            onChange={(e) => setBirthHeight(e.target.value)}
-            mb="md"
-          />
-        </Grid.Col>
-      </Grid>
+      <TextInput
+        type="date"
+        label="Delivery Date"
+        {...register("deliveryDate")}
+        error={errors.deliveryDate?.message}
+      />
 
-      <Grid>
-        <Grid.Col span={6}>
-          <TextInput
-            label="Delivery Location"
-            value={deliveryLocation}
-            onChange={(e) => setDeliveryLocation(e.target.value)}
-            mb="md"
-          />
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <TextInput
-            label="Assigned Doctor/Midwife"
-            value={assignedDoctor}
-            onChange={(e) => setAssignedDoctor(e.target.value)}
-            mb="md"
-          />
-        </Grid.Col>
-      </Grid>
+      <TextInput label="Birth Weight (kg)" {...register("birthWeight")} />
+      <TextInput label="Birth Height (cm)" {...register("birthHeight")} />
+      <TextInput label="Birth Time" type="time" {...register("birthTime")} />
+      <TextInput label="Delivery Location" {...register("deliveryLocation")} />
+      <TextInput label="Assigned Doctor" {...register("assignedDoctor")} />
 
       <Group position="right" mt="lg">
-        <Button variant="outline" onClick={() => {}}>Cancel</Button>
-        <Button onClick={handleSubmit}>Save</Button>
+        <Button
+          variant="outline"
+          type="button"
+          onClick={() => {
+            reset();
+            onCancel();
+          }}
+        >
+          Cancel
+        </Button>
+        <Button type="submit">Save</Button>
       </Group>
-    </Box>
+    </form>
   );
 };
 
 // Child record display component
 const ChildRecord = ({ child }: { child: Child }) => {
   return (
-    <Paper p="md" withBorder mb="md">
+    <Paper
+      p="md"
+      mb="md"
+      radius="md"
+      shadow="xs"
+      withBorder
+      sx={{ backgroundColor: "#fefefe" }}
+    >
       <Group position="apart">
-        <Box>
-          <Group spacing="xs">
-            <Avatar size="sm" radius="xl" color="pink">
-              {child.firstName.charAt(0)}
-            </Avatar>
-            <Text weight={600}>{child.firstName} {child.lastName}</Text>
-          </Group>
-          <Text size="sm" color="dimmed">Born on: {new Date(child.deliveryDate).toLocaleDateString()}</Text>
-        </Box>
-        <Badge>{child.gender}</Badge>
+        <Group spacing="xs">
+          <Avatar size="lg" radius="xl" color="grape">
+            {child.firstName.charAt(0)}
+          </Avatar>
+          <Box>
+            <Text size="lg" weight={600}>
+              {child.firstName} {child.lastName}
+            </Text>
+            <Text size="sm" color="dimmed">
+              Born on: {new Date(child.deliveryDate).toLocaleDateString()}
+            </Text>
+          </Box>
+        </Group>
+        <Badge size="lg" color={child.gender === "FEMALE" ? "pink" : "blue"}>
+          {child.gender}
+        </Badge>
       </Group>
-      
+
       <SimpleGrid cols={2} mt="md" spacing="xs">
         {child.birthWeight && (
           <Text size="sm">
-            <b>Weight:</b> {child.birthWeight}
+            <b>Weight:</b> {child.birthWeight} kg
           </Text>
         )}
         {child.birthHeight && (
           <Text size="sm">
-            <b>Height:</b> {child.birthHeight}
+            <b>Height:</b> {child.birthHeight} cm
           </Text>
         )}
         {child.birthTime && (
@@ -274,56 +250,112 @@ const PatientDetailPage = ({
 }) => {
   const theme = useMantineTheme();
   // const navigate = useNavigate();
-  
+
   // State for children records
-  const [children, setChildren] = useState<Child[]>(patient.children || []);
+
   const [showAddForm, setShowAddForm] = useState(false);
-  
-  // Handler for adding a new child
-  const handleAddChild = (newChild: Omit<Child, 'id'>) => {
-    // Generate a simple ID (in production, this would come from the backend)
-    const id = `C-${Date.now().toString().slice(-6)}`;
-    
-    // Add the new child to state
-    const childWithId = { ...newChild, id };
-    setChildren([...children, childWithId as Child]);
-    
-    // Hide the form
-    setShowAddForm(false);
+  const [children, setChildren] = useState<Child[]>([]);
+  const [loadingChildren, setLoadingChildren] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const params = useParams();
+
+  useEffect(() => {
+    const fetchChildren = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/infants/mother/${patient.id}`
+        );
+        setChildren(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch children:", error);
+      } finally {
+        setLoadingChildren(false);
+      }
+    };
+
+    fetchChildren();
+  }, [patient.id]);
+
+  const handleAddChild = async (formData: ChildFormData) => {
+    const { id: motherId } = params;
+
+    setLoading(true); // you can create a state: const [loading, setLoading] = useState(false)
+
+    try {
+      const response = await axiosInstance.post(`/api/infants`, {
+        ...formData,
+        motherId, // assuming the backend needs the motherId
+      });
+
+      const newChild = response.data;
+
+      // Update state with new child
+      setChildren((prev) => [...prev, newChild]);
+
+      // Feedback
+      showNotification({
+        title: "Success",
+        message: "Child added successfully",
+        color: "green",
+      });
+
+      // Close form
+      setShowAddForm(false);
+    } catch (error) {
+      console.error("Error adding child:", error);
+
+      showNotification({
+        title: "Error",
+        message: "Failed to add child. Please try again.",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Box
       p="md"
       sx={{
-        background: theme.fn.linearGradient(45, '#f6f9fc', '#edf2f7'),
-        minHeight: '100vh',
+        background: theme.fn.linearGradient(45, "#f6f9fc", "#edf2f7"),
+        minHeight: "100vh",
       }}
     >
       <Box mb="xl" maw={1000} mx="auto">
         <Group position="apart" mb="lg">
           <Button
             variant="subtle"
-            leftIcon={<IconArrowRight style={{ transform: 'rotate(180deg)' }} />}
+            leftIcon={
+              <IconArrowRight style={{ transform: "rotate(180deg)" }} />
+            }
             onClick={onBack}
           >
             Back to Patient List
           </Button>
-          <Button variant="light" leftIcon={<IconEdit size={16} />} color="blue">
+          <Button
+            variant="light"
+            leftIcon={<IconEdit size={16} />}
+            color="blue"
+          >
             Edit Patient
           </Button>
         </Group>
 
-        <Card p="xl" radius="md" shadow="sm" withBorder>
+        <Card>
           <Group position="apart" mb="xl" align="start">
             <Group>
               <Avatar size={80} radius={80} color="blue" sx={{ fontSize: 32 }}>
-                {patient.name.charAt(0)}
+                {/* {patient.name.charAt(0)} */}
               </Avatar>
               <Box>
                 <Title order={2}>{patient.name}</Title>
                 <Group spacing="xs">
-                  <Badge variant="filled" color="indigo" leftSection={<IconId size={14} />}>
+                  <Badge
+                    variant="filled"
+                    color="indigo"
+                    leftSection={<IconId size={14} />}
+                  >
                     {patient.id}
                   </Badge>
                   {/* <StatusBadge status={patient.status} /> */}
@@ -335,7 +367,9 @@ const PatientDetailPage = ({
               <Text size="sm" color="dimmed">
                 Last Visit
               </Text>
-              <Text fw={500}>{new Date(patient.lastVisit).toLocaleDateString()}</Text>
+              <Text fw={500}>
+                {/* {new Date(patient.lastVisit).toLocaleDateString()} */}
+              </Text>
             </Box>
           </Group>
 
@@ -357,58 +391,60 @@ const PatientDetailPage = ({
             </Tabs.List>
 
             {/* Existing Tab Panels */}
-            {/* <Tabs.Panel value="information"> */}
-              {/* Existing Information Tab Content */}
-            {/* </Tabs.Panel> */}
+            <Tabs.Panel value="information">
+              <PatientInformationTab patient={patient} />
+            </Tabs.Panel>
 
             <Tabs.Panel value="medical">
-              <Text color="dimmed" align="center">Medical history information would appear here.</Text>
+              <Text color="dimmed" align="center">
+                Medical history information would appear here.
+              </Text>
             </Tabs.Panel>
 
             <Tabs.Panel value="appointments">
-              <Text color="dimmed" align="center">Appointment history would appear here.</Text>
+              <Text color="dimmed" align="center">
+                Appointment history would appear here.
+              </Text>
             </Tabs.Panel>
 
             {/* New Children Tab Panel */}
             <Tabs.Panel value="children">
-              <Box>
-                {/* Header with Add Button */}
-                <Group position="apart" mb="lg">
-                  <Title order={3}>Children</Title>
-                  <Button 
-                    leftIcon={<IconPlus size={16} />}
-                    onClick={() => setShowAddForm(!showAddForm)}
-                  >
-                    {showAddForm ? 'Cancel' : 'Add Child'}
-                  </Button>
-                </Group>
+              <Affix position={{ bottom: 20, right: 20 }}>
+                <Button
+                  leftIcon={<IconBabyCarriage />}
+                  color="green"
+                  onClick={() => setShowAddForm(true)}
+                  disabled={loading}
+                >
+                  Add Child
+                </Button>
+              </Affix>
 
-                {/* Add Child Form */}
-                {showAddForm && (
-                  <>
-                    <Box mb="xl">
-                      <AddChildForm 
-                        onAddChild={handleAddChild} 
-                        motherLastName={patient.name.split(' ').slice(-1)[0]} 
-                      />
-                    </Box>
-                    <Divider my="lg" />
-                  </>
-                )}
-
-                {/* List of Children */}
-                {children.length > 0 ? (
-                  <Stack>
-                    {children.map((child) => (
-                      <ChildRecord key={child.id} child={child} />
-                    ))}
-                  </Stack>
-                ) : (
-                  <Text color="dimmed" align="center" py="lg">
-                    No children records found. Click "Add Child" to register a child.
-                  </Text>
-                )}
-              </Box>
+              {loadingChildren ? (
+                <Text align="center" color="dimmed">
+                  Loading children...
+                </Text>
+              ) : children.length === 0 ? (
+                <Text align="center" color="dimmed">
+                  No children found for this patient.
+                </Text>
+              ) : (
+                children.map((child) => (
+                  <ChildRecord key={child.id} child={child} />
+                ))
+              )}
+              {showAddForm && (
+                <Paper p="md" mt="md" shadow="xs" withBorder radius="md">
+                  <Title order={4} mb="sm">
+                    Add Child Record
+                  </Title>
+                  <AddChildForm
+                    motherLastName={patient.lastName}
+                    onAddChild={handleAddChild}
+                    onCancel={() => setShowAddForm(false)}
+                  />
+                </Paper>
+              )}
             </Tabs.Panel>
           </Tabs>
         </Card>
@@ -417,39 +453,113 @@ const PatientDetailPage = ({
   );
 };
 
+export const PatientInformationTab = ({ patient }: { patient: Patient }) => {
+  return (
+    <Card className="p-6 space-y-8">
+      {/* Personal Details */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4">Personal Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="First Name" value={patient.firstName} />
+          <Field label="Last Name" value={patient.lastName} />
+          <Field label="Email" value={patient.email} />
+          <Field label="Phone" value={patient.phone} />
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Pregnancy Info */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4">Pregnancy Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field
+            label="Expected Delivery Date"
+            value={new Date(patient.expectedDeliveryDate).toLocaleDateString()}
+          />
+          <Field label="Blood Group" value={patient.bloodGroup} />
+          <Field label="Marital Status" value={patient.maritalStatus} />
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Emergency Contact */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4">Emergency Contact</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field
+            label="Contact Name"
+            value={patient.emergencyContactFullName}
+          />
+          <Field
+            label="Relationship"
+            value={patient.emergencyContactRelationship}
+          />
+          <Field label="Phone" value={patient.emergencyContactNumber} />
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Location */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4">Location</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="District" value={patient.district} />
+          <Field label="Sector" value={patient.sector} />
+          <Field label="Cell" value={patient.cell} />
+          <Field label="Village" value={patient.village} />
+        </div>
+      </section>
+    </Card>
+  );
+};
+
+// Reusable field component
+const Field = ({ label, value }: { label: string; value: string }) => (
+  <div>
+    <Label className="text-muted-foreground">{label}</Label>
+    <p className="mt-1">{value || "—"}</p>
+  </div>
+);
+
 // Update the parent component to include sample children data
 const PatientInfo = () => {
-  const selectedPatient: Patient = {
-    id: 'P-1023',
-    name: 'Jane Smith',
-    status: 'Active',
-    lastVisit: '2023-12-10',
-    birthdate: '1990-05-15',
-    nationalId: '1199223344556677',
-    phone1: '0788888888',
-    phone2: '0733333333',
-    // Add sample children data for testing
-    children: [
-      {
-        id: 'C-102301',
-        firstName: 'Michael',
-        lastName: 'Smith',
-        gender: 'male',
-        deliveryDate: '2020-06-12',
-        birthWeight: '3.2 kg',
-        birthHeight: '52 cm',
-        birthTime: '14:30',
-        deliveryLocation: 'Central Hospital',
-        assignedDoctor: 'Dr. Sarah Johnson'
-      }
-    ]
-  };
+  const navigate = useNavigate();
+  const params = useParams();
+  const [selectedPatient, setSelectedPatient] = useState<Patient>();
+
+  console.log("params", params);
+
+  useEffect(() => {
+    axiosInstance
+      .get("/api/parents/" + params.id)
+      .then((result) => {
+        console.log("result", result);
+        setSelectedPatient(result.data);
+      })
+      .catch((error) => {
+        console.error("error", error);
+      });
+  }, [params.id]);
 
   const handleBackToList = () => {
-    console.log('Back clicked');
+    console.log("Back clicked");
+    navigate("/healthworker/view-patient");
   };
 
-  return <PatientDetailPage patient={selectedPatient} onBack={handleBackToList} />;
+  if (!selectedPatient) {
+    return (
+      <Box p="md">
+        <Text>Loading patient data...</Text>
+      </Box>
+    );
+  }
+
+  return (
+    <PatientDetailPage patient={selectedPatient} onBack={handleBackToList} />
+  );
 };
 
 export default PatientInfo;

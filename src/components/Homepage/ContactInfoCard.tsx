@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import type { ReactElement } from "react";
 
 // Enhanced Contact Info Card
 const ContactInfoCard = ({ title, description, detail, icon }:{title:string,description:string,detail:string,icon:ReactElement}) => {

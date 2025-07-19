@@ -1,3 +1,4 @@
+/* eslint-disable tsdoc/syntax */
 // src/hooks/useSectionHighlight.js
 import { useState, useEffect } from 'react';
 

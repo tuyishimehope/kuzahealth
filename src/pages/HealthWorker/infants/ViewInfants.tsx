@@ -1,144 +1,112 @@
+// ViewInfants.tsx
+import { Box, Button, Group, Paper, Title, Tooltip, ActionIcon } from "@mantine/core";
+import { IconPlus, IconEye } from "@tabler/icons-react";
 import {
-    Box,
-    Button,
-    Group,
-    Paper,
-    Title
-} from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
-import {
-    MantineReactTable,
-    useMantineReactTable,
-    type MRT_ColumnDef,
-} from 'mantine-react-table';
-import { useState } from 'react';
+  MantineReactTable,
+  useMantineReactTable,
+  type MRT_ColumnDef,
+} from "mantine-react-table";
+import { useEffect, useState } from "react";
+import type { Patient } from "../Mother/ViewPatient";
 
-// Define Child type (reusing from existing codebase)
-type Child = {
+import { axiosInstance } from "@/utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
+
+export type Child = {
   id: string;
   firstName: string;
   lastName: string;
   gender: string;
   deliveryDate: string;
-  birthWeight: string;
-  birthHeight: string;
+  birthWeight: number;
+  birthHeight: number;
   birthTime: string;
   deliveryLocation: string;
   assignedDoctor: string;
+  createdAt?: string;
+  updatedAt?: string;
+  dateOfBirth?: string;
+  bloodGroup?: string;
+  specialConditions?: string;
+  mother?: Patient;
 };
 
-// Sample data
-const sampleInfants: Child[] = [
-  {
-    id: 'C-102301',
-    firstName: 'Michael',
-    lastName: 'Smith',
-    gender: 'male',
-    deliveryDate: '2020-06-12',
-    birthWeight: '3.2 kg',
-    birthHeight: '52 cm',
-    birthTime: '14:30',
-    deliveryLocation: 'Central Hospital',
-    assignedDoctor: 'Dr. Sarah Johnson'
-  },
-  {
-    id: 'C-102302',
-    firstName: 'Emma',
-    lastName: 'Johnson',
-    gender: 'female',
-    deliveryDate: '2021-03-15',
-    birthWeight: '3.5 kg',
-    birthHeight: '50 cm',
-    birthTime: '09:45',
-    deliveryLocation: 'City Hospital',
-    assignedDoctor: 'Dr. Michael Brown'
-  }
-];
-
 const ViewInfants = () => {
-  const [data] = useState<Child[]>(sampleInfants);
+  const [infants, setInfants] = useState<Child[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchInfants = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get("/api/infants");
+        setInfants(response.data);
+      } catch (err) {
+        setError("Failed to fetch infants");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInfants();
+  }, []);
 
   const columns: MRT_ColumnDef<Child>[] = [
+    { accessorKey: "firstName", header: "First Name" },
+    { accessorKey: "lastName", header: "Last Name" },
+    { accessorKey: "gender", header: "Gender" },
     {
-      accessorKey: 'id',
-      header: 'ID',
-      size: 100,
-    },
-    {
-      accessorKey: 'firstName',
-      header: 'First Name',
-      size: 150,
-    },
-    {
-      accessorKey: 'lastName',
-      header: 'Last Name',
-      size: 150,
-    },
-    {
-      accessorKey: 'gender',
-      header: 'Gender',
-      size: 100,
-    },
-    {
-      accessorKey: 'deliveryDate',
-      header: 'Delivery Date',
-      size: 150,
+      accessorKey: "dateOfBirth",
+      header: "DOB",
       Cell: ({ cell }) => new Date(cell.getValue<string>()).toLocaleDateString(),
     },
+    { accessorKey: "birthWeight", header: "Weight (kg)" },
+    { accessorKey: "birthHeight", header: "Height (cm)" },
+    // { accessorKey: "birthTime", header: "Birth Time" },
+    { accessorKey: "deliveryLocation", header: "Delivery Location" },
+    // { accessorKey: "assignedDoctor", header: "Doctor" },
+    { accessorKey: "bloodGroup", header: "Blood Group" },
+    // { accessorKey: "specialConditions", header: "Special Conditions" },
     {
-      accessorKey: 'birthWeight',
-      header: 'Birth Weight',
-      size: 120,
-    },
-    {
-      accessorKey: 'birthHeight',
-      header: 'Birth Height',
-      size: 120,
-    },
-    {
-      accessorKey: 'birthTime',
-      header: 'Birth Time',
-      size: 120,
-    },
-    {
-      accessorKey: 'deliveryLocation',
-      header: 'Delivery Location',
-      size: 200,
-    },
-    {
-      accessorKey: 'assignedDoctor',
-      header: 'Assigned Doctor',
-      size: 200,
+      header: "Actions",
+      Cell: ({ row }) => (
+        <Tooltip label="View Details">
+          <ActionIcon
+            variant="light"
+            color="blue"
+            onClick={() =>
+              navigate( "/healthworker/view-infants/"+ row.original.id)
+            }
+          >
+            <IconEye size={18} />
+          </ActionIcon>
+        </Tooltip>
+      ),
     },
   ];
 
   const table = useMantineReactTable({
     columns,
-    data,
+    data: infants,
+    state: { isLoading: loading },
     enableColumnFilters: true,
     enableSorting: true,
     enablePagination: true,
-    // enableRowActions: true,
-    mantinePaperProps: {
-      shadow: '0',
-      withBorder: true,
-    },
-    mantineTableContainerProps: {
-      style: {
-        minHeight: '500px',
-      },
-    },
+    mantinePaperProps: { shadow: "0", withBorder: true },
+    mantineTableContainerProps: { style: { minHeight: "500px" } },
   });
 
+  if(error) return <p>{error}</p>
   return (
     <Box p="md">
       <Group position="apart" mb="md">
         <Title order={2}>Infants List</Title>
-        <Button leftIcon={<IconPlus size={16} />}>
-          Add New Infant
-        </Button>
+        <Button leftIcon={<IconPlus size={16} />} onClick={() => navigate("/healthworker/add-infant")}>Add New Infant</Button>
       </Group>
-      
+
       <Paper withBorder>
         <MantineReactTable table={table} />
       </Paper>
