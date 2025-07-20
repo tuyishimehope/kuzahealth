@@ -63,7 +63,6 @@ const Reports = () => {
   const [dateRange, setDateRange] = useState("30"); // days
 
   // Fetch data from APIs
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -73,6 +72,7 @@ const Reports = () => {
         const [healthWorkersResponse, visitsResponse] = await Promise.all([
           axiosInstance.get("/api/health-workers"),
           axiosInstance.get("/api/visits"),
+          // axiosInstance.get("/api/parents"),
         ]);
 
         setHealthWorkers(healthWorkersResponse.data);
