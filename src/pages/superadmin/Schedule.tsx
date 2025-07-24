@@ -31,6 +31,8 @@ import {
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { RiExportFill } from "react-icons/ri";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export interface Schedule {
   id: string;
@@ -105,6 +107,33 @@ const Schedule = () => {
     // Here you would use useMutation + queryClient.invalidateQueries
   };
 
+  const handleExportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Schedules Report", 14, 15);
+
+    const tableData = filteredSchedules.map((s) => [
+      s.visitType,
+      new Date(s.scheduledTime).toLocaleDateString(),
+      new Date(s.scheduledTime).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      s.location,
+      s.modeOfCommunication,
+      s.status,
+    ]);
+
+    autoTable(doc, {
+      startY: 20,
+      head: [
+        ["Visit Type", "Date", "Time", "Location", "Communication", "Status"],
+      ],
+      body: tableData,
+    });
+
+    doc.save("schedules.pdf");
+  };
+
   const columns = useMemo<MRT_ColumnDef<Schedule>[]>(
     () => [
       {
@@ -169,7 +198,7 @@ const Schedule = () => {
     state: { isLoading },
     enableGlobalFilter: false,
     enableSorting: true,
-    enableColumnFilters: false,
+    enableColumnFilters: true,
     enablePagination: true,
     initialState: {
       pagination: { pageSize: 10, pageIndex: 0 },
@@ -180,7 +209,13 @@ const Schedule = () => {
     <Box p="md">
       <Group position="apart" mb="md">
         <Title order={2}>View Schedules</Title>
-        <Button leftIcon={<RiExportFill size={rem(16)} />}>Export</Button>
+
+        <Button
+          leftIcon={<RiExportFill size={rem(16)} />}
+          onClick={handleExportToPDF}
+        >
+          Export PDF
+        </Button>
       </Group>
 
       <TextInput

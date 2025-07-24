@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 interface ButtonProps {
-  name: React.ReactNode; 
+  name: React.ReactNode;
   disabled?: boolean;
   className?: string;
   onClick: (e: MouseEvent<HTMLButtonElement>) => void;
@@ -169,6 +169,7 @@ const OtpVerification = () => {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
       // Retrieve user data from localStorage
       const storedUser = localStorage.getItem("user");
       let email = "";
@@ -204,9 +205,10 @@ const OtpVerification = () => {
         localStorage.setItem("token", JSON.stringify(response.data.token));
         //  const token = extractToken(response.data);
         // console.log("Extracted Token:", token);
-
+        setLoading(false);
         toast.success("OTP verified successfully!");
         if (response.data.userType === "ADMIN") {
+          setLoading(false);
           navigator("/superadmin/dashboard");
           console.log("Redirecting to admin dashboard", response.data.userType);
           return;
@@ -217,9 +219,11 @@ const OtpVerification = () => {
           response.data.userType
         );
       } else {
+        setLoading(false);
         toast.error("Invalid OTP, please try again.");
       }
     } catch (error) {
+      setLoading(false);
       console.error("Error during OTP verification:", error);
       toast.error("There was an error verifying the OTP.");
     }
@@ -293,7 +297,7 @@ const OtpVerification = () => {
   };
 
   const handleBackToLogin = () => {
-    navigator("/auth/signin")
+    navigator("/auth/signin");
   };
 
   // Auto-focus first input on mount

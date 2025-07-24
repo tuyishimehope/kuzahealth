@@ -1,6 +1,8 @@
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { saveAs } from "file-saver";
+import Papa from "papaparse";
 
 import {
   ActionIcon,
@@ -60,6 +62,24 @@ const ViewHealthWorkers = () => {
     queryFn: fetchHealthWorkers,
   });
   console.log(error);
+
+  const handleExport = () => {
+    if (!healthWorkers || healthWorkers.length === 0) return;
+
+    const dataToExport = healthWorkers.map((worker) => ({
+      Name: `${worker.first_name} ${worker.last_name}`,
+      Email: worker.email,
+      Qualification: worker.qualification,
+      Phone: worker.phone_number,
+      ServiceArea: worker.service_area,
+      CreatedAt: new Date(worker.createdAt).toLocaleDateString(),
+      UpdatedAt: new Date(worker.updatedAt).toLocaleDateString(),
+    }));
+
+    const csv = Papa.unparse(dataToExport);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "health_workers.csv");
+  };
 
   const columns = useMemo<MRT_ColumnDef<HealthWorker>[]>(
     () => [
@@ -140,7 +160,7 @@ const ViewHealthWorkers = () => {
     columns,
     data: healthWorkers,
     enableColumnActions: false,
-    enableColumnFilters: false,
+    enableColumnFilters: true,
     enableGlobalFilter: true,
     positionGlobalFilter: "left",
     state: {
@@ -151,6 +171,7 @@ const ViewHealthWorkers = () => {
     initialState: {
       pagination: { pageSize: 10, pageIndex: 0 },
       showGlobalFilter: true,
+      columnVisibility: { actions: true },
     },
   });
 
@@ -180,7 +201,13 @@ const ViewHealthWorkers = () => {
     <Stack p="md" spacing="md">
       <Group position="apart">
         <Title order={2}>Health Workers</Title>
-        <Button leftIcon={<FaFileExport size={rem(16)} />}>Export</Button>
+
+        <Button
+          leftIcon={<FaFileExport size={rem(16)} />}
+          onClick={handleExport}
+        >
+          Export
+        </Button>
       </Group>
 
       <MantineReactTable table={table} />

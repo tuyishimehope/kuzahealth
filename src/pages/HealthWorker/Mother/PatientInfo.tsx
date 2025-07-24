@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { axiosInstance } from "@/utils/axiosInstance";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Affix,
   Avatar,
@@ -11,32 +10,31 @@ import {
   Group,
   Paper,
   Select,
-  SimpleGrid,
   Tabs,
   Text,
   TextInput,
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
 import {
   IconArrowRight,
   IconBabyCarriage,
   IconCalendar,
   IconChartBar,
-  IconEdit,
   IconId,
   IconUserCircle,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { showNotification } from "@mantine/notifications";
 
-// import { useNavigate } from 'react-router-dom';
+import { AppointmentHistoryTab } from "./AppointmentHistoryTab";
+import { ChildRecord } from "./ChildRecord";
+import { PatientInformationTab } from "./PatientInformationTab";
+import { PregnancyRecordTab } from "./PregancyRecordTab";
 
-// Extend the Patient type to include children
 type Patient = {
   id: string;
   name?: string;
@@ -64,7 +62,7 @@ type Patient = {
   village: string;
   pregnancyRecord: [];
   highRisk: false;
-  children?: Child[]; // Add children array
+  children?: Child[];
 };
 
 // Define Child type
@@ -80,10 +78,6 @@ type Child = {
   deliveryLocation: string;
   assignedDoctor: string;
 };
-
-// Rest of the existing components...
-
-// New Child Form Component
 
 const childSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -184,63 +178,6 @@ const AddChildForm = ({
   );
 };
 
-// Child record display component
-const ChildRecord = ({ child }: { child: Child }) => {
-  return (
-    <Paper
-      p="md"
-      mb="md"
-      radius="md"
-      shadow="xs"
-      withBorder
-      sx={{ backgroundColor: "#fefefe" }}
-    >
-      <Group position="apart">
-        <Group spacing="xs">
-          <Avatar size="lg" radius="xl" color="grape">
-            {child.firstName.charAt(0)}
-          </Avatar>
-          <Box>
-            <Text size="lg" weight={600}>
-              {child.firstName} {child.lastName}
-            </Text>
-            <Text size="sm" color="dimmed">
-              Born on: {new Date(child.deliveryDate).toLocaleDateString()}
-            </Text>
-          </Box>
-        </Group>
-        <Badge size="lg" color={child.gender === "FEMALE" ? "pink" : "blue"}>
-          {child.gender}
-        </Badge>
-      </Group>
-
-      <SimpleGrid cols={2} mt="md" spacing="xs">
-        {child.birthWeight && (
-          <Text size="sm">
-            <b>Weight:</b> {child.birthWeight} kg
-          </Text>
-        )}
-        {child.birthHeight && (
-          <Text size="sm">
-            <b>Height:</b> {child.birthHeight} cm
-          </Text>
-        )}
-        {child.birthTime && (
-          <Text size="sm">
-            <b>Time:</b> {child.birthTime}
-          </Text>
-        )}
-        {child.deliveryLocation && (
-          <Text size="sm">
-            <b>Location:</b> {child.deliveryLocation}
-          </Text>
-        )}
-      </SimpleGrid>
-    </Paper>
-  );
-};
-
-// Updated PatientDetailPage with Children Tab
 const PatientDetailPage = ({
   patient,
   onBack,
@@ -249,9 +186,6 @@ const PatientDetailPage = ({
   onBack: () => void;
 }) => {
   const theme = useMantineTheme();
-  // const navigate = useNavigate();
-
-  // State for children records
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [children, setChildren] = useState<Child[]>([]);
@@ -333,20 +267,20 @@ const PatientDetailPage = ({
           >
             Back to Patient List
           </Button>
-          <Button
+          {/* <Button
             variant="light"
             leftIcon={<IconEdit size={16} />}
             color="blue"
           >
             Edit Patient
-          </Button>
+          </Button> */}
         </Group>
 
         <Card>
           <Group position="apart" mb="xl" align="start">
             <Group>
               <Avatar size={80} radius={80} color="blue" sx={{ fontSize: 32 }}>
-                {/* {patient.name.charAt(0)} */}
+                {patient.firstName.charAt(0)}
               </Avatar>
               <Box>
                 <Title order={2}>{patient.name}</Title>
@@ -362,15 +296,6 @@ const PatientDetailPage = ({
                 </Group>
               </Box>
             </Group>
-
-            <Box>
-              <Text size="sm" color="dimmed">
-                Last Visit
-              </Text>
-              <Text fw={500}>
-                {/* {new Date(patient.lastVisit).toLocaleDateString()} */}
-              </Text>
-            </Box>
           </Group>
 
           <Tabs defaultValue="information">
@@ -396,15 +321,11 @@ const PatientDetailPage = ({
             </Tabs.Panel>
 
             <Tabs.Panel value="medical">
-              <Text color="dimmed" align="center">
-                Medical history information would appear here.
-              </Text>
+              <PregnancyRecordTab patientId={params.id} />
             </Tabs.Panel>
 
             <Tabs.Panel value="appointments">
-              <Text color="dimmed" align="center">
-                Appointment history would appear here.
-              </Text>
+              <AppointmentHistoryTab patientId={params.id} />
             </Tabs.Panel>
 
             {/* New Children Tab Panel */}
@@ -453,78 +374,6 @@ const PatientDetailPage = ({
   );
 };
 
-export const PatientInformationTab = ({ patient }: { patient: Patient }) => {
-  return (
-    <Card className="p-6 space-y-8">
-      {/* Personal Details */}
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Personal Details</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="First Name" value={patient.firstName} />
-          <Field label="Last Name" value={patient.lastName} />
-          <Field label="Email" value={patient.email} />
-          <Field label="Phone" value={patient.phone} />
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* Pregnancy Info */}
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Pregnancy Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field
-            label="Expected Delivery Date"
-            value={new Date(patient.expectedDeliveryDate).toLocaleDateString()}
-          />
-          <Field label="Blood Group" value={patient.bloodGroup} />
-          <Field label="Marital Status" value={patient.maritalStatus} />
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* Emergency Contact */}
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Emergency Contact</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field
-            label="Contact Name"
-            value={patient.emergencyContactFullName}
-          />
-          <Field
-            label="Relationship"
-            value={patient.emergencyContactRelationship}
-          />
-          <Field label="Phone" value={patient.emergencyContactNumber} />
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* Location */}
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Location</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="District" value={patient.district} />
-          <Field label="Sector" value={patient.sector} />
-          <Field label="Cell" value={patient.cell} />
-          <Field label="Village" value={patient.village} />
-        </div>
-      </section>
-    </Card>
-  );
-};
-
-// Reusable field component
-const Field = ({ label, value }: { label: string; value: string }) => (
-  <div>
-    <Label className="text-muted-foreground">{label}</Label>
-    <p className="mt-1">{value || "—"}</p>
-  </div>
-);
-
-// Update the parent component to include sample children data
 const PatientInfo = () => {
   const navigate = useNavigate();
   const params = useParams();
