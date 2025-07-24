@@ -24,7 +24,6 @@ import {
   YAxis,
 } from "recharts";
 
-// Types based on your API interfaces
 interface HealthWorker {
   id: string;
   email: string;

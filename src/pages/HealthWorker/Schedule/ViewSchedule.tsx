@@ -160,7 +160,7 @@ const ViewSchedule = () => {
               <Table striped highlightOnHover>
                 <thead>
                   <tr>
-                    <th>Patient Name</th>
+                    <th>Visit Type</th>
                     <th>Appointment Date</th>
                     <th>Schedule Time</th>
                     <th>Location</th>

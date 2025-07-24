@@ -15,13 +15,17 @@ import socialImage from "../assets/social-service.png";
 import nutritionImage from "../assets/nutrition.png";
 import ctnImage from "../assets/ctn.png";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { showNotification } from "@mantine/notifications";
 
 /**
  * Home page component with sections for hero, about, services, etc.
  */
 const Home = () => {
   const navigate = useNavigate();
-
+  useEffect(() => {
+    showNotification({ message: "red" });
+  }, []);
   // Services data
   const services = [
     {

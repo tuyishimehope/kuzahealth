@@ -17,6 +17,8 @@ import {
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export interface Patient {
   id: string;
@@ -96,6 +98,41 @@ const ViewParents = () => {
       : patients.filter((p) => p.maritalStatus === selectedStatus);
   }, [patients, selectedStatus]);
 
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Parents Report", 14, 15);
+
+    const tableData = filteredData.map((p) => [
+      p.id,
+      p.firstName,
+      p.lastName,
+      p.phone,
+      p.expectedDeliveryDate
+        ? new Date(p.expectedDeliveryDate).toLocaleDateString()
+        : "-",
+      p.bloodGroup,
+      p.highRisk ? "Yes" : "No",
+    ]);
+
+    autoTable(doc, {
+      startY: 20,
+      head: [
+        [
+          "ID",
+          "First Name",
+          "Last Name",
+          "Phone",
+          "EDD",
+          "Blood Group",
+          "High Risk?",
+        ],
+      ],
+      body: tableData,
+    });
+
+    doc.save("parents-report.pdf");
+  };
+
   const table = useMantineReactTable({
     columns,
     data: filteredData,
@@ -103,6 +140,7 @@ const ViewParents = () => {
     enableSorting: true,
     enableRowSelection: true,
     enableRowActions: true,
+    enableColumnFilters: true, // ✅ enable column filters
     positionActionsColumn: "last",
     globalFilterFn: "fuzzy",
     state: {
@@ -118,9 +156,9 @@ const ViewParents = () => {
           leftIcon={<IconDownload size={20} />}
           variant="light"
           color="blue"
-          onClick={() => console.log("Export data")}
+          onClick={handleExportPDF} // ✅ use export handler here
         >
-          Export
+          Export PDF
         </Button>
       </Group>
     ),
