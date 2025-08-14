@@ -9,6 +9,7 @@ import ViewInfants from "@/pages/HealthWorker/infants/ViewInfants";
 import AddMotherForm from "@/pages/HealthWorker/Mother/AddPatient";
 import PatientInfo from "@/pages/HealthWorker/Mother/PatientInfo";
 import MaritimePatientDashboard from "@/pages/HealthWorker/Mother/ViewPatient";
+import Nutrition from "@/pages/HealthWorker/Nutrition";
 import Profile from "@/pages/HealthWorker/Profile";
 import Reports from "@/pages/HealthWorker/Reports";
 import AddSchedule from "@/pages/HealthWorker/Schedule/AddSchedule";
@@ -39,6 +40,10 @@ const HealthWorkerRoutes = [
       {
         path: "view-patient",
         element: <MaritimePatientDashboard />,
+      },
+       {
+        path: "nutrition",
+        element: <Nutrition />,
       },
         {
         path: "view-patient/:id",

@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import {
   BarChart3,
-  Building2,
-  Calendar,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
@@ -15,7 +14,7 @@ import {
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo1.png";
-import { motion } from "framer-motion";
+
 
 const sidebarLinks = [
   {
@@ -36,24 +35,24 @@ const sidebarLinks = [
     icon: Users,
     description: "Staff Management",
   },
-  {
-    href: "/superadmin/schedules",
-    label: "Schedules",
-    icon: Calendar,
-    description: "Shift Planning",
-  },
+  // {
+  //   href: "/superadmin/add-parent",
+  //   label: "Add Mother",
+  //   icon: RiParentLine,
+  //   description: "Add Mother",
+  // },
   {
     href: "/superadmin/parents",
-    label: "Parents",
+    label: "Mothers",
     icon: Users2,
-    description: "View Parents",
+    description: "View Mothers",
   },
-  {
-    href: "/superadmin/facilities",
-    label: "Facilities",
-    icon: Building2,
-    description: "Location Management",
-  },
+  // {
+  //   href: "/superadmin/facilities",
+  //   label: "Facilities",
+  //   icon: Building2,
+  //   description: "Location Management",
+  // },
   {
     href: "/superadmin/reports",
     label: "Reports",
@@ -100,9 +99,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
                 <img src={logo} alt="logo" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-800">
-                  Kuza Health
-                </h2>
+                <h2 className="text-lg font-bold text-slate-800">Kuza Care</h2>
                 <p className="text-xs text-slate-500">Super Admin Portal</p>
               </div>
             </div>

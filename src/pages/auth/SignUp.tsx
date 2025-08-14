@@ -56,8 +56,8 @@ const signUpSchema = z
       .string()
       .min(1, "Phone number is required")
       .regex(
-        /^(\+250|0)[0-9]{9}$/,
-        "Please enter a valid Rwandan phone number"
+        /^(\+250)[0-9]{9}$/,
+        "Please enter a valid Rwandan phone number(+25078___)"
       ),
     province: z.string().min(1, "Please select your province"),
     title: z
@@ -413,7 +413,7 @@ const SignUp = (): JSX.Element => {
   );
 
   return (
-    <div className="flex min-h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100">
+    <motion.div className="flex h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100">
       <Toaster
         position="top-right"
         toastOptions={{
@@ -424,48 +424,48 @@ const SignUp = (): JSX.Element => {
         }}
       />
 
-      {/* Left side - Image with enhanced animations */}
+      {/* Left side - Image (fixed) */}
       <motion.div
-        className="hidden lg:block w-2/5 relative overflow-hidden"
+        className="hidden lg:block lg:w-2/5 relative overflow-hidden h-screen sticky top-0"
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-purple-600/30 to-transparent"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 1 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
         />
 
         <img
           src={image}
           alt="Healthcare Registration"
-          className="h-screen object-cover w-full"
+          className="w-full h-full object-cover"
         />
 
         <motion.div
-          className="absolute bottom-10 left-10 text-white max-w-md"
-          initial={{ y: 30, opacity: 0 }}
+          className="absolute bottom-6 left-6 right-6 lg:bottom-10 lg:left-10 text-white max-w-md"
+          initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
         >
-          <h2 className="text-4xl font-bold drop-shadow-lg mb-3">
+          <h2 className="text-2xl lg:text-4xl font-bold drop-shadow-lg mb-3">
             Join Our Platform
           </h2>
-          <p className="text-lg drop-shadow-lg opacity-90 leading-relaxed">
+          <p className="text-base lg:text-lg drop-shadow-lg opacity-90 leading-relaxed">
             Create your healthcare professional account and start making a
             difference in patient care.
           </p>
         </motion.div>
       </motion.div>
 
-      {/* Right side - Enhanced form */}
+      {/* Right side - Scrollable */}
       <motion.div
-        className="flex flex-col items-center justify-center p-6 lg:p-12 w-full lg:w-3/5 overflow-y-auto max-h-screen relative"
+        className="flex flex-col items-center px-6 py-12 sm:px-8 lg:px-12 w-full lg:w-3/5 overflow-y-auto h-screen"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         {/* Loading overlay */}
         <AnimatePresence>
@@ -716,7 +716,7 @@ const SignUp = (): JSX.Element => {
           </motion.form>
         </motion.div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
