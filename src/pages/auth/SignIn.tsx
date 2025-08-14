@@ -8,9 +8,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle2 } from "lucide-react";
 import image from "../../assets/signin.png";
-import { axiosInstance } from "@/utils/axiosInstance";
 import { Toaster, toast } from "sonner";
-
+import axios from "axios";
+const api = import.meta.env.VITE_API_BASE_URL_DEV;
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address").min(1, "Email is required"),
   password: z
@@ -91,7 +91,7 @@ const SignIn = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       // API call with proper error handling
-      const response = await axiosInstance.post("/api/v1/auth/send-otp", user);
+      const response = await axios.post(`${api}/api/v1/auth/send-otp`, user);
       
       console.log("OTP sent successfully:", response.data);
       
@@ -164,12 +164,12 @@ const SignIn = () => {
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <motion.div
+        {/* <motion.div
           className="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-purple-600/30 to-transparent"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 1 }}
-        />
+        /> */}
         
         <img
           src={image}

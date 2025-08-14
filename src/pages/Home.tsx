@@ -83,7 +83,7 @@ const Home = () => {
         {/* Hero Content */}
         <div className="container mx-auto px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="max-w-2xl space-y-6">
-            <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 backdrop-blur-sm border border-purple-500/30 mb-2">
+            <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 backdrop-blur-sm border border-purple-500/30">
               <span className="text-white font-medium text-sm">
                 Maternal & Child Healthcare
               </span>
@@ -106,7 +106,7 @@ const Home = () => {
               >
                 Get Started
               </Button>
-              <button className="flex items-center px-6 py-4 text-white hover:text-purple-200 transition-colors duration-300">
+              {/* <button className="flex items-center px-6 py-4 text-white hover:text-purple-200 transition-colors duration-300">
                 <span className="mr-2">Learn more</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +122,7 @@ const Home = () => {
                     d="M14 5l7 7m0 0l-7 7m7-7H3"
                   />
                 </svg>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -171,63 +171,68 @@ const Home = () => {
       </Section> */}
 
       {/* About us Section */}
-      <Section id="about" background="gradient">
-        <div className="flex flex-col lg:flex-row items-center gap-12">
-          <div className="lg:w-1/2 space-y-6">
-            <div className="inline-block px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium mb-2">
+      <Section id="about" background="gradient" className="py-16 md:py-24">
+        <div className="container mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center gap-12">
+          {/* Left Content */}
+          <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
+            <span className="inline-block px-4 py-1 rounded-full bg-purple-100 text-purple-700 font-medium text-sm">
               Our Mission
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+            </span>
+
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight leading-tight">
               Health Services for Your Well-being
             </h2>
-            <div className="w-20 h-1 bg-purple-500 rounded-full"></div>
-            <p className="text-gray-600 leading-relaxed">
+
+            <div className="mx-auto lg:mx-0 w-16 h-1 bg-purple-500 rounded-full"></div>
+
+            <p className="text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
               We provide an extensive array of health services designed to cater
               to your unique health needs.
             </p>
-            <p className="text-gray-700 text-lg leading-relaxed">
+
+            <p className="text-gray-700 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
               At HealVritue, we are dedicated to improving maternal and child
               health outcomes by leveraging technology and innovative solutions.
               Our goal is to provide essential resources, education, and support
               to healthcare providers and communities to help reduce preventable
-              deaths. By collaborating with experts and using data-driven
-              approaches, we aim to create a sustainable impact in the fight
-              against maternal and child mortality, ensuring that every mother
-              and child has the opportunity to thrive.
+              deaths.
             </p>
-            <div className="pt-4">
-              <Button
-                variant="primary"
-                size="lg"
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                Explore Our Services
-              </Button>
-            </div>
+
+            <Button
+              variant="primary"
+              size="lg"
+              className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto"
+            >
+              Explore Our Services
+            </Button>
           </div>
-          <div className="lg:w-1/2">
-            <div className="relative">
-              <div className="absolute -top-6 -left-6 w-64 h-64 bg-purple-200 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
-              <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-blue-200 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-              <img
-                src={aboutImage}
-                alt="About Us"
-                className="relative rounded-xl shadow-lg w-full object-cover max-w-md mx-auto lg:max-w-full"
-              />
-            </div>
+
+          {/* Right Image */}
+          <div className="lg:w-1/2 relative flex justify-center">
+            <div className="absolute -top-6 -left-6 w-48 h-48 md:w-64 md:h-64 bg-purple-200 rounded-full blur-3xl opacity-30 animate-blob"></div>
+            <div className="absolute -bottom-6 -right-6 w-48 h-48 md:w-64 md:h-64 bg-blue-200 rounded-full blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+
+            <img
+              src={aboutImage}
+              alt="About Us"
+              className="relative rounded-xl shadow-lg w-full max-w-md lg:max-w-full object-cover"
+            />
           </div>
         </div>
       </Section>
 
       {/* Services Section */}
-      <Section id="services" background="light">
+      <Section id="services" background="light" className="py-16 md:py-24">
+        {/* Header */}
         <SectionHeader
           badge="What We Offer"
           title="Our Services"
           subtitle="Comprehensive healthcare solutions focused on maternal and child well-being"
+          className="text-center max-w-2xl mx-auto mb-12"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service) => (
             <ServiceCard
               key={service.id}
@@ -239,11 +244,12 @@ const Home = () => {
           ))}
         </div>
 
+        {/* Button */}
         <div className="text-center mt-12">
           <Button
             variant="primary"
             size="lg"
-            className="bg-purple-600 hover:bg-purple-700"
+            className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto"
           >
             View All Services
           </Button>

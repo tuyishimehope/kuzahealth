@@ -167,7 +167,7 @@ const MaritimePatientDashboard = () => {
           color="violet"
           onClick={() => navigate("/healthworker/patient")}
         >
-          New Patient
+          New Mother
         </Button>
       </Group>
     ),

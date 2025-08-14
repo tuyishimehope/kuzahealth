@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 import {
   Activity,
   AlertCircle,
@@ -92,53 +94,53 @@ const axiosInstance = {
   },
 };
 
-type StatCardProps = {
-  title: string;
-  value: number | string;
-  icon: IconType;
-  color: string; // e.g., "bg-blue-500"
-  trend?: number;
-  loading?: boolean;
-};
+// type StatCardProps = {
+//   title: string;
+//   value: number | string;
+//   icon: IconType;
+//   color: string; // e.g., "bg-blue-500"
+//   trend?: number;
+//   loading?: boolean;
+// };
 
-const StatCard: React.FC<StatCardProps> = ({
-  title,
-  value,
-  icon: Icon,
-  color,
-  trend,
-  loading,
-}) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
-    <div className="flex items-center justify-between">
-      <div className="flex-1">
-        <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-        {loading ? (
-          <div className="h-8 bg-gray-200 rounded animate-pulse w-16"></div>
-        ) : (
-          <div className="flex items-baseline space-x-2">
-            <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
-            {trend !== undefined && (
-              <span
-                className={`text-xs px-2 py-1 rounded-full ${
-                  trend > 0
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {trend > 0 ? "+" : ""}
-                {trend}%
-              </span>
-            )}
-          </div>
-        )}
-      </div>
-      <div className={`p-3 rounded-lg ${color}`}>
-        <Icon size={24} className="text-white" />
-      </div>
-    </div>
-  </div>
-);
+// const StatCard: React.FC<StatCardProps> = ({
+//   title,
+//   value,
+//   icon: Icon,
+//   color,
+//   trend,
+//   loading,
+// }) => (
+//   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+//     <div className="flex items-center justify-between">
+//       <div className="flex-1">
+//         <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
+//         {loading ? (
+//           <div className="h-8 bg-gray-200 rounded animate-pulse w-16"></div>
+//         ) : (
+//           <div className="flex items-baseline space-x-2">
+//             <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
+//             {trend !== undefined && (
+//               <span
+//                 className={`text-xs px-2 py-1 rounded-full ${
+//                   trend > 0
+//                     ? "bg-green-100 text-green-700"
+//                     : "bg-red-100 text-red-700"
+//                 }`}
+//               >
+//                 {trend > 0 ? "+" : ""}
+//                 {trend}%
+//               </span>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//       <div className={`p-3 rounded-lg ${color}`}>
+//         <Icon size={24} className="text-white" />
+//       </div>
+//     </div>
+//   </div>
+// );
 type QuickActionCardProps = {
   title: string;
   description: string;
@@ -320,27 +322,27 @@ const Dashboard = () => {
   };
 
   // Calculate statistics
-  const stats = {
-    totalHealthWorkers: data.healthWorkers.length,
-    activeHealthWorkers: data.healthWorkers.filter(
-      (hw: { service_area: any }) => hw.service_area
-    ).length,
-    totalParents: data.parents.length,
-    highRiskParents: data.parents.filter((p: { highRisk: any }) => p.highRisk)
-      .length,
-    totalInfants: data.infants.length,
-    recentInfants: data.infants.filter(
-      (i: { deliveryDate: string | number | Date }) =>
-        new Date(i.deliveryDate) >
-        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-    ).length,
-    scheduledVisits: data.visits.filter(
-      (v: { status: string }) => v.status === "Scheduled"
-    ).length,
-    completedVisits: data.visits.filter(
-      (v: { status: string }) => v.status === "Completed"
-    ).length,
-  };
+  // const stats = {
+  //   totalHealthWorkers: data.healthWorkers.length,
+  //   activeHealthWorkers: data.healthWorkers.filter(
+  //     (hw: { service_area: any }) => hw.service_area
+  //   ).length,
+  //   totalParents: data.parents.length,
+  //   highRiskParents: data.parents.filter((p: { highRisk: any }) => p.highRisk)
+  //     .length,
+  //   totalInfants: data.infants.length,
+  //   recentInfants: data.infants.filter(
+  //     (i: { deliveryDate: string | number | Date }) =>
+  //       new Date(i.deliveryDate) >
+  //       new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  //   ).length,
+  //   scheduledVisits: data.visits.filter(
+  //     (v: { status: string }) => v.status === "Scheduled"
+  //   ).length,
+  //   completedVisits: data.visits.filter(
+  //     (v: { status: string }) => v.status === "Completed"
+  //   ).length,
+  // };
 
   // Mock activities
   const activities = [
@@ -414,7 +416,7 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Health Workers"
             value={stats.totalHealthWorkers.toString()}
@@ -447,10 +449,10 @@ const Dashboard = () => {
             trend={-3}
             loading={loading}
           />
-        </div>
+        </div> */}
 
         {/* Secondary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
@@ -501,7 +503,7 @@ const Dashboard = () => {
               <MapPin size={20} className="text-blue-500" />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Quick Actions */}
         <div className="mb-8">
@@ -509,13 +511,13 @@ const Dashboard = () => {
             Quick Actions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <QuickActionCard
+            {/* <QuickActionCard
               title="Add Health Worker"
               description="Register new health worker"
               icon={UserPlus}
               color="bg-blue-500"
               onClick={() => console.log("Add health worker")}
-            />
+            /> */}
             <QuickActionCard
               title="View All Workers"
               description="Manage health worker profiles"
@@ -523,13 +525,13 @@ const Dashboard = () => {
               color="bg-green-500"
               onClick={() => console.log("View workers")}
             />
-            <QuickActionCard
+            {/* <QuickActionCard
               title="Schedule Visit"
               description="Plan upcoming care visits"
               icon={Calendar}
               color="bg-purple-500"
               onClick={() => console.log("Schedule visit")}
-            />
+            /> */}
             <QuickActionCard
               title="Generate Report"
               description="Create system analytics"
@@ -537,13 +539,13 @@ const Dashboard = () => {
               color="bg-orange-500"
               onClick={() => console.log("Generate report")}
             />
-            <QuickActionCard
+            {/* <QuickActionCard
               title="View Parents"
               description="Manage patient records"
               icon={Eye}
               color="bg-indigo-500"
               onClick={() => console.log("View parents")}
-            />
+            /> */}
             <QuickActionCard
               title="Emergency Alert"
               description="Handle urgent cases"

@@ -70,7 +70,7 @@ const Navbar = () => {
                 isScrolled || isMenuOpen ? "text-purple-600" : "text-white"
               }`}
             >
-              HealVirtue
+              KuzaCare
             </span>
           </Link>
 

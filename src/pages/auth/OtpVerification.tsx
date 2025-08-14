@@ -3,7 +3,7 @@ import type { ChangeEvent, KeyboardEvent, MouseEvent } from "react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
+import image from "@/assets/image.png";
 interface ButtonProps {
   name: React.ReactNode;
   disabled?: boolean;
@@ -212,12 +212,20 @@ const OtpVerification = () => {
           navigator("/superadmin/dashboard");
           console.log("Redirecting to admin dashboard", response.data.userType);
           return;
+        } else if (response.data.userType === "HEALTH_WORKER") {
+          navigator("/healthworker/dashboard");
+          console.log(
+            "Redirecting to health worker dashboard",
+            response.data.userType
+          );
+          return;
+        } else {
+          navigator("/data-analyst/dashboard");
+          console.log(
+            "Redirecting to data-analyst dashboard",
+            response.data.userType
+          );
         }
-        navigator("/healthworker/dashboard");
-        console.log(
-          "Redirecting to health worker dashboard",
-          response.data.userType
-        );
       } else {
         setLoading(false);
         toast.error("Invalid OTP, please try again.");
@@ -311,27 +319,23 @@ const OtpVerification = () => {
   return (
     <div className="flex min-h-screen w-full bg-gray-50">
       {/* Left side - Image Placeholder */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-500 to-purple-600">
-        <div className="flex items-center justify-center w-full">
-          <div className="text-center text-white space-y-4">
-            <div className="w-32 h-32 mx-auto bg-white/20 rounded-full flex items-center justify-center mb-8">
-              <svg
-                className="w-16 h-16"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h2 className="text-3xl font-bold">Secure Verification</h2>
-            <p className="text-lg opacity-90">Your security is our priority</p>
-          </div>
+      <div className="hidden md:block w-1/2 relative overflow-hidden">
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-purple-600/30 to-transparent" /> */}
+
+        <img
+          src={image}
+          alt="Healthcare Sign In"
+          className="h-screen object-cover w-full"
+        />
+
+        <div className="absolute bottom-10 left-10 text-white max-w-md">
+          <h2 className="text-4xl font-bold drop-shadow-lg mb-3">
+            Welcome Back
+          </h2>
+          <p className="text-lg drop-shadow-lg opacity-90 leading-relaxed">
+            Sign in to access your healthcare dashboard and continue providing
+            excellent patient care.
+          </p>
         </div>
       </div>
 

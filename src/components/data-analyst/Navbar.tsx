@@ -63,7 +63,7 @@ const Navbar = () => {
               </h1>
               <span className="mx-2 text-gray-300">|</span>
               <span className="text-sm font-medium text-gray-500">
-                Super Admin Portal
+                Data analyst Portal
               </span>
             </div>
 
@@ -102,7 +102,7 @@ const Navbar = () => {
                   AK
                 </div>
                 <span className="hidden md:inline text-sm font-medium">
-                  Admin
+                  Data-analyst
                 </span>
               </Button>
             </div>
