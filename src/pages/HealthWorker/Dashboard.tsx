@@ -10,20 +10,13 @@ import {
 import type { ApexOptions } from "apexcharts";
 import PatientChart from "../../components/HealthWorker/PatientChart";
 import Map from "../../components/HealthWorker/Map";
+import { LineChart, Line, ResponsiveContainer, Area } from "recharts";
 
 interface ProgressBarProps {
   label: string;
   percentage: number;
   color: string; // Tailwind color class like "bg-blue-500"
 }
-
-type StatCardProps = {
-  icon: React.ReactNode;
-  title: string;
-  count: number;
-  period: string;
-  color: string;
-};
 
 type AlertProps = {
   title: string;
@@ -32,7 +25,24 @@ type AlertProps = {
   onClose: () => void;
 };
 
-const StatCard = ({ icon, title, count, period, color }: StatCardProps) => {
+interface StatCardProps {
+  icon: React.ReactNode;
+  title: string;
+  count: number;
+  period: string;
+  color: string;
+  chartData?: { value: number }[]; // Optional chart data
+}
+
+
+const StatCard = ({
+  icon,
+  title,
+  count,
+  period,
+  color,
+  chartData = [],
+}: StatCardProps) => {
   return (
     <motion.div
       className="bg-white rounded-2xl shadow-sm p-6 flex flex-col cursor-pointer"
@@ -53,20 +63,51 @@ const StatCard = ({ icon, title, count, period, color }: StatCardProps) => {
         </motion.div>
       </div>
 
-      <div className="mt-2">
-        <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">
-          {title}
-        </h3>
-        <div className="flex items-baseline mt-1">
-          <span className="text-3xl md:text-4xl font-extrabold text-gray-900">
-            {count}
-          </span>
-          <span className="text-gray-400 text-sm ml-2">{period}</span>
+      <div className="flex items-center justify-between gap-4">
+        {/* Left: Stats */}
+        <div className="flex-shrink-0">
+          <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">
+            {title}
+          </h3>
+          <div className="flex items-baseline mt-1">
+            <span className="text-3xl md:text-4xl font-extrabold text-gray-900">
+              {count}
+            </span>
+            <span className="text-gray-400 text-sm ml-2">{period}</span>
+          </div>
         </div>
+
+        {/* Right: Long chart with area background */}
+        {chartData.length > 0 && (
+          <div className="flex-1 h-16">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                {/* Low opacity background */}
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="none"
+                  fill="#6366F1"
+                  fillOpacity={0.15}
+                />
+                {/* Main trend line */}
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#6366F1"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     </motion.div>
   );
 };
+
+
 
 const Alert = ({ title, message, isVisible, onClose }: AlertProps) => {
   if (!isVisible) return null;
@@ -235,6 +276,14 @@ const Dashboard = (): JSX.Element => {
             count={13}
             period="This Month"
             color="bg-purple-500"
+            chartData={[
+              { value: 5 },
+              { value: 8 },
+              { value: 6 },
+              { value: 10 },
+              { value: 12 },
+              { value: 9 },
+            ]}
           />
 
           <StatCard
@@ -243,6 +292,14 @@ const Dashboard = (): JSX.Element => {
             count={123}
             period="This Month"
             color="bg-green-500"
+            chartData={[
+              { value: 5 },
+              { value: 8 },
+              { value: 6 },
+              { value: 10 },
+              { value: 12 },
+              { value: 9 },
+            ]}
           />
 
           <StatCard
@@ -251,6 +308,14 @@ const Dashboard = (): JSX.Element => {
             count={13}
             period="This Month"
             color="bg-purple-400"
+            chartData={[
+              { value: 5 },
+              { value: 8 },
+              { value: 6 },
+              { value: 10 },
+              { value: 12 },
+              { value: 9 },
+            ]}
           />
         </div>
       </div>
