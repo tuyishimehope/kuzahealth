@@ -426,7 +426,7 @@ const SignUp = (): JSX.Element => {
 
       {/* Left side - Image (fixed) */}
       <motion.div
-        className="hidden lg:block lg:w-2/5 relative overflow-hidden h-screen sticky top-0"
+        className="hidden lg:block lg:w-2/5 relative overflow-hidden h-screen top-0"
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}

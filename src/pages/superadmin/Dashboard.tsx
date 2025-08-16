@@ -3,10 +3,12 @@
 import {
   Activity,
   AlertCircle,
+  AlertTriangle,
   Baby,
   BarChart3,
   Calendar,
   CheckCircle2,
+  Database,
   Eye,
   MapPin,
   RefreshCw,
@@ -16,6 +18,8 @@ import {
 import { useEffect, useState } from "react";
 import React from "react";
 import type { IconType } from "react-icons";
+import { audit } from "./Audit";
+import SystemMonitor from "./SystemMonitor";
 // Mock axios instance - replace with your actual axiosInstance
 const axiosInstance = {
   get: async (url: any) => {
@@ -179,47 +183,56 @@ type Activity = {
   time: string;
   color: string; // Tailwind color class like bg-blue-500
 };
+// RecentActivities.tsx
 
-type ActivityCardProps = {
+type RecentActivitiesProps = {
   activities: Activity[];
   loading?: boolean;
 };
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ activities, loading }) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-    <div className="flex items-center justify-between mb-4">
-      <h3 className="text-lg font-semibold text-gray-900">Recent Activities</h3>
-      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-        View All
-      </button>
+export const RecentActivities: React.FC<RecentActivitiesProps> = ({
+  activities,
+  loading,
+}) => {
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">
+          Recent Activities
+        </h3>
+        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+          View All
+        </button>
+      </div>
+      <div className="space-y-3">
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                <div className="flex-1">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
+                  <div className="h-3 bg-gray-200 rounded animate-pulse w-24"></div>
+                </div>
+              </div>
+            ))
+          : activities.map((activity, index) => (
+              <div key={index} className="flex items-center space-x-3">
+                <div className={`p-2 rounded-full ${activity.color}`}>
+                  <activity.icon size={16} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    {activity.title}
+                  </p>
+                  <p className="text-xs text-gray-500">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+      </div>
     </div>
-    <div className="space-y-3">
-      {loading
-        ? Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
-              <div className="flex-1">
-                <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
-                <div className="h-3 bg-gray-200 rounded animate-pulse w-24"></div>
-              </div>
-            </div>
-          ))
-        : activities.map((activity, index) => (
-            <div key={index} className="flex items-center space-x-3">
-              <div className={`p-2 rounded-full ${activity.color}`}>
-                <activity.icon size={16} className="text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  {activity.title}
-                </p>
-                <p className="text-xs text-gray-500">{activity.time}</p>
-              </div>
-            </div>
-          ))}
-    </div>
-  </div>
-);
+  );
+};
+
 type Visit = {
   type: string;
   time: string;
@@ -238,9 +251,6 @@ const UpcomingVisitsCard: React.FC<UpcomingVisitsCardProps> = ({
   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
     <div className="flex items-center justify-between mb-4">
       <h3 className="text-lg font-semibold text-gray-900">Upcoming Visits</h3>
-      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-        Schedule New
-      </button>
     </div>
     <div className="space-y-3">
       {loading
@@ -415,96 +425,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stats Grid */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            title="Health Workers"
-            value={stats.totalHealthWorkers.toString()}
-            icon={Users}
-            color="bg-blue-500"
-            trend={5}
-            loading={loading}
-          />
-          <StatCard
-            title="Active Parents"
-            value={stats.totalParents.toString()}
-            icon={Activity}
-            color="bg-green-500"
-            trend={12}
-            loading={loading}
-          />
-          <StatCard
-            title="Total Infants"
-            value={stats.totalInfants.toString()}
-            icon={Baby}
-            color="bg-purple-500"
-            trend={8}
-            loading={loading}
-          />
-          <StatCard
-            title="Scheduled Visits"
-            value={stats.scheduledVisits.toString()}
-            icon={Calendar}
-            color="bg-orange-500"
-            trend={-3}
-            loading={loading}
-          />
-        </div> */}
-
-        {/* Secondary Stats */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600 uppercase tracking-wide">
-                  High Risk
-                </p>
-                <p className="text-lg font-bold text-red-600">
-                  {stats.highRiskParents}
-                </p>
-              </div>
-              <AlertCircle size={20} className="text-red-500" />
-            </div>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600 uppercase tracking-wide">
-                  Completed
-                </p>
-                <p className="text-lg font-bold text-green-600">
-                  {stats.completedVisits}
-                </p>
-              </div>
-              <CheckCircle2 size={20} className="text-green-500" />
-            </div>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600 uppercase tracking-wide">
-                  Recent Births
-                </p>
-                <p className="text-lg font-bold text-purple-600">
-                  {stats.recentInfants}
-                </p>
-              </div>
-              <Baby size={20} className="text-purple-500" />
-            </div>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600 uppercase tracking-wide">
-                  Service Areas
-                </p>
-                <p className="text-lg font-bold text-blue-600">3</p>
-              </div>
-              <MapPin size={20} className="text-blue-500" />
-            </div>
-          </div>
-        </div> */}
-
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -558,9 +478,10 @@ const Dashboard = () => {
 
         {/* Activity and Visits */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ActivityCard activities={activities} loading={loading} />
+          <RecentActivities activities={activities} loading={loading} />
           <UpcomingVisitsCard visits={upcomingVisits} loading={loading} />
         </div>
+      <SystemMonitor/>
       </div>
     </div>
   );
