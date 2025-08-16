@@ -19,7 +19,7 @@ import {
 } from "@mui/x-charts";
 import { useQuery } from "@tanstack/react-query";
 import React, { useMemo } from "react";
-import KPICard from "./KpiCard";
+import KPICard from "./KPICard";
 
 
 
