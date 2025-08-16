@@ -89,53 +89,7 @@ interface KPI {
   icon: React.ReactNode;
   color?: "primary" | "success" | "warning" | "error";
 }
-// KPI Card
-// const KPICard: React.FC<{
-//   title: string;
-//   value: string | number;
-//   change?: { value: number; isUp: boolean };
-//   icon: React.ReactNode;
-//   color?: "primary" | "success" | "warning" | "error";
-// }> = ({ title, value, change, icon, color }) => (
-//   <Card
-//     elevation={2}
-//     sx={{ height: "100%", borderLeft: 4, borderLeftColor: `${color}.main` }}
-//   >
-//     <CardContent>
-//       <Stack
-//         direction="row"
-//         justifyContent="space-between"
-//         alignItems="flex-start"
-//       >
-//         <Box>
-//           <Typography color="text.secondary" variant="body2" gutterBottom>
-//             {title}
-//           </Typography>
-//           <Typography variant="h4" component="h3" fontWeight="bold">
-//             {value}
-//           </Typography>
-//           {change && (
-//             <Stack direction="row" alignItems="center" spacing={0.5} mt={1}>
-//               {change.isUp ? (
-//                 <TrendingUpIcon color="success" fontSize="small" />
-//               ) : (
-//                 <TrendingDownIcon color="error" fontSize="small" />
-//               )}
-//               <Typography
-//                 variant="body2"
-//                 color={change.isUp ? "success.main" : "error.main"}
-//                 fontWeight="medium"
-//               >
-//                 {change.value.toFixed(1)}%
-//               </Typography>
-//             </Stack>
-//           )}
-//         </Box>
-//         <Box sx={{ color: `${color}.main`, opacity: 0.7 }}>{icon}</Box>
-//       </Stack>
-//     </CardContent>
-//   </Card>
-// );
+
 
 export default function Dashboard() {
   const {
