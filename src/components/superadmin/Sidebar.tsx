@@ -6,7 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
-  FileText,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -45,12 +44,12 @@ const sidebarLinks = [
     icon: Baby,
     description: "View Mothers",
   },
-  {
-    href: "/superadmin/reports",
-    label: "Reports",
-    icon: FileText,
-    description: "Analytics & Insights",
-  },
+  // {
+  //   href: "/superadmin/reports",
+  //   label: "Reports",
+  //   icon: FileText,
+  //   description: "Analytics & Insights",
+  // },
   {
     href: "/superadmin/audit",
     label: "Audit",

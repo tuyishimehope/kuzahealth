@@ -10,12 +10,13 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconDownload, IconEye, IconPlus } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
 } from "mantine-react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export interface Patient {
@@ -44,36 +45,33 @@ const MaritimePatientDashboard = () => {
   const theme = useMantineTheme();
   const navigate = useNavigate();
 
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [globalFilter] = useState("");
   const [selectedStatus] = useState<"all" | Patient["maritalStatus"]>("all");
   const [rowSelection, setRowSelection] = useState({});
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await axiosInstance.get("/api/parents");
-        setPatients(response.data);
-      } catch (err) {
-        setError("Failed to fetch patients");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPatients = async (): Promise<Patient[]> => {
+    const response = await axiosInstance.get("/api/parents");
+    return response.data;
+  };
 
-    fetchPatients();
-  }, []);
+  const {
+    data: patients = [], // default to empty array
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["patients"],
+    queryFn: fetchPatients,
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+  });
 
   const columns = useMemo<MRT_ColumnDef<Patient>[]>(
     () => [
-      {
-        accessorKey: "id",
-        header: "ID",
-        size: 100,
-      },
+      // {
+      //   accessorKey: "id",
+      //   header: "ID",
+      //   size: 100,
+      // },
       {
         accessorKey: "firstName",
         header: "First Name",
@@ -132,7 +130,7 @@ const MaritimePatientDashboard = () => {
     enableRowActions: true,
     positionActionsColumn: "last",
     globalFilterFn: "fuzzy",
-    state: { isLoading:loading,globalFilter, rowSelection },
+    state: { isLoading: isLoading, globalFilter, rowSelection },
     onRowSelectionChange: setRowSelection,
     displayColumnDefOptions: {
       "mrt-row-actions": { header: "Actions", size: 100 },
@@ -142,7 +140,7 @@ const MaritimePatientDashboard = () => {
         <Button
           size="xs"
           variant="subtle"
-          color="blue"
+          color="purple"
           leftIcon={<IconEye size={14} />}
           onClick={() =>
             navigate(`/healthworker/view-patient/${row.original.id}`)
@@ -157,7 +155,7 @@ const MaritimePatientDashboard = () => {
         <Button
           leftIcon={<IconDownload size={20} />}
           variant="light"
-          color="blue"
+          color="purple"
           onClick={() => console.log("Export data")}
         >
           Export
@@ -173,7 +171,6 @@ const MaritimePatientDashboard = () => {
     ),
   });
 
-
   if (error) {
     return (
       <Box
@@ -188,7 +185,7 @@ const MaritimePatientDashboard = () => {
           <Title order={3} color="red">
             We've hit rough waters!
           </Title>
-          <Text my="md">{error}</Text>
+          <Text my="md">{isError}</Text>
           <Button color="red" onClick={() => window.location.reload()}>
             Try Again
           </Button>

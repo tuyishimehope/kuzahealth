@@ -177,7 +177,7 @@ const SidebarLink = ({ link }: { link: typeof sidebarLinks[0] }) => {
         {!collapsed && (
           <div>
             <h2 className="font-bold text-slate-800 text-lg">Kuza Care</h2>
-            <p className="text-xs text-slate-500">Super Admin Portal</p>
+            <p className="text-xs text-slate-500">Data analyst Portal</p>
           </div>
         )}
       </div>

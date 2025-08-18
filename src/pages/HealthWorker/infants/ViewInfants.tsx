@@ -76,7 +76,8 @@ const ViewInfants = () => {
         <Tooltip label="View Details">
           <ActionIcon
             variant="light"
-            color="blue"
+            color="purple"
+            className="bg-purple-600 hover:bg-purple-500"
             onClick={() =>
               navigate( "/healthworker/view-infants/"+ row.original.id)
             }
@@ -104,7 +105,7 @@ const ViewInfants = () => {
     <Box p="md">
       <Group position="apart" mb="md">
         <Title order={2}>Infants List</Title>
-        <Button leftIcon={<IconPlus size={16} />} onClick={() => navigate("/healthworker/add-infant")}>Add New Infant</Button>
+        <Button leftIcon={<IconPlus size={16} />} onClick={() => navigate("/healthworker/add-infant")} className="bg-purple-600 hover:bg-purple-500">Add New Infant</Button>
       </Group>
 
       <Paper withBorder>

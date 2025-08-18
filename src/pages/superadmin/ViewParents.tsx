@@ -82,9 +82,13 @@ const ViewParents = () => {
         header: "High Risk?",
         Cell: ({ cell }) =>
           cell.getValue<boolean>() ? (
-            <Badge color="red" variant="light">Yes</Badge>
+            <Badge color="red" variant="light">
+              Yes
+            </Badge>
           ) : (
-            <Badge color="green" variant="light">No</Badge>
+            <Badge color="green" variant="light">
+              No
+            </Badge>
           ),
       },
     ],
@@ -93,24 +97,88 @@ const ViewParents = () => {
 
   const handleExportPDF = () => {
     const doc = new jsPDF();
-    doc.text("Parents Report", 14, 15);
+    const pageWidth = doc.internal.pageSize.width;
 
+    // === Header ===
+    doc.setFillColor(124, 58, 237); // Purple
+    doc.rect(0, 0, pageWidth, 30, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.text("Parents Report", 14, 20);
+
+    // === Summary Section ===
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    const currentY = 45;
+
+    doc.text(`Total Parents: ${patients.length}`, 14, currentY);
+    doc.text(
+      `High-Risk Cases: ${patients.filter((p) => p.highRisk).length}`,
+      14,
+      currentY + 10
+    );
+    doc.text(
+      `Blood Groups: ${
+        [...new Set(patients.map((p) => p.bloodGroup || "-"))].length
+      }`,
+      14,
+      currentY + 20
+    );
+    doc.text(
+      `Report Generated: ${new Date().toLocaleDateString()}`,
+      14,
+      currentY + 30
+    );
+
+    // === Table Data ===
     const tableData = patients.map((p) => [
       p.firstName,
       p.lastName,
-      p.phone,
+      p.phone || "-",
       p.expectedDeliveryDate
         ? new Date(p.expectedDeliveryDate).toLocaleDateString()
         : "-",
-      p.bloodGroup,
+      p.bloodGroup || "-",
       p.highRisk ? "Yes" : "No",
     ]);
 
     autoTable(doc, {
-      startY: 20,
-      head: [["First Name", "Last Name", "Phone", "EDD", "Blood Group", "High Risk?"]],
+      startY: currentY + 45,
+      head: [
+        [
+          "First Name",
+          "Last Name",
+          "Phone",
+          "EDD",
+          "Blood Group",
+          "High Risk?",
+        ],
+      ],
       body: tableData,
+      theme: "grid",
+      headStyles: {
+        fillColor: [124, 58, 237], // Purple header
+        textColor: [255, 255, 255],
+        halign: "center",
+      },
+      styles: { fontSize: 9 },
+      alternateRowStyles: { fillColor: [245, 243, 255] }, // light purple background
     });
+
+    // === Footer (Page Number) ===
+    // const pageCount = doc.internal.getNumberOfPages();
+    const pageCount = (doc as any).internal.getNumberOfPages();
+
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(150);
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        pageWidth - 30,
+        doc.internal.pageSize.height - 10
+      );
+    }
 
     doc.save("parents-report.pdf");
   };
@@ -140,7 +208,8 @@ const ViewParents = () => {
         <Button
           leftIcon={<IconDownload size={20} />}
           variant="filled"
-          color="blue"
+          color="purple"
+          className="bg-purple-600 hover:bg-purple-500"
           onClick={handleExportPDF}
         >
           Export PDF
@@ -163,7 +232,9 @@ const ViewParents = () => {
           <Title order={3} color="red">
             We've hit rough waters!
           </Title>
-          <Text my="md">{(error as Error)?.message || "Failed to fetch patients"}</Text>
+          <Text my="md">
+            {(error as Error)?.message || "Failed to fetch patients"}
+          </Text>
           <Button color="red" onClick={() => refetch()}>
             Try Again
           </Button>

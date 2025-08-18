@@ -131,12 +131,12 @@ const AddHealthWorker = (): JSX.Element => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <User className="w-8 h-8 text-blue-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-violet-100 rounded-full mb-4">
+            <User className="w-8 h-8 text-violet-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Register Health Worker
@@ -270,11 +270,11 @@ const AddHealthWorker = (): JSX.Element => {
               </div>
 
               {/* Password Requirements */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-                <h4 className="text-sm font-medium text-blue-800 mb-2">
+              <div className="bg-violet-50 border border-violet-200 rounded-lg p-4 mb-8">
+                <h4 className="text-sm font-medium text-violet-800 mb-2">
                   Password Requirements:
                 </h4>
-                <ul className="text-xs text-blue-700 space-y-1">
+                <ul className="text-xs text-violet-700 space-y-1">
                   <li>• At least 6 characters long</li>
                   <li>• Include both letters and numbers</li>
                   <li>• Use special characters for added security</li>
@@ -286,7 +286,7 @@ const AddHealthWorker = (): JSX.Element => {
                 <motion.div className="flex-1 pt-4" variants={itemVariants}>
                   <AnimatedButton
                     type="submit"
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-violet-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     Create Health Worker Account
                   </AnimatedButton>

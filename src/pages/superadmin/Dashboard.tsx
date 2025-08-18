@@ -3,24 +3,16 @@
 import {
   Activity,
   AlertCircle,
-  AlertTriangle,
-  Baby,
   BarChart3,
-  Calendar,
   CheckCircle2,
-  Database,
-  Eye,
-  MapPin,
   RefreshCw,
   UserPlus,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { IconType } from "react-icons";
-import { audit } from "./Audit";
 import SystemMonitor from "./SystemMonitor";
-// Mock axios instance - replace with your actual axiosInstance
+
 const axiosInstance = {
   get: async (url: any) => {
     // Simulate API delay
@@ -98,53 +90,6 @@ const axiosInstance = {
   },
 };
 
-// type StatCardProps = {
-//   title: string;
-//   value: number | string;
-//   icon: IconType;
-//   color: string; // e.g., "bg-blue-500"
-//   trend?: number;
-//   loading?: boolean;
-// };
-
-// const StatCard: React.FC<StatCardProps> = ({
-//   title,
-//   value,
-//   icon: Icon,
-//   color,
-//   trend,
-//   loading,
-// }) => (
-//   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
-//     <div className="flex items-center justify-between">
-//       <div className="flex-1">
-//         <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-//         {loading ? (
-//           <div className="h-8 bg-gray-200 rounded animate-pulse w-16"></div>
-//         ) : (
-//           <div className="flex items-baseline space-x-2">
-//             <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
-//             {trend !== undefined && (
-//               <span
-//                 className={`text-xs px-2 py-1 rounded-full ${
-//                   trend > 0
-//                     ? "bg-green-100 text-green-700"
-//                     : "bg-red-100 text-red-700"
-//                 }`}
-//               >
-//                 {trend > 0 ? "+" : ""}
-//                 {trend}%
-//               </span>
-//             )}
-//           </div>
-//         )}
-//       </div>
-//       <div className={`p-3 rounded-lg ${color}`}>
-//         <Icon size={24} className="text-white" />
-//       </div>
-//     </div>
-//   </div>
-// );
 type QuickActionCardProps = {
   title: string;
   description: string;
@@ -161,18 +106,31 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
   color,
 }) => (
   <div
-    className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 cursor-pointer group"
+    className="bg-white rounded-2xl p-6 shadow hover:shadow-lg border border-gray-100 
+             transition-all duration-200 cursor-pointer group hover:-translate-y-1"
     onClick={onClick}
   >
     <div className="flex items-center space-x-4">
       <div
-        className={`p-3 rounded-lg ${color} group-hover:scale-110 transition-transform duration-200`}
+        className={`p-3 rounded-xl ${color} bg-gradient-to-tr from-${color}-500 to-${color}-400
+                  shadow-inner group-hover:scale-110 transition-transform`}
       >
         <Icon size={20} className="text-white" />
       </div>
       <div className="flex-1">
         <h4 className="font-semibold text-gray-900 mb-1">{title}</h4>
         <p className="text-sm text-gray-600">{description}</p>
+      </div>
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+        <svg
+          className="w-4 h-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       </div>
     </div>
   </div>
@@ -181,9 +139,8 @@ type Activity = {
   icon: IconType;
   title: string;
   time: string;
-  color: string; // Tailwind color class like bg-blue-500
+  color: string;
 };
-// RecentActivities.tsx
 
 type RecentActivitiesProps = {
   activities: Activity[];
@@ -205,22 +162,26 @@ export const RecentActivities: React.FC<RecentActivitiesProps> = ({
         </button>
       </div>
       <div className="space-y-3">
-        {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
-                <div className="flex-1">
-                  <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
-                  <div className="h-3 bg-gray-200 rounded animate-pulse w-24"></div>
-                </div>
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
+                <div className="h-3 bg-gray-200 rounded animate-pulse w-24"></div>
               </div>
-            ))
-          : activities.map((activity, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <div className={`p-2 rounded-full ${activity.color}`}>
-                  <activity.icon size={16} className="text-white" />
+            </div>
+          ))
+        ) : (
+          <div className="relative pl-6 border-l border-gray-200 space-y-4">
+            {activities.map((activity, i) => (
+              <div key={i} className="flex items-start space-x-3">
+                <div
+                  className={`absolute -left-3 top-1 w-6 h-6 rounded-full flex items-center justify-center ${activity.color}`}
+                >
+                  <activity.icon size={14} className="text-white" />
                 </div>
-                <div className="flex-1">
+                <div>
                   <p className="text-sm font-medium text-gray-900">
                     {activity.title}
                   </p>
@@ -228,6 +189,8 @@ export const RecentActivities: React.FC<RecentActivitiesProps> = ({
                 </div>
               </div>
             ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -273,11 +236,14 @@ const UpcomingVisitsCard: React.FC<UpcomingVisitsCardProps> = ({
                   <p className="text-xs text-gray-500">{visit.time}</p>
                 </div>
                 <span
-                  className={`px-2 py-1 text-xs rounded-full ${
-                    visit.status === "Confirmed"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium
+  ${
+    visit.status === "Confirmed"
+      ? "bg-green-100 text-green-700"
+      : visit.status === "Pending"
+      ? "bg-yellow-100 text-yellow-700"
+      : "bg-red-100 text-red-700"
+  }`}
                 >
                   {visit.status}
                 </span>
@@ -331,30 +297,6 @@ const Dashboard = () => {
     await fetchDashboardData();
   };
 
-  // Calculate statistics
-  // const stats = {
-  //   totalHealthWorkers: data.healthWorkers.length,
-  //   activeHealthWorkers: data.healthWorkers.filter(
-  //     (hw: { service_area: any }) => hw.service_area
-  //   ).length,
-  //   totalParents: data.parents.length,
-  //   highRiskParents: data.parents.filter((p: { highRisk: any }) => p.highRisk)
-  //     .length,
-  //   totalInfants: data.infants.length,
-  //   recentInfants: data.infants.filter(
-  //     (i: { deliveryDate: string | number | Date }) =>
-  //       new Date(i.deliveryDate) >
-  //       new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  //   ).length,
-  //   scheduledVisits: data.visits.filter(
-  //     (v: { status: string }) => v.status === "Scheduled"
-  //   ).length,
-  //   completedVisits: data.visits.filter(
-  //     (v: { status: string }) => v.status === "Completed"
-  //   ).length,
-  // };
-
-  // Mock activities
   const activities = [
     {
       title: "New health worker registered",
@@ -382,7 +324,6 @@ const Dashboard = () => {
     },
   ];
 
-  // Mock upcoming visits
   const upcomingVisits = data.visits
     .filter((v: { status: string }) => v.status === "Scheduled")
     .slice(0, 5)
@@ -410,19 +351,15 @@ const Dashboard = () => {
               Monitor and manage healthcare operations
             </p>
           </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-            >
-              <RefreshCw
-                size={16}
-                className={refreshing ? "animate-spin" : ""}
-              />
-              <span>Refresh</span>
-            </button>
-          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600 text-white 
+             hover:bg-blue-700 transition disabled:opacity-50 shadow-sm"
+          >
+            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
+            <span>Refresh</span>
+          </button>
         </div>
 
         {/* Quick Actions */}
@@ -430,58 +367,66 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Quick Actions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* <QuickActionCard
-              title="Add Health Worker"
-              description="Register new health worker"
-              icon={UserPlus}
-              color="bg-blue-500"
-              onClick={() => console.log("Add health worker")}
-            /> */}
-            <QuickActionCard
-              title="View All Workers"
-              description="Manage health worker profiles"
-              icon={Users}
-              color="bg-green-500"
-              onClick={() => console.log("View workers")}
-            />
-            {/* <QuickActionCard
-              title="Schedule Visit"
-              description="Plan upcoming care visits"
-              icon={Calendar}
-              color="bg-purple-500"
-              onClick={() => console.log("Schedule visit")}
-            /> */}
-            <QuickActionCard
-              title="Generate Report"
-              description="Create system analytics"
-              icon={BarChart3}
-              color="bg-orange-500"
-              onClick={() => console.log("Generate report")}
-            />
-            {/* <QuickActionCard
-              title="View Parents"
-              description="Manage patient records"
-              icon={Eye}
-              color="bg-indigo-500"
-              onClick={() => console.log("View parents")}
-            /> */}
-            <QuickActionCard
-              title="Emergency Alert"
-              description="Handle urgent cases"
-              icon={AlertCircle}
-              color="bg-red-500"
-              onClick={() => console.log("Emergency alert")}
-            />
-          </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <QuickActionCard
+    title="Manage Health Workers"
+    description="Add, update, or remove health worker accounts"
+    icon={Users}
+    color="bg-green-600"
+    onClick={() => console.log("Manage workers")}
+  />
+
+  <QuickActionCard
+    title="Audit Logs"
+    description="Review all system activity for compliance & HIPAA"
+    icon={Activity}
+    color="bg-blue-600"
+    onClick={() => console.log("Open audit logs")}
+  />
+
+  <QuickActionCard
+    title="Access Control"
+    description="Assign roles, permissions, and security policies"
+    icon={UserPlus}
+    color="bg-purple-600"
+    onClick={() => console.log("Manage access control")}
+  />
+
+  <QuickActionCard
+    title="Analytics & Reports"
+    description="Generate insights on visits, workers, and patients"
+    icon={BarChart3}
+    color="bg-orange-600"
+    onClick={() => console.log("Generate analytics")}
+  />
+
+  <QuickActionCard
+    title="Emergency Broadcast"
+    description="Send alerts to all health workers instantly"
+    icon={AlertCircle}
+    color="bg-red-600"
+    onClick={() => console.log("Send broadcast")}
+  />
+
+  <QuickActionCard
+    title="System Settings"
+    description="Configure integrations, backups, and policies"
+    icon={CheckCircle2}
+    color="bg-gray-700"
+    onClick={() => console.log("System settings")}
+  />
+</div>
+
+
         </div>
 
+        <SystemMonitor />
         {/* Activity and Visits */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RecentActivities activities={activities} loading={loading} />
           <UpcomingVisitsCard visits={upcomingVisits} loading={loading} />
         </div>
-      <SystemMonitor/>
       </div>
     </div>
   );

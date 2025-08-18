@@ -41,6 +41,7 @@ const AddInfant = () => {
 
   const onSubmit = async (data: InfantForm) => {
     try {
+      console.log("submitted")
       await axiosInstance.post("/api/infants", data);
       navigate("/healthworker/view-infants");
     } catch (error) {
@@ -50,13 +51,13 @@ const AddInfant = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
             <svg
-              className="w-8 h-8 text-blue-600"
+              className="w-8 h-8 text-purple-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -80,12 +81,12 @@ const AddInfant = () => {
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
           <div className="p-8">
-            <div onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {/* Personal Information Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
                   <svg
-                    className="w-5 h-5 text-blue-600"
+                    className="w-5 h-5 text-purple-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -125,7 +126,7 @@ const AddInfant = () => {
                       </div>
                       <input
                         {...register("firstName")}
-                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
+                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
                         placeholder="Enter first name"
                       />
                     </div>
@@ -161,7 +162,7 @@ const AddInfant = () => {
                       </div>
                       <input
                         {...register("lastName")}
-                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
+                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
                         placeholder="Enter last name"
                       />
                     </div>
@@ -200,7 +201,7 @@ const AddInfant = () => {
                       <input
                         type="date"
                         {...register("dateOfBirth")}
-                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
+                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
                       />
                     </div>
                     {errors.dateOfBirth && (
@@ -235,7 +236,7 @@ const AddInfant = () => {
                       </div>
                       <select
                         {...register("gender")}
-                        className="block w-full pl-10 pr-8 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none appearance-none bg-white cursor-pointer"
+                        className="block w-full pl-10 pr-8 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none appearance-none bg-white cursor-pointer"
                       >
                         <option value="">Select gender</option>
                         <option value="FEMALE">Female</option>
@@ -273,7 +274,7 @@ const AddInfant = () => {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
                   <svg
-                    className="w-5 h-5 text-blue-600"
+                    className="w-5 h-5 text-purple-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -315,7 +316,7 @@ const AddInfant = () => {
                         type="number"
                         step="0.1"
                         {...register("birthWeight")}
-                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
+                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
                         placeholder="Weight in kg (e.g., 3.2)"
                       />
                     </div>
@@ -353,7 +354,7 @@ const AddInfant = () => {
                         type="number"
                         step="0.1"
                         {...register("birthHeight")}
-                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
+                        className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
                         placeholder="Height in cm (e.g., 50.0)"
                       />
                     </div>
@@ -390,7 +391,7 @@ const AddInfant = () => {
                     </div>
                     <input
                       {...register("bloodGroup")}
-                      className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
+                      className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none"
                       placeholder="e.g., A+, B-, O+, AB-"
                     />
                   </div>
@@ -409,7 +410,7 @@ const AddInfant = () => {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
                   <svg
-                    className="w-5 h-5 text-blue-600"
+                    className="w-5 h-5 text-purple-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -448,7 +449,7 @@ const AddInfant = () => {
                     </div>
                     <select
                       {...register("motherId")}
-                      className="block w-full pl-10 pr-8 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none appearance-none bg-white cursor-pointer"
+                      className="block w-full pl-10 pr-8 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none appearance-none bg-white cursor-pointer"
                     >
                       <option value="">Select mother</option>
                       {mothers.map((mother) => (
@@ -505,7 +506,7 @@ const AddInfant = () => {
                     </div>
                     <textarea
                       {...register("specialConditions")}
-                      className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 focus:outline-none resize-none"
+                      className="block w-full pl-10 pr-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none resize-none"
                       placeholder="Any special medical conditions, allergies, or notes..."
                       rows={4}
                     />
@@ -549,7 +550,7 @@ const AddInfant = () => {
                   )}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
 

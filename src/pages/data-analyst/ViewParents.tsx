@@ -14,12 +14,12 @@ import {
   Tooltip,
   ThemeIcon,
 } from "@mantine/core";
-import { 
-  IconDownload, 
-  IconRefresh, 
-  IconUsers, 
+import {
+  IconDownload,
+  IconRefresh,
+  IconUsers,
   IconAlertTriangle,
-  IconUserPlus 
+  IconUserPlus,
 } from "@tabler/icons-react";
 import {
   MantineReactTable,
@@ -79,8 +79,8 @@ const ViewParents = () => {
   // Statistics
   const stats = useMemo(() => {
     const totalPatients = patients.length;
-    const highRiskCount = patients.filter(p => p.highRisk).length;
-    const upcomingDeliveries = patients.filter(p => {
+    const highRiskCount = patients.filter((p) => p.highRisk).length;
+    const upcomingDeliveries = patients.filter((p) => {
       if (!p.expectedDeliveryDate) return false;
       const edd = new Date(p.expectedDeliveryDate);
       const now = new Date();
@@ -94,18 +94,18 @@ const ViewParents = () => {
 
   const columns = useMemo<MRT_ColumnDef<Patient>[]>(
     () => [
-      { 
-        accessorKey: "firstName", 
+      {
+        accessorKey: "firstName",
         header: "First Name",
         size: 120,
       },
-      { 
-        accessorKey: "lastName", 
+      {
+        accessorKey: "lastName",
         header: "Last Name",
         size: 120,
       },
-      { 
-        accessorKey: "phone", 
+      {
+        accessorKey: "phone",
         header: "Phone",
         size: 130,
         Cell: ({ cell }) => (
@@ -120,18 +120,23 @@ const ViewParents = () => {
         size: 140,
         Cell: ({ cell }) => {
           const date = cell.getValue<string>();
-          if (!date) return <Text size="sm" color="dimmed">-</Text>;
-          
+          if (!date)
+            return (
+              <Text size="sm" color="dimmed">
+                -
+              </Text>
+            );
+
           const edd = new Date(date);
           const now = new Date();
           const diffTime = edd.getTime() - now.getTime();
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          
+
           let color = "gray";
           if (diffDays < 0) color = "red";
           else if (diffDays <= 7) color = "orange";
           else if (diffDays <= 30) color = "yellow";
-          
+
           return (
             <Stack spacing={2}>
               <Text size="sm" weight={500}>
@@ -146,16 +151,12 @@ const ViewParents = () => {
           );
         },
       },
-      { 
-        accessorKey: "bloodGroup", 
+      {
+        accessorKey: "bloodGroup",
         header: "Blood Group",
         size: 100,
         Cell: ({ cell }) => (
-          <Badge 
-            variant="outline" 
-            color="violet" 
-            size="sm"
-          >
+          <Badge variant="outline" color="violet" size="sm">
             {cell.getValue<string>()}
           </Badge>
         ),
@@ -167,11 +168,13 @@ const ViewParents = () => {
         Cell: ({ cell }) => {
           const isHighRisk = cell.getValue<boolean>();
           return (
-            <Badge 
-              color={isHighRisk ? "red" : "teal"} 
+            <Badge
+              color={isHighRisk ? "red" : "teal"}
               variant={isHighRisk ? "filled" : "light"}
               size="sm"
-              leftSection={isHighRisk ? <IconAlertTriangle size={12} /> : undefined}
+              leftSection={
+                isHighRisk ? <IconAlertTriangle size={12} /> : undefined
+              }
             >
               {isHighRisk ? "High Risk" : "Normal"}
             </Badge>
@@ -184,16 +187,20 @@ const ViewParents = () => {
 
   const handleExportPDF = () => {
     const doc = new jsPDF();
-    
+
     // Header
     doc.setFontSize(18);
     doc.setTextColor(102, 51, 153); // Purple color
     doc.text("Parents Report", 14, 20);
-    
+
     // Stats
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Total Patients: ${stats.totalPatients} | High Risk: ${stats.highRiskCount} | Upcoming Deliveries: ${stats.upcomingDeliveries}`, 14, 30);
+    doc.text(
+      `Total Patients: ${stats.totalPatients} | High Risk: ${stats.highRiskCount} | Upcoming Deliveries: ${stats.upcomingDeliveries}`,
+      14,
+      30
+    );
 
     const tableData = patients.map((p) => [
       p.firstName,
@@ -208,17 +215,26 @@ const ViewParents = () => {
 
     autoTable(doc, {
       startY: 40,
-      head: [["First Name", "Last Name", "Phone", "Expected Delivery", "Blood Group", "Risk Level"]],
+      head: [
+        [
+          "First Name",
+          "Last Name",
+          "Phone",
+          "Expected Delivery",
+          "Blood Group",
+          "Risk Level",
+        ],
+      ],
       body: tableData,
       theme: "striped",
-      headStyles: { 
+      headStyles: {
         fillColor: [102, 51, 153], // Purple header
         textColor: 255,
       },
       alternateRowStyles: { fillColor: [249, 246, 255] }, // Light purple
     });
 
-    doc.save(`parents-report-${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`parents-report-${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
   const table = useMantineReactTable({
@@ -236,9 +252,9 @@ const ViewParents = () => {
       density: "md",
       // pagination: { pageSize: 25 },
     },
-    state: { 
-      isLoading, 
-      globalFilter, 
+    state: {
+      isLoading,
+      globalFilter,
       rowSelection,
       showProgressBars: isFetching,
     },
@@ -260,8 +276,9 @@ const ViewParents = () => {
     },
     mantineTableBodyRowProps: ({ row }) => ({
       sx: {
-        backgroundColor: row.index % 2 === 0 ? theme.white : theme.colors.gray[0],
-        '&:hover': {
+        backgroundColor:
+          row.index % 2 === 0 ? theme.white : theme.colors.gray[0],
+        "&:hover": {
           backgroundColor: theme.colors.violet[0],
         },
       },
@@ -274,9 +291,11 @@ const ViewParents = () => {
           color="violet"
           onClick={handleExportPDF}
           disabled={patients.length === 0}
-          sx={{
-            // background: theme.fn.linearGradient(45, theme.colors.violet[6], theme.colors.purple[6]),
-          }}
+          sx={
+            {
+              // background: theme.fn.linearGradient(45, theme.colors.violet[6], theme.colors.purple[6]),
+            }
+          }
         >
           Export PDF
         </Button>
@@ -291,13 +310,6 @@ const ViewParents = () => {
             <IconRefresh size={18} />
           </ActionIcon>
         </Tooltip>
-        <Button
-          leftIcon={<IconUserPlus size={18} />}
-          variant="outline"
-          color="violet"
-        >
-          Add Parent
-        </Button>
       </Group>
     ),
   });
@@ -316,7 +328,9 @@ const ViewParents = () => {
       >
         <Stack align="center" spacing="md">
           <Loader size="lg" color="violet" />
-          <Text size="lg" color="violet.7">Loading parents data...</Text>
+          <Text size="lg" color="violet.7">
+            Loading parents data...
+          </Text>
         </Stack>
       </Box>
     );
@@ -331,16 +345,20 @@ const ViewParents = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          background: theme.fn.linearGradient(135, theme.colors.red[0], theme.colors.orange[0]),
+          background: theme.fn.linearGradient(
+            135,
+            theme.colors.red[0],
+            theme.colors.orange[0]
+          ),
           padding: theme.spacing.md,
         }}
       >
-        <Paper 
-          p="xl" 
-          withBorder 
-          shadow="lg" 
-          radius="lg" 
-          sx={{ 
+        <Paper
+          p="xl"
+          withBorder
+          shadow="lg"
+          radius="lg"
+          sx={{
             maxWidth: 500,
             background: theme.white,
           }}
@@ -356,8 +374,8 @@ const ViewParents = () => {
               {(error as Error)?.message || "Failed to fetch patients data"}
             </Text>
             <Group>
-              <Button 
-                color="red" 
+              <Button
+                color="red"
                 variant="filled"
                 leftIcon={<IconRefresh size={16} />}
                 onClick={() => refetch()}
@@ -384,7 +402,12 @@ const ViewParents = () => {
         {/* Header */}
         <Group position="apart" align="center">
           <Group spacing="sm">
-            <ThemeIcon size="xl" color="violet" variant="gradient" gradient={{ from: 'violet', to: 'purple' }}>
+            <ThemeIcon
+              size="xl"
+              color="violet"
+              variant="gradient"
+              gradient={{ from: "violet", to: "purple" }}
+            >
               <IconUsers size={24} />
             </ThemeIcon>
             <div>
@@ -403,7 +426,12 @@ const ViewParents = () => {
           <Paper p="md" radius="lg" withBorder shadow="sm">
             <Group position="apart">
               <div>
-                <Text size="xs" color="dimmed" transform="uppercase" weight={600}>
+                <Text
+                  size="xs"
+                  color="dimmed"
+                  transform="uppercase"
+                  weight={600}
+                >
                   Total Patients
                 </Text>
                 <Text size="xl" weight={700} color="violet.7">
@@ -419,7 +447,12 @@ const ViewParents = () => {
           <Paper p="md" radius="lg" withBorder shadow="sm">
             <Group position="apart">
               <div>
-                <Text size="xs" color="dimmed" transform="uppercase" weight={600}>
+                <Text
+                  size="xs"
+                  color="dimmed"
+                  transform="uppercase"
+                  weight={600}
+                >
                   High Risk Cases
                 </Text>
                 <Text size="xl" weight={700} color="red.6">
@@ -435,7 +468,12 @@ const ViewParents = () => {
           <Paper p="md" radius="lg" withBorder shadow="sm">
             <Group position="apart">
               <div>
-                <Text size="xs" color="dimmed" transform="uppercase" weight={600}>
+                <Text
+                  size="xs"
+                  color="dimmed"
+                  transform="uppercase"
+                  weight={600}
+                >
                   Due This Month
                 </Text>
                 <Text size="xl" weight={700} color="orange.6">
@@ -450,10 +488,10 @@ const ViewParents = () => {
         </Group>
 
         {/* Main Table */}
-        <Paper 
-          shadow="lg" 
-          radius="lg" 
-          sx={{ 
+        <Paper
+          shadow="lg"
+          radius="lg"
+          sx={{
             overflow: "hidden",
             background: theme.white,
           }}

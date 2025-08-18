@@ -382,7 +382,7 @@ const SignIn = () => {
           </motion.form>
 
           {/* Sign Up Link */}
-          <motion.div className="text-center mt-8" variants={itemVariants}>
+          {/* <motion.div className="text-center mt-8" variants={itemVariants}>
             <p className="text-gray-600">
               Don't have an account?{" "}
               <motion.button
@@ -399,7 +399,7 @@ const SignIn = () => {
                 Sign Up
               </motion.button>
             </p>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
       </motion.div>
     </div>

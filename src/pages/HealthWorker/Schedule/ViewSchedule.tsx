@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Group,
+  LoadingOverlay,
   Menu,
   Modal,
   Paper,
@@ -14,24 +15,19 @@ import {
   TextInput,
   Title,
   rem,
-  LoadingOverlay,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import {
-  IconCalendar,
-  IconClock,
   IconDotsVertical,
   IconEdit,
   IconEye,
-  IconMapPin,
-  IconPhone,
   IconPlus,
   IconSearch,
   IconTrash,
 } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export interface Schedule {
@@ -43,23 +39,62 @@ export interface Schedule {
   location: string;
   modeOfCommunication: string;
   status: "Scheduled" | "Completed" | "Cancelled";
-  visitNotes: {
-    id: string;
-    observation: string;
-    vitalSigns: string;
-    recommendations: string;
-    attachments: string[];
-  }[];
+  visitNoteIds: { id: string }[];
 }
-
+interface VisitNote {
+  id: string;
+  observation: string;
+  vitalSigns: string;
+  recommendations: string;
+  attachments: string[];
+}
 const ViewSchedule = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
+    null
+  );
   const [opened, { open, close }] = useDisclosure(false);
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  //  const { data: notes } = await axiosInstance.get(
+  //               `/api/visit-notes/${appointment.visitNoteId}`
+  //             );
+
+  const {
+    data: schedules = [],
+    isLoading,
+    isError,
+  } = useQuery<Schedule[], Error>({
+    queryKey: ["schedules"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/api/visits");
+      return data;
+    },
+    // onError: (error) => {
+    //   console.warn("Error fetching schedules", error);
+    //   notifications.show({
+    //     title: "Error",
+    //     message: "Failed to load schedules",
+    //     color: "red",
+    //   });
+    // },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Fetch visit notes for the selected schedule
+  const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<
+    VisitNote[],
+    Error
+  >({
+    queryKey: ["visitNotes", selectedSchedule?.id],
+    queryFn: async () => {
+      if (!selectedSchedule) return [];
+      const { data } = await axiosInstance.get(
+        `/api/visit-notes/${selectedSchedule.id}`
+      );
+      return data;
+    },
+  });
 
   const filteredSchedules = schedules.filter((schedule) =>
     schedule.visitType.toLowerCase().includes(searchQuery.toLowerCase())
@@ -68,7 +103,7 @@ const ViewSchedule = () => {
   const getStatusColor = (status: Schedule["status"]) => {
     switch (status) {
       case "Scheduled":
-        return "blue";
+        return "purple";
       case "Completed":
         return "green";
       case "Cancelled":
@@ -79,83 +114,69 @@ const ViewSchedule = () => {
   };
 
   const handleViewDetails = (schedule: Schedule) => {
+    console.log(schedule);
     setSelectedSchedule(schedule);
     open();
   };
 
-  const handleDelete = (_id: string) => {
-    // Here you should call API to delete schedule
-    notifications.show({
-      title: "Success",
-      message: "Schedule deleted successfully",
-      color: "green",
-    });
-
-    // Remove deleted schedule from state (example)
-    setSchedules((prev) => prev.filter((s) => s.id !== _id));
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-
-    axiosInstance
-      .get("/api/visits")
-      .then((result) => {
-        setSchedules(result.data);
-      })
-      .catch((error) => {
-        console.warn("Error fetching schedules", error);
-        setError("Failed to load schedules");
-        notifications.show({
-          title: "Error",
-          message: "Failed to load schedules",
-          color: "red",
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+  function handleDelete(id: string): void {
+    console.log("id", id);
+    // throw new Error("Function not implemented.");
+  }
 
   return (
     <Box p="md" pos="relative" style={{ minHeight: 300 }}>
       {/* Loading overlay */}
-      <LoadingOverlay visible={loading} overlayBlur={2} />
+      <LoadingOverlay visible={isLoading} overlayBlur={2} />
 
-      <motion.div initial="hidden" animate="visible" variants={{
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
           hidden: { opacity: 0 },
           visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-        }}>
+        }}
+      >
         <Group position="apart" mb="xl">
           <Title order={2}>View Schedules</Title>
           <Button
             leftIcon={<IconPlus size={rem(16)} />}
             onClick={() => navigate("/healthworker/schedule")}
-            disabled={loading}
+            className="bg-purple-600 hover:bg-purple-500"
+            disabled={isLoading}
           >
             Add New Schedule
           </Button>
         </Group>
 
         <Stack spacing="md">
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 },
+            }}
+          >
             <TextInput
               placeholder="Search schedules..."
               icon={<IconSearch size={rem(16)} />}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              disabled={loading}
+              disabled={isLoading}
             />
           </motion.div>
 
-          {error && (
+          {isError && (
             <Text color="red" align="center" mt="md">
-              {error}
+              {isError}
             </Text>
           )}
 
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 },
+            }}
+          >
             <Paper shadow="sm" p="md" radius="md" withBorder>
               <Table striped highlightOnHover>
                 <thead>
@@ -170,9 +191,12 @@ const ViewSchedule = () => {
                 </thead>
                 <tbody>
                   <AnimatePresence>
-                    {filteredSchedules.length === 0 && !loading ? (
+                    {filteredSchedules.length === 0 && !isLoading ? (
                       <tr>
-                        <td colSpan={6} style={{ textAlign: "center", padding: "20px" }}>
+                        <td
+                          colSpan={6}
+                          style={{ textAlign: "center", padding: "20px" }}
+                        >
                           No schedules found.
                         </td>
                       </tr>
@@ -186,31 +210,41 @@ const ViewSchedule = () => {
                           transition={{ duration: 0.2 }}
                         >
                           <td>{schedule.visitType}</td>
-                          <td>{new Date(schedule.scheduledTime).toLocaleDateString()}</td>
                           <td>
-                            {new Date(schedule.scheduledTime).toLocaleTimeString([], {
+                            {new Date(
+                              schedule.scheduledTime
+                            ).toLocaleDateString()}
+                          </td>
+                          <td>
+                            {new Date(
+                              schedule.scheduledTime
+                            ).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
                             })}
                           </td>
                           <td>{schedule.location}</td>
                           <td>
-                            <Badge color={getStatusColor(schedule.status)}>
+                            <Badge
+                              color={getStatusColor(schedule.status)}
+                              className="text-purple-500"
+                            >
                               {schedule.status}
                             </Badge>
                           </td>
                           <td>
                             <Group spacing={4} position="right" noWrap>
                               <ActionIcon
-                                color="blue"
+                                color="purple"
                                 onClick={() => handleViewDetails(schedule)}
-                                disabled={loading}
+                                className="text-purple-400"
+                                disabled={isLoading}
                               >
                                 <IconEye size={rem(16)} />
                               </ActionIcon>
                               <Menu position="bottom-end" withinPortal>
                                 <Menu.Target>
-                                  <ActionIcon disabled={loading}>
+                                  <ActionIcon disabled={isLoading}>
                                     <IconDotsVertical size={rem(16)} />
                                   </ActionIcon>
                                 </Menu.Target>
@@ -220,7 +254,7 @@ const ViewSchedule = () => {
                                     onClick={() => {
                                       /* Handle edit */
                                     }}
-                                    disabled={loading}
+                                    disabled={isLoading}
                                   >
                                     Edit
                                   </Menu.Item>
@@ -228,7 +262,7 @@ const ViewSchedule = () => {
                                     icon={<IconTrash size={rem(16)} />}
                                     color="red"
                                     onClick={() => handleDelete(schedule.id)}
-                                    disabled={loading}
+                                    disabled={isLoading}
                                   >
                                     Delete
                                   </Menu.Item>
@@ -246,38 +280,57 @@ const ViewSchedule = () => {
           </motion.div>
         </Stack>
 
-        <Modal opened={opened} onClose={close} title="Schedule Details" size="lg">
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Schedule Details"
+          size="lg"
+        >
           {selectedSchedule && (
             <Stack spacing="md">
               <Group>
-                <IconCalendar size={rem(16)} />
                 <Text>Date: {selectedSchedule.actualStartTime || "N/A"}</Text>
               </Group>
               <Group>
-                <IconClock size={rem(16)} />
                 <Text>Time: {selectedSchedule.scheduledTime}</Text>
               </Group>
               <Group>
-                <IconMapPin size={rem(16)} />
                 <Text>Location: {selectedSchedule.location}</Text>
               </Group>
               <Group>
-                <IconPhone size={rem(16)} />
-                <Text>Communication: {selectedSchedule.modeOfCommunication}</Text>
+                <Text>
+                  Communication: {selectedSchedule.modeOfCommunication}
+                </Text>
               </Group>
-              <Group position="right" mt="xl">
-                <Button variant="outline" onClick={close} disabled={loading}>
-                  Close
-                </Button>
-                <Button
-                  onClick={() => {
-                    /* Handle edit */
-                  }}
-                  disabled={loading}
-                >
-                  Edit Schedule
-                </Button>
-              </Group>
+
+              <Stack spacing="sm" mt="md">
+                <Title order={4}>Visit Notes</Title>
+                {isNotesLoading ? (
+                  <Text>Loading notes...</Text>
+                ) : visitNotes.length === 0 ? (
+                  <Text>No visit notes available.</Text>
+                ) : (
+                  visitNotes.map((note) => (
+                    <Paper key={note.id} p="sm" shadow="xs" withBorder>
+                      <Text>
+                        <strong>Observation:</strong> {note.observation}
+                      </Text>
+                      <Text>
+                        <strong>Vital Signs:</strong> {note.vitalSigns}
+                      </Text>
+                      <Text>
+                        <strong>Recommendations:</strong> {note.recommendations}
+                      </Text>
+                      {note.attachments.length > 0 && (
+                        <Text>
+                          <strong>Attachments:</strong>{" "}
+                          {note.attachments.join(", ")}
+                        </Text>
+                      )}
+                    </Paper>
+                  ))
+                )}
+              </Stack>
             </Stack>
           )}
         </Modal>

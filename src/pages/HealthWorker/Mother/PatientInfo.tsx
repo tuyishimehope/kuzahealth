@@ -270,7 +270,7 @@ const PatientDetailPage = ({
           {/* <Button
             variant="light"
             leftIcon={<IconEdit size={16} />}
-            color="blue"
+            color="purple"
           >
             Edit Patient
           </Button> */}
@@ -279,7 +279,7 @@ const PatientDetailPage = ({
         <Card>
           <Group position="apart" mb="xl" align="start">
             <Group>
-              <Avatar size={80} radius={80} color="blue" sx={{ fontSize: 32 }}>
+              <Avatar size={80} radius={80} color="purple" sx={{ fontSize: 32 }}>
                 {patient.firstName.charAt(0)}
               </Avatar>
               <Box>
@@ -290,7 +290,8 @@ const PatientDetailPage = ({
                     color="indigo"
                     leftSection={<IconId size={14} />}
                   >
-                    {patient.id}
+                    {/* {patient.id} */}
+                    {patient.firstName} {patient.lastName}
                   </Badge>
                   {/* <StatusBadge status={patient.status} /> */}
                 </Group>

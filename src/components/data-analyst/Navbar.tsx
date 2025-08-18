@@ -58,7 +58,7 @@ const Navbar = ({ menuOpen, setMenuOpen }: NavbarProp) => {
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-medium text-purple-900">Kuza Care</h1>
             <span className="hidden md:inline text-gray-400">|</span>
-            <span className="hidden md:inline text-sm text-gray-500">Super Admin Portal</span>
+            <span className="hidden md:inline text-sm text-gray-500">Data analyst Portal</span>
           </div>
         </div>
 

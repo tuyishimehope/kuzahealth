@@ -93,8 +93,15 @@ const PregnancyStatusBadge = ({ lmpDate }: { lmpDate: string }) => {
 };
 
 // Pregnancy Record Card Component
-const PregnancyRecordCard = ({ record }: { record: PregnancyRecord }) => {
+const PregnancyRecordCard = ({
+  record,
+  parentRecord,
+}: {
+  record: PregnancyRecord;
+  parentRecord: Patient | undefined;
+}) => {
   const [expanded, setExpanded] = useState(false);
+  console.log("record", record);
 
   const formatDate = (dateTime: string) => {
     return new Date(dateTime).toLocaleDateString("en-US", {
@@ -134,7 +141,8 @@ const PregnancyRecordCard = ({ record }: { record: PregnancyRecord }) => {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">
-                {record.parent.firstName} {record.parent.lastName}
+                {/* {record.parent.firstName} {record.parent.lastName} */}
+                {parentRecord?.firstName} {parentRecord?.lastName}
               </h3>
               <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
@@ -194,14 +202,16 @@ const PregnancyRecordCard = ({ record }: { record: PregnancyRecord }) => {
             <Phone className="w-4 h-4 text-gray-400" />
             <span className="text-gray-600">Phone:</span>
             <span className="font-medium text-gray-900">
-              {record.parent.phone}
+              {/* {record.parent.phone} */}
+              {parentRecord?.phone}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-gray-400" />
             <span className="text-gray-600">Email:</span>
             <span className="font-medium text-gray-900">
-              {record.parent.email}
+              {/* {record.parent.email} */}
+              {parentRecord?.email}
             </span>
           </div>
         </div>
@@ -372,6 +382,7 @@ export const PregnancyRecordTab = ({
   const [pregnancyRecords, setPregnancyRecords] = useState<PregnancyRecord[]>(
     []
   );
+  const [parentRecord, setParentRecord] = useState<Patient>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -391,6 +402,13 @@ export const PregnancyRecordTab = ({
         `/api/pregnancy-records/parent/${patientId}`
       );
       setPregnancyRecords(response.data);
+
+      if (response.data.parentId) {
+        const parentResponse = await axiosInstance.get(
+          "/api/parent/" + response.data.parentId
+        );
+        setParentRecord(parentResponse.data);
+      }
     } catch (err: any) {
       setError("Failed to fetch pregnancy records");
       console.error("API Error:", err);
@@ -477,7 +495,11 @@ export const PregnancyRecordTab = ({
                     new Date(a.createdAt).getTime()
                 )
                 .map((record) => (
-                  <PregnancyRecordCard key={record.id} record={record} />
+                  <PregnancyRecordCard
+                    key={record.id}
+                    record={record}
+                    parentRecord={parentRecord}
+                  />
                 ))}
             </div>
           )}

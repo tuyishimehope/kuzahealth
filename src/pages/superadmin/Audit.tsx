@@ -440,7 +440,7 @@ const stats = useMemo(() => {
                       {log.ip}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                      {log.entityId.slice(0, 25)}
+                      {log.entityId.slice(0, 15)}
                     </td>
                   </tr>
                 ))}

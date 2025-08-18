@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { axiosInstance } from "@/utils/axiosInstance";
 import {
+  AlertCircle,
   Calendar,
+  CheckCircle,
   Clock,
+  Download,
   MapPin,
   Phone,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Download,
-  Eye,
+  XCircle
 } from "lucide-react";
-import { axiosInstance } from "@/utils/axiosInstance";
+import { useCallback, useEffect, useState } from "react";
 
 // Types
 interface VisitNote {
@@ -19,6 +18,10 @@ interface VisitNote {
   vitalSigns: string;
   recommendations: string;
   attachments: string[];
+}
+
+interface visitNoteId {
+  id: string;
 }
 
 interface Schedule {
@@ -30,7 +33,7 @@ interface Schedule {
   location: string;
   modeOfCommunication: string;
   status: "Scheduled" | "Completed" | "Cancelled";
-  visitNotes: VisitNote[];
+  visitNoteIds: visitNoteId[];
 }
 
 // Status Badge Component
@@ -44,9 +47,9 @@ const StatusBadge = ({ status }: { status: Schedule["status"] }) => {
     },
     Scheduled: {
       icon: Clock,
-      bg: "bg-blue-100",
-      text: "text-blue-800",
-      border: "border-blue-200",
+      bg: "bg-purple-100",
+      text: "text-purple-800",
+      border: "border-purple-200",
     },
     Cancelled: {
       icon: XCircle,
@@ -70,8 +73,14 @@ const StatusBadge = ({ status }: { status: Schedule["status"] }) => {
 };
 
 // Appointment Card Component
-const AppointmentCard = ({ appointment }: { appointment: Schedule }) => {
-  const [expanded, setExpanded] = useState(false);
+const AppointmentCard = ({
+  appointment,
+  visitNotes,
+}: {
+  appointment: Schedule;
+  visitNotes: VisitNote[];
+}) => {
+  const [expanded] = useState(true);
 
   const formatDateTime = (dateTime: string) => {
     return new Date(dateTime).toLocaleString("en-US", {
@@ -136,23 +145,23 @@ const AppointmentCard = ({ appointment }: { appointment: Schedule }) => {
             </div>
           )}
         </div>
-
+        {/* 
         {appointment.visitNotes.length > 0 && (
           <div className="mt-4">
             <button
               onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="flex items-center gap-2 text-purple-600 hover:text-purple-800 text-sm font-medium"
             >
               <Eye className="w-4 h-4" />
               {expanded ? "Hide" : "View"} Visit Notes
             </button>
           </div>
-        )}
+        )} */}
       </div>
 
-      {expanded && appointment.visitNotes.length > 0 && (
+      {expanded && visitNotes.length > 0 && (
         <div className="border-t border-gray-100 bg-gray-50 p-4">
-          {appointment.visitNotes.map((note) => (
+          {visitNotes.map((note) => (
             <div key={note.id} className="space-y-3">
               <div>
                 <h4 className="text-sm font-semibold text-gray-900 mb-1">
@@ -229,7 +238,7 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
     </p>
     <button
       onClick={onRetry}
-      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
     >
       Try Again
     </button>
@@ -248,28 +257,90 @@ const EmptyState = () => (
 );
 
 // Main Component
-export const AppointmentHistoryTab = ({ patientId }: { patientId: string | undefined}) => {
-  const [appointments, setAppointments] = useState<Schedule[]>([]);
+type AppointmentWithNotes = Schedule & { visitNotes?: VisitNote[] };
+
+export const AppointmentHistoryTab = ({
+  patientId,
+}: {
+  patientId?: string;
+}) => {
+  const [appointments, setAppointments] = useState<AppointmentWithNotes[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAppointments = async () => {
+  const fetchAppointments = useCallback(async () => {
+    if (!patientId) return;
+
     try {
       setLoading(true);
       setError(null);
-      const data = await axiosInstance.get("/api/visits/patient/" + patientId);
-      setAppointments(data.data);
+
+      // fetch visits
+      const { data: visitData } = await axiosInstance.get(
+        `/api/visits/patient/${patientId}`
+      );
+
+      // fetch visit notes for each appointment if any
+      const enrichedAppointments: AppointmentWithNotes[] = await Promise.all(
+        visitData.map(async (appointment: Schedule) => {
+          if (appointment.visitNoteIds?.length) {
+            try {
+              const { data: notes } = await axiosInstance.get(
+                `/api/visit-notes/${appointment.visitNoteIds.join(",")}`
+              );
+              return { ...appointment, visitNotes: notes };
+            } catch (err) {
+              console.warn(
+                "Failed to fetch notes for appointment",
+                appointment.id,
+                err
+              );
+              return { ...appointment, visitNotes: [] };
+            }
+          }
+          return { ...appointment, visitNotes: [] };
+        })
+      );
+
+      setAppointments(enrichedAppointments);
     } catch (err) {
+      console.error(err);
       setError("Failed to fetch appointments");
-      console.log(err)
     } finally {
       setLoading(false);
     }
-  };
+  }, [patientId]);
 
   useEffect(() => {
     fetchAppointments();
-  }, []);
+  }, [fetchAppointments]);
+
+  // ---- UI ----
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 space-y-4">
+        {[1, 2, 3].map((i) => (
+          <LoadingCard key={i} />
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <ErrorState onRetry={fetchAppointments} />
+      </div>
+    );
+  }
+
+  if (appointments.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <EmptyState />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -282,31 +353,21 @@ export const AppointmentHistoryTab = ({ patientId }: { patientId: string | undef
         </p>
       </div>
 
-      {loading && (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <LoadingCard key={i} />
+      <div className="space-y-4">
+        {appointments
+          .sort(
+            (a, b) =>
+              new Date(b.scheduledTime).getTime() -
+              new Date(a.scheduledTime).getTime()
+          )
+          .map((appointment) => (
+            <AppointmentCard
+              key={appointment.id}
+              appointment={appointment}
+              visitNotes={appointment.visitNotes ?? []}
+            />
           ))}
-        </div>
-      )}
-
-      {error && <ErrorState onRetry={fetchAppointments} />}
-
-      {!loading && !error && appointments.length === 0 && <EmptyState />}
-
-      {!loading && !error && appointments.length > 0 && (
-        <div className="space-y-4">
-          {appointments
-            .sort(
-              (a, b) =>
-                new Date(b.scheduledTime).getTime() -
-                new Date(a.scheduledTime).getTime()
-            )
-            .map((appointment) => (
-              <AppointmentCard key={appointment.id} appointment={appointment} />
-            ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 };

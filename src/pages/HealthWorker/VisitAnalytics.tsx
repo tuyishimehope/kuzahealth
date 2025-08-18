@@ -14,7 +14,7 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
-import type { ReactNode, FC } from "react";
+import type { FC, ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   Area,
