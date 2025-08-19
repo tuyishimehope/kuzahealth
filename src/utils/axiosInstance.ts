@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.MODE === 'production'
-  ? import.meta.env.VITE_API_BASE_URL_PROD
-  : import.meta.env.VITE_API_BASE_URL_DEV;
+const baseURL = import.meta.env.VITE_API_BASE_URL_DEV;
 
 export const axiosInstance = (() => {
   const instance = axios.create({
