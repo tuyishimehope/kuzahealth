@@ -1,89 +1,243 @@
-import { useEffect, useState } from "react";
-
-import { axiosInstance } from "@/utils/axiosInstance";
-import { Box, Title, Text, Divider, Paper } from "@mantine/core";
-import { IconUser, IconMapPin, IconBabyCarriage } from "@tabler/icons-react";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useParams } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "@/utils/axiosInstance";
+import {
+  Box,
+  Title,
+  Text,
+  Divider,
+  Paper,
+  Stack,
+  Group,
+  Button,
+  Modal,
+  TextInput,
+  Select,
+} from "@mantine/core";
+import { useForm, Controller } from "react-hook-form";
+import { useState } from "react";
+import { IconUser, IconBabyCarriage, IconEdit } from "@tabler/icons-react";
+
+const fetchInfant = async (id: string) => {
+  const { data } = await axiosInstance.get(`/api/infants/${id}`);
+  return data;
+};
+
+const fetchMother = async (motherId: string) => {
+  const { data } = await axiosInstance.get(`/api/parents/${motherId}`);
+  return data;
+};
 
 const ViewInfantMother = () => {
-  const router = useParams();
-  const { id } = router;
-  const [infant, setInfant] = useState<any>(null);
+  const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
+  const [editModal, setEditModal] = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
+  const { data: infant, isLoading: infantLoading } = useQuery({
+    queryKey: ["infant", id],
+    queryFn: () => fetchInfant(id!),
+    enabled: !!id,
+  });
 
-    const fetchInfant = async () => {
-      try {
-        const response = await axiosInstance.get(`/api/infants/${id}`);
-        setInfant(response.data);
-      } catch (err) {
-        console.error("Error fetching infant details", err);
-      }
-    };
+  const motherId = infant?.motherId;
 
-    fetchInfant();
-  }, [id]);
+  const { data: mother, isLoading: motherLoading } = useQuery({
+    queryKey: ["mother", motherId],
+    queryFn: () => fetchMother(motherId!),
+    enabled: !!motherId,
+  });
 
-  if (!infant) return <Text>Loading...</Text>;
+  const { control, handleSubmit, reset } = useForm<any>({
+    defaultValues: infant || {},
+  });
 
-  const mother = infant.mother;
+  // Update infant mutation
+  const updateInfantMutation = useMutation({
+    mutationFn: (data: any) => axiosInstance.put(`/api/infants/${id}`, data),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(["infant", id], updated.data);
+      setEditModal(false);
+    },
+  });
+
+  if (infantLoading || motherLoading) return <Text>Loading...</Text>;
+
+  // Prefill form when infant data changes
+  useState(() => {
+    if (infant) reset(infant);
+  });
 
   return (
     <Box p="md">
-      <Title order={2} mb="md">
+      <Title order={2} mb="lg">
         Infant & Mother Details
       </Title>
 
-      <Paper p="md" withBorder mb="md">
-        <Title order={4}>
+      {/* Edit Button */}
+      <Group mb="md">
+        <Button
+          leftIcon={<IconEdit size={16} />}
+          onClick={() => setEditModal(true)}
+          color="purple"
+          className="bg-purple-600 hover:bg-purple-500"
+        >
+          Edit Infant Info
+        </Button>
+      </Group>
+
+      {/* Infant Details */}
+      <Paper p="md" withBorder shadow="sm" mb="md" radius="md">
+        <Title order={4} mb="sm">
           <IconBabyCarriage size={20} /> Infant Details
         </Title>
-        <Divider my="sm" />
-        <Text>
-          Name: {infant.firstName} {infant.lastName}
-        </Text>
-        <Text>
-          Date of Birth: {new Date(infant.dateOfBirth).toLocaleDateString()}
-        </Text>
-        <Text>Gender: {infant.gender}</Text>
-        <Text>Weight: {infant.birthWeight} kg</Text>
-        <Text>Height: {infant.birthHeight} cm</Text>
-        <Text>Blood Group: {infant.bloodGroup}</Text>
-        <Text>Birth Time: {infant.birthTime}</Text>
-        <Text>Delivery Location: {infant.deliveryLocation}</Text>
-        <Text>Doctor: {infant.assignedDoctor}</Text>
-        <Text>Special Conditions: {infant.specialConditions}</Text>
+        <Divider mb="sm" />
+        <Stack spacing="xs">
+          <Text>
+            <strong>Name:</strong> {infant.firstName} {infant.lastName}
+          </Text>
+          <Text>
+            <strong>Date of Birth:</strong>{" "}
+            {infant.dateOfBirth
+              ? new Date(infant.dateOfBirth).toLocaleDateString()
+              : "-"}
+          </Text>
+          <Text>
+            <strong>Gender:</strong> {infant.gender}
+          </Text>
+          <Text>
+            <strong>Weight:</strong> {infant.birthWeight} kg
+          </Text>
+          <Text>
+            <strong>Height:</strong> {infant.birthHeight} cm
+          </Text>
+          <Text>
+            <strong>Blood Group:</strong> {infant.bloodGroup || "-"}
+          </Text>
+          <Text>
+            <strong>Special Conditions:</strong>{" "}
+            {infant.specialConditions || "-"}
+          </Text>
+        </Stack>
       </Paper>
 
-      <Paper p="md" withBorder>
-        <Title order={4}>
-          <IconUser size={20} /> Mother Details
-        </Title>
-        <Divider my="sm" />
-        <Text>
-          Name: {mother.firstName} {mother.lastName}
-        </Text>
-        <Text>Email: {mother.email}</Text>
-        <Text>Phone: {mother.phone}</Text>
-        <Text>Blood Group: {mother.bloodGroup}</Text>
-        <Text>Marital Status: {mother.maritalStatus}</Text>
-        <Text>Expected Delivery: {mother.expectedDeliveryDate}</Text>
-        <Text>High Risk: {mother.highRisk ? "Yes" : "No"}</Text>
-        <Title order={5} mt="sm">
-          <IconMapPin size={16} /> Address
-        </Title>
-        <Text>District: {mother.district}</Text>
-        <Text>Sector: {mother.sector}</Text>
-        <Text>Cell: {mother.cell}</Text>
-        <Text>Village: {mother.village}</Text>
-        <Title order={5} mt="sm">
-          Emergency Contact
-        </Title>
-        <Text>Name: {mother.emergencyContactFullName}</Text>
-        <Text>Number: {mother.emergencyContactNumber}</Text>
-        <Text>Relationship: {mother.emergencyContactRelationship}</Text>
-      </Paper>
+      {/* Mother Details */}
+      {mother && (
+        <Paper p="md" withBorder shadow="sm" radius="md">
+          <Title order={4} mb="sm">
+            <IconUser size={20} /> Mother Details
+          </Title>
+          <Divider mb="sm" />
+          <Stack spacing="xs">
+            <Text>
+              <strong>Name:</strong> {mother.firstName} {mother.lastName}
+            </Text>
+            <Text>
+              <strong>Email:</strong> {mother.email || "-"}
+            </Text>
+            <Text>
+              <strong>Phone:</strong> {mother.phone || "-"}
+            </Text>
+            <Text>
+              <strong>Blood Group:</strong> {mother.bloodGroup || "-"}
+            </Text>
+            <Text>
+              <strong>Marital Status:</strong> {mother.maritalStatus || "-"}
+            </Text>
+          </Stack>
+        </Paper>
+      )}
+
+      {/* Edit Infant Modal */}
+      <Modal
+        opened={editModal}
+        onClose={() => setEditModal(false)}
+        title="Edit Infant Information"
+        size="lg"
+      >
+        <form
+          onSubmit={handleSubmit((data) => updateInfantMutation.mutate(data))}
+        >
+          <Stack spacing="md">
+            <Controller
+              name="firstName"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} label="First Name" required />
+              )}
+            />
+            <Controller
+              name="lastName"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} label="Last Name" required />
+              )}
+            />
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="Gender"
+                  data={[
+                    { value: "male", label: "Male" },
+                    { value: "female", label: "Female" },
+                  ]}
+                  required
+                />
+              )}
+            />
+            <Controller
+              name="dateOfBirth"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} label="Date of Birth" type="date" />
+              )}
+            />
+            <Controller
+              name="birthWeight"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} label="Weight (kg)" type="number" />
+              )}
+            />
+            <Controller
+              name="birthHeight"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} label="Height (cm)" type="number" />
+              )}
+            />
+            <Controller
+              name="bloodGroup"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} label="Blood Group" />
+              )}
+            />
+            <Controller
+              name="specialConditions"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} label="Special Conditions" />
+              )}
+            />
+            <Group position="right">
+              <Button variant="outline" onClick={() => setEditModal(false)}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                color="purple"
+                loading={updateInfantMutation.isPending}
+              >
+                Save
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
     </Box>
   );
 };

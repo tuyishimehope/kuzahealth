@@ -9,8 +9,8 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { IconDownload, IconEye, IconPlus } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
+import { IconDownload, IconEye, IconPlus, IconTrash } from "@tabler/icons-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -38,12 +38,12 @@ export interface Patient {
   highRisk: boolean;
   createdAt: string;
   updatedAt: string;
-  // pregnancyRecord?:[]
 }
 
 const MaritimePatientDashboard = () => {
   const theme = useMantineTheme();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [globalFilter] = useState("");
   const [selectedStatus] = useState<"all" | Patient["maritalStatus"]>("all");
@@ -54,39 +54,23 @@ const MaritimePatientDashboard = () => {
     return response.data;
   };
 
-  const {
-    data: patients = [], // default to empty array
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data: patients = [], isLoading, isError, error } = useQuery({
     queryKey: ["patients"],
     queryFn: fetchPatients,
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => axiosInstance.delete(`/api/parents/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({queryKey:["patients"]}),
   });
 
   const columns = useMemo<MRT_ColumnDef<Patient>[]>(
     () => [
-      // {
-      //   accessorKey: "id",
-      //   header: "ID",
-      //   size: 100,
-      // },
-      {
-        accessorKey: "firstName",
-        header: "First Name",
-        size: 120,
-      },
-      {
-        accessorKey: "lastName",
-        header: "Last Name",
-        size: 120,
-      },
-      {
-        accessorKey: "phone",
-        header: "Phone",
-        size: 140,
-      },
+      { accessorKey: "firstName", header: "First Name", size: 120 },
+      { accessorKey: "lastName", header: "Last Name", size: 120 },
+      { accessorKey: "phone", header: "Phone", size: 140 },
       {
         accessorKey: "expectedDeliveryDate",
         header: "EDD",
@@ -94,11 +78,7 @@ const MaritimePatientDashboard = () => {
         Cell: ({ cell }) =>
           new Date(cell.getValue<string>()).toLocaleDateString(),
       },
-      {
-        accessorKey: "bloodGroup",
-        header: "Blood Group",
-        size: 100,
-      },
+      { accessorKey: "bloodGroup", header: "Blood Group", size: 100 },
       {
         accessorKey: "highRisk",
         header: "High Risk?",
@@ -123,7 +103,6 @@ const MaritimePatientDashboard = () => {
   const table = useMantineReactTable({
     columns,
     data: filteredData,
-
     enableGlobalFilter: true,
     enableSorting: true,
     enableRowSelection: true,
@@ -133,7 +112,7 @@ const MaritimePatientDashboard = () => {
     state: { isLoading: isLoading, globalFilter, rowSelection },
     onRowSelectionChange: setRowSelection,
     displayColumnDefOptions: {
-      "mrt-row-actions": { header: "Actions", size: 100 },
+      "mrt-row-actions": { header: "Actions", size: 140 },
     },
     renderRowActions: ({ row }) => (
       <Group spacing={4} position="center">
@@ -142,11 +121,22 @@ const MaritimePatientDashboard = () => {
           variant="subtle"
           color="purple"
           leftIcon={<IconEye size={14} />}
-          onClick={() =>
-            navigate(`/healthworker/view-patient/${row.original.id}`)
-          }
+          onClick={() => navigate(`/healthworker/view-patient/${row.original.id}`)}
         >
           View
+        </Button>
+        <Button
+          size="xs"
+          variant="subtle"
+          color="red"
+          leftIcon={<IconTrash size={14} />}
+          onClick={() => {
+            if (window.confirm("Are you sure you want to delete this patient?")) {
+              deleteMutation.mutate(row.original.id);
+            }
+          }}
+        >
+          Delete
         </Button>
       </Group>
     ),

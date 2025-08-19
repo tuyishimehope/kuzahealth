@@ -1,27 +1,32 @@
 import { axiosInstance } from "@/utils/axiosInstance";
 import extractToken from "@/utils/extractToken";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Alert,
   Box,
   Button,
   Group,
+  LoadingOverlay,
   Paper,
   Select,
   Stack,
   TextInput,
   Textarea,
   Title,
-  Alert,
-  LoadingOverlay,
-  rem,
+  rem
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCalendar, IconMapPin, IconMessage, IconAlertCircle } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCalendar,
+  IconMapPin,
+  IconMessage,
+} from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 
 // Validation Schema
 const scheduleSchema = z.object({
@@ -33,11 +38,13 @@ const scheduleSchema = z.object({
   modeOfCommunication: z.enum(["phone", "faceToFace", "SMS"], {
     errorMap: () => ({ message: "Please select a communication mode" }),
   }),
-  visitNotes: z.object({
-    observation: z.string().optional(),
-    vitalSigns: z.string().optional(),
-    recommendations: z.string().optional(),
-  }).optional(),
+  visitNotes: z
+    .object({
+      observation: z.string().optional(),
+      vitalSigns: z.string().optional(),
+      recommendations: z.string().optional(),
+    })
+    .optional(),
 });
 
 type ScheduleFormData = z.infer<typeof scheduleSchema>;
@@ -56,21 +63,23 @@ interface HealthWorker {
 }
 
 // Custom Hooks
-const useCurrentHealthWorker = () => {
+export const useCurrentHealthWorker = () => {
   return useQuery({
-    queryKey: ['current-health-worker'],
+    queryKey: ["current-health-worker"],
     queryFn: async () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
-      
+
       const decoded = extractToken(token);
-      const response = await axiosInstance.get<HealthWorker[]>("api/health-workers");
-      console.log("response",response)
-      console.log("decoded",decoded)
+      const response = await axiosInstance.get<HealthWorker[]>(
+        "api/health-workers"
+      );
+      console.log("response", response);
+      console.log("decoded", decoded);
       const currentWorker = response.data.find(
         (worker) => worker.email === decoded.email
       );
-      
+
       if (!currentWorker) throw new Error("Health worker not found");
       return currentWorker;
     },
@@ -80,7 +89,7 @@ const useCurrentHealthWorker = () => {
 
 const useParents = () => {
   return useQuery({
-    queryKey: ['parents'],
+    queryKey: ["parents"],
     queryFn: async () => {
       const response = await axiosInstance.get<Parent[]>("api/parents");
       return response.data;
@@ -91,7 +100,7 @@ const useParents = () => {
 
 const useCreateSchedule = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: ScheduleFormData & { healthWorkerId: string }) => {
       const now = new Date().toISOString();
@@ -111,7 +120,7 @@ const useCreateSchedule = () => {
       return axiosInstance.post("/api/visits", payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['schedules'] });
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
       notifications.show({
         title: "Success",
         message: "Schedule created successfully",
@@ -119,7 +128,8 @@ const useCreateSchedule = () => {
       });
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to create schedule";
+      const message =
+        error.response?.data?.message || "Failed to create schedule";
       notifications.show({
         title: "Error",
         message,
@@ -146,10 +156,18 @@ const itemVariants = {
 
 const AddSchedule = () => {
   const queryClient = useQueryClient();
-  
+
   // Data fetching
-  const { data: healthWorker, isLoading: loadingWorker, error: workerError } = useCurrentHealthWorker();
-  const { data: parents = [], isLoading: loadingParents, error: parentsError } = useParents();
+  const {
+    data: healthWorker,
+    isLoading: loadingWorker,
+    error: workerError,
+  } = useCurrentHealthWorker();
+  const {
+    data: parents = [],
+    isLoading: loadingParents,
+    error: parentsError,
+  } = useParents();
   const createScheduleMutation = useCreateSchedule();
 
   // Form setup
@@ -178,10 +196,11 @@ const AddSchedule = () => {
 
   // Memoized parent options
   const parentOptions = useMemo(
-    () => parents.map(({ id, firstName, lastName }) => ({
-      value: id,
-      label: `${firstName} ${lastName}`,
-    })),
+    () =>
+      parents.map(({ id, firstName, lastName }) => ({
+        value: id,
+        label: `${firstName} ${lastName}`,
+      })),
     [parents]
   );
 
@@ -193,7 +212,7 @@ const AddSchedule = () => {
 
   const onSubmit = async (data: ScheduleFormData) => {
     if (!healthWorker) return;
-    
+
     try {
       await createScheduleMutation.mutateAsync({
         ...data,
@@ -201,7 +220,7 @@ const AddSchedule = () => {
       });
       reset();
     } catch (error) {
-      console.log(error)
+      console.log(error);
       // Error handled in mutation
     }
   };
@@ -211,7 +230,7 @@ const AddSchedule = () => {
     notifications.show({
       title: "Form Reset",
       message: "All fields have been cleared",
-      color: "blue",
+      color: "purple",
     });
   };
 
@@ -220,7 +239,9 @@ const AddSchedule = () => {
     return (
       <Box p="md" pos="relative" mih={400}>
         <LoadingOverlay visible overlayBlur={2} />
-        <Title order={2} mb="xl">Add New Schedule</Title>
+        <Title order={2} mb="xl">
+          Add New Schedule
+        </Title>
         <Paper shadow="sm" p="xl" radius="md" withBorder h={300} />
       </Box>
     );
@@ -230,14 +251,18 @@ const AddSchedule = () => {
   if (workerError || parentsError) {
     return (
       <Box p="md">
-        <Title order={2} mb="xl">Add New Schedule</Title>
+        <Title order={2} mb="xl">
+          Add New Schedule
+        </Title>
         <Alert
           icon={<IconAlertCircle size={rem(16)} />}
           title="Error Loading Data"
           color="red"
           variant="light"
         >
-          {workerError?.message || parentsError?.message || "Failed to load required data"}
+          {workerError?.message ||
+            parentsError?.message ||
+            "Failed to load required data"}
           <Button
             variant="outline"
             size="xs"
@@ -253,16 +278,32 @@ const AddSchedule = () => {
 
   return (
     <Box p="md">
-      <motion.div initial="hidden" animate="visible" variants={containerVariants}>
-        <Group position="apart" mb="xl">
-          <Title order={2}>Add New Schedule</Title>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <Group position="apart" mb="lg">
+          <Title order={2} className="text-purple-700">
+            Add New Schedule
+          </Title>
         </Group>
 
-        <Paper shadow="sm" p="xl" radius="md" withBorder pos="relative">
-          <LoadingOverlay visible={createScheduleMutation.isPending} overlayBlur={2} />
-          
+        <Paper
+          shadow="xl"
+          p="xl"
+          radius="lg"
+          withBorder
+          pos="relative"
+          className="bg-white"
+        >
+          <LoadingOverlay
+            visible={createScheduleMutation.isPending}
+            overlayBlur={3}
+          />
+
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing="md">
+            <Stack spacing="lg">
               {/* Patient Selection */}
               <motion.div variants={itemVariants}>
                 <Controller
@@ -272,20 +313,25 @@ const AddSchedule = () => {
                     <Select
                       {...field}
                       label="Patient Name"
-                      placeholder="Select patient"
+                      placeholder="Search and select patient"
                       data={parentOptions}
-                      error={errors.parent_id?.message}
                       searchable
                       clearable
                       required
+                      radius="md"
+                      size="md"
+                      nothingFound="No matching patient"
+                      maxDropdownHeight={200} // sets max height for dropdown
+                      withinPortal // ensures dropdown overlays correctly
+                      classNames={{ input: "bg-gray-50 hover:bg-gray-100" }}
                     />
                   )}
                 />
               </motion.div>
 
               {/* Summary and Scheduled Time */}
-              <Group grow align="flex-start">
-                <motion.div variants={itemVariants}>
+              <Group grow align="flex-start" spacing="md">
+                <motion.div variants={itemVariants} style={{ flex: 2 }}>
                   <Controller
                     name="summary"
                     control={control}
@@ -295,15 +341,18 @@ const AddSchedule = () => {
                         label="Visit Summary"
                         placeholder="Describe the purpose and details of this visit"
                         icon={<IconMessage size={rem(16)} />}
-                        minRows={3}
+                        minRows={4}
                         error={errors.summary?.message}
                         required
+                        radius="md"
+                        size="md"
+                        classNames={{ input: "bg-gray-50 hover:bg-gray-100" }}
                       />
                     )}
                   />
                 </motion.div>
 
-                <motion.div variants={itemVariants}>
+                <motion.div variants={itemVariants} style={{ flex: 1 }}>
                   <Controller
                     name="scheduledTime"
                     control={control}
@@ -315,6 +364,9 @@ const AddSchedule = () => {
                         icon={<IconCalendar size={rem(16)} />}
                         error={errors.scheduledTime?.message}
                         required
+                        radius="md"
+                        size="md"
+                        classNames={{ input: "bg-gray-50 hover:bg-gray-100" }}
                       />
                     )}
                   />
@@ -322,18 +374,31 @@ const AddSchedule = () => {
               </Group>
 
               {/* Visit Type and Location */}
-              <Group grow>
+              <Group grow spacing="md">
                 <motion.div variants={itemVariants}>
                   <Controller
                     name="visitType"
                     control={control}
                     render={({ field }) => (
-                      <TextInput
+                      <Select
                         {...field}
                         label="Visit Type"
-                        placeholder="e.g., Routine Checkup, Follow-up"
+                        placeholder="Select visit type"
+                        data={[
+                          {
+                            value: "Routine Checkup",
+                            label: "Routine Checkup",
+                          },
+                          { value: "Follow-up", label: "Follow-up" },
+                          { value: "Emergency", label: "Emergency" },
+                          { value: "Consultation", label: "Consultation" },
+                          { value: "Vaccination", label: "Vaccination" },
+                        ]}
                         error={errors.visitType?.message}
                         required
+                        radius="md"
+                        size="md"
+                        classNames={{ input: "bg-gray-50 hover:bg-gray-100" }}
                       />
                     )}
                   />
@@ -351,6 +416,9 @@ const AddSchedule = () => {
                         icon={<IconMapPin size={rem(16)} />}
                         error={errors.location?.message}
                         required
+                        radius="md"
+                        size="md"
+                        classNames={{ input: "bg-gray-50 hover:bg-gray-100" }}
                       />
                     )}
                   />
@@ -370,76 +438,28 @@ const AddSchedule = () => {
                       data={communicationOptions}
                       error={errors.modeOfCommunication?.message}
                       required
+                      radius="md"
+                      size="md"
+                      classNames={{ input: "bg-gray-50 hover:bg-gray-100" }}
                     />
                   )}
                 />
               </motion.div>
-
-              {/* Visit Notes Section */}
-              <Title order={4} mt="lg" mb="sm">Visit Notes (Optional)</Title>
-              
-              <motion.div variants={itemVariants}>
-                <Controller
-                  name="visitNotes.observation"
-                  control={control}
-                  render={({ field }) => (
-                    <Textarea
-                      {...field}
-                      label="Observations"
-                      placeholder="Record any observations during the visit"
-                      minRows={2}
-                      error={errors.visitNotes?.observation?.message}
-                    />
-                  )}
-                />
-              </motion.div>
-
-              <Group grow>
-                <motion.div variants={itemVariants}>
-                  <Controller
-                    name="visitNotes.vitalSigns"
-                    control={control}
-                    render={({ field }) => (
-                      <Textarea
-                        {...field}
-                        label="Vital Signs"
-                        placeholder="Record vital signs if applicable"
-                        minRows={2}
-                        error={errors.visitNotes?.vitalSigns?.message}
-                      />
-                    )}
-                  />
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <Controller
-                    name="visitNotes.recommendations"
-                    control={control}
-                    render={({ field }) => (
-                      <Textarea
-                        {...field}
-                        label="Recommendations"
-                        placeholder="Any recommendations or follow-up actions"
-                        minRows={2}
-                        error={errors.visitNotes?.recommendations?.message}
-                      />
-                    )}
-                  />
-                </motion.div>
-              </Group>
 
               {/* Action Buttons */}
               <motion.div variants={itemVariants}>
-                <Group position="right" mt="xl">
+                <Group position="right" mt="md" spacing="sm">
                   <Button
-                    variant="outline"
+                    variant="light"
                     onClick={handleReset}
+                    className="bg-purple-50 text-purple-700 hover:bg-purple-100"
                     disabled={createScheduleMutation.isPending}
                   >
                     Reset Form
                   </Button>
                   <Button
                     type="submit"
+                    className="bg-purple-600 hover:bg-purple-500 text-white"
                     loading={createScheduleMutation.isPending}
                     disabled={!isValid}
                   >

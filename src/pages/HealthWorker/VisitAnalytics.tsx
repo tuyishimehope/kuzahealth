@@ -7,7 +7,6 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  Download,
   MessageSquare,
   RefreshCw,
   TrendingUp,
@@ -423,15 +422,7 @@ export default function VisitAnalytics() {
         {/* Charts */}
         <div className="grid gap-6 mb-8">
           {/* Monthly Trend - Full Width */}
-          <ChartCard
-            title="Visit Trends Over Time"
-            icon={BarChart3}
-            actions={
-              <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                <Download className="h-4 w-4" />
-              </button>
-            }
-          >
+          <ChartCard title="Visit Trends Over Time" icon={BarChart3}>
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart data={visitsByMonth}>
                 <defs>

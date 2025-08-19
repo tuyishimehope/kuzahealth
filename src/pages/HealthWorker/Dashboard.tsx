@@ -11,7 +11,6 @@ import { Area, Line, LineChart, ResponsiveContainer } from "recharts";
 
 import { axiosInstance } from "@/utils/axiosInstance";
 import type { ApexOptions } from "apexcharts";
-import Map from "../../components/HealthWorker/Map";
 import PatientChart from "../../components/HealthWorker/PatientChart";
 
 // ---------- Types ----------
@@ -35,7 +34,6 @@ export interface Patient {
   updatedAt: string;
 }
 
-type ProgressBarProps = { label: string; percentage: number; color: string };
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -111,26 +109,6 @@ const StatCard: React.FC<StatCardProps> = ({
   </motion.div>
 );
 
-const ProgressBar: React.FC<ProgressBarProps> = ({
-  label,
-  percentage,
-  color,
-}) => (
-  <div className="mb-5">
-    <div className="flex justify-between items-center mb-1">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-      <span className="text-sm font-semibold text-gray-900">{percentage}%</span>
-    </div>
-    <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden shadow-inner">
-      <motion.div
-        className={`${color} h-4 rounded-full shadow-md`}
-        initial={{ width: 0 }}
-        animate={{ width: `${percentage}%` }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      />
-    </div>
-  </div>
-);
 
 // ---------- Dashboard ----------
 const Dashboard: React.FC = () => {
@@ -145,13 +123,6 @@ const Dashboard: React.FC = () => {
   });
   const safePatients = Array.isArray(patients) ? patients : [];
 
-  const locationData = [
-    { region: "Kigali City", percentage: 25, color: "bg-purple-500" },
-    { region: "North Province", percentage: 20, color: "bg-pink-500" },
-    { region: "South Province", percentage: 22, color: "bg-purple-400" },
-    { region: "East Province", percentage: 32, color: "bg-green-500" },
-    { region: "West Province", percentage: 18, color: "bg-lime-500" },
-  ];
 
   const series = [
     {
@@ -208,7 +179,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Mother Information Overview</h1>
       </div>
 
       {/* Stat Cards */}
@@ -261,24 +232,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Health Coverage by Region
-          </h2>
-          {locationData.map((loc, i) => (
-            <ProgressBar
-              key={i}
-              label={loc.region}
-              percentage={loc.percentage}
-              color={loc.color}
-            />
-          ))}
-        </div>
-        <div className="h-80 rounded-xl overflow-hidden shadow-inner border border-gray-200 mt-6">
-          <Map />
-        </div>
-      </div>
+     
     </div>
   );
 };

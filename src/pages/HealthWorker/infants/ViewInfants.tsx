@@ -1,5 +1,5 @@
 // ViewInfants.tsx
-import { Box, Button, Group, Paper, Title, Tooltip, ActionIcon } from "@mantine/core";
+import { Box, Button, Group, Paper, Title, Tooltip, ActionIcon, Text } from "@mantine/core";
 import { IconPlus, IconEye } from "@tabler/icons-react";
 import {
   MantineReactTable,
@@ -8,7 +8,6 @@ import {
 } from "mantine-react-table";
 import { useEffect, useState } from "react";
 import type { Patient } from "../Mother/ViewPatient";
-
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
@@ -17,17 +16,9 @@ export type Child = {
   firstName: string;
   lastName: string;
   gender: string;
-  deliveryDate: string;
-  birthWeight: number;
-  birthHeight: number;
-  birthTime: string;
-  deliveryLocation: string;
-  assignedDoctor: string;
-  createdAt?: string;
-  updatedAt?: string;
   dateOfBirth?: string;
-  bloodGroup?: string;
-  specialConditions?: string;
+  birthWeight?: number;
+  birthHeight?: number;
   mother?: Patient;
 };
 
@@ -50,7 +41,6 @@ const ViewInfants = () => {
         setLoading(false);
       }
     };
-
     fetchInfants();
   }, []);
 
@@ -60,29 +50,25 @@ const ViewInfants = () => {
     { accessorKey: "gender", header: "Gender" },
     {
       accessorKey: "dateOfBirth",
-      header: "DOB",
-      Cell: ({ cell }) => new Date(cell.getValue<string>()).toLocaleDateString(),
+      header: "Date of Birth",
+      Cell: ({ cell }) =>
+        cell.getValue<string>()
+          ? new Date(cell.getValue<string>()).toLocaleDateString()
+          : "-",
     },
-    { accessorKey: "birthWeight", header: "Weight (kg)" },
-    { accessorKey: "birthHeight", header: "Height (cm)" },
-    // { accessorKey: "birthTime", header: "Birth Time" },
-    { accessorKey: "deliveryLocation", header: "Delivery Location" },
-    // { accessorKey: "assignedDoctor", header: "Doctor" },
-    { accessorKey: "bloodGroup", header: "Blood Group" },
-    // { accessorKey: "specialConditions", header: "Special Conditions" },
+    { accessorKey: "birthWeight", header: "Weight (kg)", Cell: ({ cell }) => cell.getValue<number>() ?? "-" },
+    { accessorKey: "birthHeight", header: "Height (cm)", Cell: ({ cell }) => cell.getValue<number>() ?? "-" },
     {
       header: "Actions",
       Cell: ({ row }) => (
-        <Tooltip label="View Details">
+        <Tooltip label="View Details" position="top">
           <ActionIcon
-            variant="light"
+            variant="filled"
             color="purple"
-            className="bg-purple-600 hover:bg-purple-500"
-            onClick={() =>
-              navigate( "/healthworker/view-infants/"+ row.original.id)
-            }
+            size="lg"
+            onClick={() => navigate(`/healthworker/view-infants/${row.original.id}`)}
           >
-            <IconEye size={18} />
+            <IconEye size={20} />
           </ActionIcon>
         </Tooltip>
       ),
@@ -96,19 +82,30 @@ const ViewInfants = () => {
     enableColumnFilters: true,
     enableSorting: true,
     enablePagination: true,
-    mantinePaperProps: { shadow: "0", withBorder: true },
-    mantineTableContainerProps: { style: { minHeight: "500px" } },
+    mantinePaperProps: { shadow: "sm", radius: "md", withBorder: true },
+    mantineTableContainerProps: { style: { minHeight: 550 } },
   });
 
-  if(error) return <p>{error}</p>
   return (
     <Box p="md">
-      <Group position="apart" mb="md">
+      <Group position="apart" mb="lg" align="center">
         <Title order={2}>Infants List</Title>
-        <Button leftIcon={<IconPlus size={16} />} onClick={() => navigate("/healthworker/add-infant")} className="bg-purple-600 hover:bg-purple-500">Add New Infant</Button>
+        <Button
+          leftIcon={<IconPlus size={16} />}
+          className="bg-purple-600 hover:bg-purple-500 text-white"
+          onClick={() => navigate("/healthworker/add-infant")}
+        >
+          Add New Infant
+        </Button>
       </Group>
 
-      <Paper withBorder>
+      {error && (
+        <Text color="red" mb="md">
+          {error}
+        </Text>
+      )}
+
+      <Paper withBorder radius="md" shadow="sm" p="sm">
         <MantineReactTable table={table} />
       </Paper>
     </Box>

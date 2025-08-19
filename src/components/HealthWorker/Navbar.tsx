@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { RiMenuLine, RiNotification3Line } from "react-icons/ri";
+import { useEffect, useState } from "react";
+import { RiMenuLine } from "react-icons/ri";
 import profile from "../../assets/profile.png";
 
 interface DecodedToken {
   email: string;
   name?: string;
-  // Add other properties if necessary (e.g., role, exp)
 }
 
 interface NavbarProps {
@@ -58,8 +57,8 @@ const Navbar = ({ toggleSidebar, title = "Dashboard" }: NavbarProps): JSX.Elemen
       <div className="flex items-center gap-5">
         <div className="relative">
           <button className="p-2 rounded-full hover:bg-gray-100 relative">
-            <RiNotification3Line className="text-gray-600 w-5 h-5" />
-            <span className="absolute top-0 right-0 w-2 h-2 bg-purple-500 rounded-full"></span>
+            {/* <RiNotification3Line className="text-gray-600 w-5 h-5" /> */}
+            {/* <span className="absolute top-0 right-0 w-2 h-2 bg-purple-500 rounded-full"></span> */}
           </button>
         </div>
         

@@ -1,269 +1,386 @@
+import { axiosInstance } from "@/utils/axiosInstance";
 import {
-    Badge,
-    Box,
-    Button,
-    Card,
-    Group,
-    Modal,
-    SimpleGrid,
-    Stack,
-    Tabs,
-    Text,
-    ThemeIcon,
-    Timeline,
-    Title
-} from '@mantine/core';
-import {
-    IconAlertCircle,
-    IconCalendar,
-    IconCheck,
-    IconClock,
-    IconInfoCircle,
-    IconVaccine,
-} from '@tabler/icons-react';
-import { useState } from 'react';
+  Badge,
+  Box,
+  Button,
+  Group,
+  Modal,
+  Paper,
+  ScrollArea,
+  Select,
+  Stack,
+  Table,
+  Textarea,
+  TextInput,
+  Title,
+} from "@mantine/core";
+import { IconVaccine } from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useCurrentHealthWorker } from "../Schedule/AddSchedule";
 
-interface VaccinationSchedule {
+interface Vaccination {
   id: string;
   name: string;
   description: string;
-  recommendedAge: string;
-  doses: number;
-  status: 'completed' | 'upcoming' | 'overdue';
-  lastDoseDate?: string;
-  nextDoseDate?: string;
+  administeredDate?: string;
+  nextDueDate?: string;
+  notes?: string;
+  infantId: string;
+  healthWorkerId: string;
 }
 
-const vaccinationSchedule: VaccinationSchedule[] = [
-  {
-    id: 'bcg',
-    name: 'BCG (Bacille Calmette-Guérin)',
-    description: 'Protects against tuberculosis',
-    recommendedAge: 'At birth',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-04-15',
-  },
-  {
-    id: 'opv0',
-    name: 'OPV-0 (Oral Polio Vaccine)',
-    description: 'First dose of polio vaccine',
-    recommendedAge: 'At birth',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-04-15',
-  },
-  {
-    id: 'hepB',
-    name: 'Hepatitis B',
-    description: 'Protects against hepatitis B virus',
-    recommendedAge: 'At birth',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-04-15',
-  },
-  {
-    id: 'dtap1',
-    name: 'DTaP (Diphtheria, Tetanus, Pertussis)',
-    description: 'First dose of combined vaccine',
-    recommendedAge: '6 weeks',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-05-15',
-  },
-  {
-    id: 'ipv1',
-    name: 'IPV (Inactivated Polio Vaccine)',
-    description: 'First dose of inactivated polio vaccine',
-    recommendedAge: '6 weeks',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-05-15',
-  },
-  {
-    id: 'hib1',
-    name: 'Hib (Haemophilus influenzae type b)',
-    description: 'First dose of Hib vaccine',
-    recommendedAge: '6 weeks',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-05-15',
-  },
-  {
-    id: 'pcv1',
-    name: 'PCV (Pneumococcal Conjugate)',
-    description: 'First dose of pneumococcal vaccine',
-    recommendedAge: '6 weeks',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-05-15',
-  },
-  {
-    id: 'rota1',
-    name: 'Rotavirus',
-    description: 'First dose of rotavirus vaccine',
-    recommendedAge: '6 weeks',
-    doses: 1,
-    status: 'upcoming',
-    nextDoseDate: '2024-05-15',
-  },
+interface Option {
+  value: string;
+  label: string;
+}
+
+const vaccinationOptions = [
+  { value: "BCG", label: "BCG (Infant)" },
+  { value: "Polio", label: "Polio (Infant)" },
+  { value: "HepB", label: "Hepatitis B (Infant)" },
+  { value: "DTP", label: "DTP (Toddler)" },
+  { value: "MMR", label: "MMR (Toddler)" },
+  { value: "Varicella", label: "Varicella (Toddler)" },
 ];
 
 const InfantVaccination = () => {
-  const [selectedVaccine, setSelectedVaccine] = useState<VaccinationSchedule | null>(null);
+  const queryClient = useQueryClient();
+
+  const [filterType] = useState<
+    "infant" | "parent" | "healthworker"
+  >("infant");
+  const [selectedFilterId] = useState<string | null>(null);
+  const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
+  const [selectedInfantId, setSelectedInfantId] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [searchName, setSearchName] = useState("");
+  const [filterAgeGroup, setFilterAgeGroup] = useState<
+    "infant" | "toddler" | "all"
+  >("all");
+  const [filterDate, setFilterDate] = useState("");
 
-  const getStatusColor = (status: VaccinationSchedule['status']) => {
+  const { control, handleSubmit, reset } = useForm<
+    Partial<Vaccination>
+  >({});
+
+  const { data: parents = [] } = useQuery<Option[]>({
+    queryKey: ["parents"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/api/parents");
+      return data
+        .filter((p: any) => p?.id && p.firstName)
+        .map((p: any) => ({
+          value: p.id,
+          label: `${p.firstName} ${p.lastName}`,
+        }));
+    },
+  });
+
+  const { data: children = [] } = useQuery<Option[]>({
+    queryKey: ["children", selectedParentId],
+    queryFn: async () => {
+      if (!selectedParentId) return [];
+      const { data } = await axiosInstance.get(
+        `/api/infants/mother/${selectedParentId}`
+      );
+      return data
+        .filter((i: any) => i?.id && i.firstName)
+        .map((i: any) => ({ value: i.id, label: i.firstName }));
+    },
+    // enabled: !!selectedParentId,  <-- remove if you want to always fetch
+  });
+
+  const { data: currentHealthWorker } = useCurrentHealthWorker();
+
+  const { data: vaccinations = [] } = useQuery<Vaccination[]>({
+    queryKey: ["vaccinations", filterType, selectedFilterId],
+    queryFn: async () => {
+      let endpoint = "/api/vaccinations"; // fetch all by default
+      if (selectedFilterId) {
+        endpoint =
+          filterType === "infant"
+            ? `/api/vaccinations/infant/${selectedFilterId}`
+            : filterType === "parent"
+            ? `/api/vaccinations/parent/${selectedFilterId}`
+            : `/api/vaccinations/healthworker/${selectedFilterId}`;
+      }
+      const { data } = await axiosInstance.get(endpoint);
+      return data;
+    },
+    staleTime: 1000 * 60, // 1 minute caching
+  });
+
+  const recordMutation = useMutation({
+    mutationFn: (newVaccine: Partial<Vaccination>) =>
+      axiosInstance.post("/api/vaccinations", newVaccine),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["vaccinations", filterType, selectedFilterId],
+      });
+      resetForm();
+    },
+  });
+  const { data: allInfants = [] } = useQuery<Option[]>({
+    queryKey: ["infants"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/api/infants");
+      return data
+        .filter((i: any) => i?.id && i.firstName)
+        .map((i: any) => ({
+          value: i.id,
+          label: `${i.firstName} ${i.lastName}`,
+        }));
+    },
+  });
+
+  const resetForm = () => {
+    reset();
+    setSelectedParentId(null);
+    setSelectedInfantId(null);
+    setShowModal(false);
+  };
+
+  const getStatus = (v: Vaccination) => {
+    const today = new Date();
+    if (v.administeredDate && new Date(v.administeredDate) <= today)
+      return "completed";
+    if (v.nextDueDate && new Date(v.nextDueDate) < today) return "overdue";
+    return "upcoming";
+  };
+
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'green';
-      case 'upcoming':
-        return 'blue';
-      case 'overdue':
-        return 'red';
+      case "completed":
+        return "green";
+      case "upcoming":
+        return "purple";
+      case "overdue":
+        return "red";
       default:
-        return 'gray';
+        return "gray";
     }
   };
 
-  const getStatusIcon = (status: VaccinationSchedule['status']) => {
-    switch (status) {
-      case 'completed':
-        return <IconCheck size={16} />;
-      case 'upcoming':
-        return <IconClock size={16} />;
-      case 'overdue':
-        return <IconAlertCircle size={16} />;
-      default:
-        return <IconInfoCircle size={16} />;
-    }
-  };
+  const filteredVaccinations = useMemo(() => {
+    return vaccinations.filter((v) => {
+      const nameMatch = v.name.toLowerCase().includes(searchName.toLowerCase());
+      const ageMatch =
+        filterAgeGroup === "all" ||
+        (filterAgeGroup === "infant" &&
+          ["BCG", "Polio", "HepB"].includes(v.name)) ||
+        (filterAgeGroup === "toddler" &&
+          ["DTP", "MMR", "Varicella"].includes(v.name));
+      const dateMatch =
+        !filterDate ||
+        (v.administeredDate &&
+          dayjs(v.administeredDate).isSame(filterDate, "day"));
+      return nameMatch && ageMatch && dateMatch;
+    });
+  }, [vaccinations, searchName, filterAgeGroup, filterDate]);
 
   return (
     <Box p="md">
-      <Group position="apart" mb="xl">
-        <Title order={2}>Infant Vaccination Schedule</Title>
-        <Button leftIcon={<IconVaccine size={16} />}>
+      <Group position="apart" mb="lg">
+        <Title order={2}>Vaccination Schedule</Title>
+        <Button
+          leftIcon={<IconVaccine size={16} />}
+          className="bg-purple-600 hover:bg-purple-500"
+          onClick={() => setShowModal(true)}
+        >
           Record Vaccination
         </Button>
       </Group>
 
-      <Tabs defaultValue="timeline">
-        <Tabs.List mb="xl">
-          <Tabs.Tab value="timeline" icon={<IconCalendar size={16} />}>
-            Timeline View
-          </Tabs.Tab>
-          <Tabs.Tab value="grid" icon={<IconVaccine size={16} />}>
-            Grid View
-          </Tabs.Tab>
-        </Tabs.List>
+      {/* Search & Filters */}
+      {/* Filters */}
+      <Group mb="md" spacing="md" align="flex-end">
+        {/* Search by vaccine name */}
+        <TextInput
+          label="Vaccine Name"
+          placeholder="Search vaccine"
+          value={searchName}
+          onChange={(e) => setSearchName(e.currentTarget.value)}
+          sx={{ flex: 1 }}
+        />
 
-        <Tabs.Panel value="timeline">
-          <Timeline active={1} bulletSize={24} lineWidth={2}>
-            {vaccinationSchedule.map((vaccine) => (
-              <Timeline.Item
-                key={vaccine.id}
-                bullet={
-                  <ThemeIcon color={getStatusColor(vaccine.status)} size={24} radius="xl">
-                    {getStatusIcon(vaccine.status)}
-                  </ThemeIcon>
-                }
-                title={vaccine.name}
-              >
-                <Text size="sm">{vaccine.description}</Text>
-                <Text size="xs" color="dimmed" mt={4}>
-                  Recommended Age: {vaccine.recommendedAge}
-                </Text>
-                {vaccine.nextDoseDate && (
-                  <Text size="xs" color="dimmed">
-                    Next Dose: {new Date(vaccine.nextDoseDate).toLocaleDateString()}
-                  </Text>
-                )}
-              </Timeline.Item>
-            ))}
-          </Timeline>
-        </Tabs.Panel>
+        {/* Filter by age group */}
+        <Select
+          label="Age Group"
+          placeholder="Filter by age"
+          value={filterAgeGroup}
+          onChange={(val) =>
+            setFilterAgeGroup(val as "all" | "infant" | "toddler")
+          }
+          data={[
+            { value: "all", label: "All" },
+            { value: "infant", label: "Infant" },
+            { value: "toddler", label: "Toddler" },
+          ]}
+          sx={{ width: 150 }}
+        />
 
-        <Tabs.Panel value="grid">
-          <SimpleGrid cols={3} spacing="lg">
-            {vaccinationSchedule.map((vaccine) => (
-              <Card
-                key={vaccine.id}
-                shadow="sm"
-                p="lg"
-                radius="md"
-                withBorder
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  setSelectedVaccine(vaccine);
-                  setShowModal(true);
-                }}
-              >
-                <Group position="apart" mb="md">
-                  <Text weight={500}>{vaccine.name}</Text>
-                  <Badge color={getStatusColor(vaccine.status)}>
-                    {vaccine.status}
-                  </Badge>
-                </Group>
+        {/* Filter by date */}
+        <TextInput
+          label="Administered Date"
+          type="date"
+          placeholder="Filter by date"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.currentTarget.value)}
+          sx={{ width: 180 }}
+        />
+      </Group>
 
-                <Stack spacing="xs">
-                  <Text size="sm">{vaccine.description}</Text>
-                  <Text size="xs" color="dimmed">
-                    Recommended Age: {vaccine.recommendedAge}
-                  </Text>
-                  <Text size="xs" color="dimmed">
-                    Doses: {vaccine.doses}
-                  </Text>
-                  {vaccine.nextDoseDate && (
-                    <Text size="xs" color="dimmed">
-                      Next Dose: {new Date(vaccine.nextDoseDate).toLocaleDateString()}
-                    </Text>
-                  )}
-                </Stack>
-              </Card>
-            ))}
-          </SimpleGrid>
-        </Tabs.Panel>
-      </Tabs>
+      {/* Vaccination Table */}
+      <ScrollArea>
+        <Paper p="sm" shadow="xs" radius="md">
+          <Table highlightOnHover>
+            <thead>
+              <tr>
+                <th>Vaccine</th>
+                <th>Child</th>
+                <th>Administered</th>
+                <th>Next Dose</th>
+                <th>Status</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredVaccinations.map((v) => (
+                <tr key={v.id}>
+                  <td>{v.name}</td>
+                  <td>
+                    <td>
+                      {allInfants.find((c) => c.value === v.infantId)?.label ||
+                        "-"}
+                    </td>
+                  </td>
+                  <td>
+                    {v.administeredDate
+                      ? dayjs(v.administeredDate).format("YYYY-MM-DD")
+                      : "-"}
+                  </td>
+                  <td>
+                    {v.nextDueDate
+                      ? dayjs(v.nextDueDate).format("YYYY-MM-DD")
+                      : "-"}
+                  </td>
+                  <td>
+                    <Badge color={getStatusColor(getStatus(v))}>
+                      {getStatus(v)}
+                    </Badge>
+                  </td>
+                  <td>{v.notes || "-"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Paper>
+      </ScrollArea>
 
+      {/* Modal for Recording */}
       <Modal
         opened={showModal}
-        onClose={() => setShowModal(false)}
-        title={selectedVaccine?.name}
+        onClose={resetForm}
+        title="Record Vaccination"
         size="lg"
       >
-        {selectedVaccine && (
+        <form
+          onSubmit={handleSubmit((data) =>
+            recordMutation.mutate({
+              ...data,
+              infantId: selectedInfantId || "",
+              healthWorkerId: currentHealthWorker?.id || "",
+            })
+          )}
+        >
           <Stack spacing="md">
-            <Text>{selectedVaccine.description}</Text>
-            <Group>
-              <Badge color={getStatusColor(selectedVaccine.status)}>
-                {selectedVaccine.status}
-              </Badge>
-              <Badge variant="outline">
-                {selectedVaccine.doses} {selectedVaccine.doses === 1 ? 'Dose' : 'Doses'}
-              </Badge>
-            </Group>
-            <Text size="sm">
-              <b>Recommended Age:</b> {selectedVaccine.recommendedAge}
-            </Text>
-            {selectedVaccine.nextDoseDate && (
-              <Text size="sm">
-                <b>Next Dose:</b> {new Date(selectedVaccine.nextDoseDate).toLocaleDateString()}
-              </Text>
-            )}
-            <Group position="right" mt="xl">
-              <Button variant="outline" onClick={() => setShowModal(false)}>
-                Close
+            <Select
+              label="Parent"
+              placeholder="Select parent"
+              value={selectedParentId}
+              onChange={setSelectedParentId}
+              data={parents}
+              required
+            />
+            <Select
+              label="Child / Infant"
+              placeholder="Select child"
+              value={selectedInfantId}
+              onChange={setSelectedInfantId}
+              data={children}
+              required
+              disabled={!selectedParentId}
+            />
+            <Controller
+              name="name"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="Vaccination Name"
+                  placeholder="Select a vaccine"
+                  data={vaccinationOptions}
+                  required
+                />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <Textarea {...field} label="Description" required />
+              )}
+            />
+            <Controller
+              name="administeredDate"
+              control={control}
+              defaultValue={dayjs().format("YYYY-MM-DD")}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  type="date"
+                  label="Administered Date"
+                  required
+                />
+              )}
+            />
+            <Controller
+              name="nextDueDate"
+              control={control}
+              render={({ field }) => (
+                <TextInput {...field} type="date" label="Next Due Date" />
+              )}
+            />
+            <Controller
+              name="notes"
+              control={control}
+              render={({ field }) => <Textarea {...field} label="Notes" />}
+            />
+            <Group position="right">
+              <Button
+                variant="outline"
+                onClick={resetForm}
+                className="bg-purple-600 hover:bg-purple-500 text-white"
+              >
+                Cancel
               </Button>
-              <Button>
-                Record Vaccination
+              <Button
+                type="submit"
+                loading={recordMutation.isPending}
+                className="bg-purple-600 hover:bg-purple-500"
+              >
+                Record
               </Button>
             </Group>
           </Stack>
-        )}
+        </form>
       </Modal>
     </Box>
   );
 };
 
-export default InfantVaccination; 
+export default InfantVaccination;
