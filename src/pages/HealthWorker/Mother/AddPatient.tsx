@@ -11,7 +11,7 @@ import { z } from "zod";
 const motherSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().min(1, "Email is required").optional(),
+  email: z.string().optional(),
   phone: z
     .string()
     .min(1, "Phone number is required")
@@ -183,7 +183,7 @@ const AddMotherForm: React.FC = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
             <FormInput
-              label="email"
+              label="Email"
               name="email"
               register={register}
               error={errors.email?.message}
