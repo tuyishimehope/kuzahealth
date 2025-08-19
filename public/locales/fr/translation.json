@@ -1,0 +1,10 @@
+{
+  "hero": {
+    "title": "Un chemin vers des avenirs plus sains",
+    "subtitle": "Notre mission est de réduire la mortalité maternelle et infantile en sensibilisant, en améliorant l'accès aux soins de santé et en fournissant une éducation essentielle. Ensemble, nous pouvons garantir que chaque mère et chaque enfant reçoivent les soins nécessaires pour un avenir plus sain et plus sûr."
+  },
+  "button": {
+    "getStarted": "Commencer",
+    "exploreServices": "Explorer nos services"
+  }
+}

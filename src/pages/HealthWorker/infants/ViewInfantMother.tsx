@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/rules-of-hooks */
+
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "@/utils/axiosInstance";
@@ -48,7 +48,9 @@ const ViewInfantMother = () => {
     enabled: !!motherId,
   });
 
-  const { control, handleSubmit, reset } = useForm<any>({
+  const { control, handleSubmit,
+    // reset
+   } = useForm<any>({
     defaultValues: infant || {},
   });
 
@@ -64,9 +66,9 @@ const ViewInfantMother = () => {
   if (infantLoading || motherLoading) return <Text>Loading...</Text>;
 
   // Prefill form when infant data changes
-  useState(() => {
-    if (infant) reset(infant);
-  });
+  // useState(() => {
+  //   if (infant) reset(infant);
+  // });
 
   return (
     <Box p="md">

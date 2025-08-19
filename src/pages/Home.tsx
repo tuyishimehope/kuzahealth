@@ -17,12 +17,14 @@ import ctnImage from "../assets/ctn.png";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { showNotification } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 
 /**
  * Home page component with sections for hero, about, services, etc.
  */
 const Home = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   useEffect(() => {
     showNotification({ message: "red" });
   }, []);
@@ -89,13 +91,10 @@ const Home = () => {
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-tight">
-              A Path to Healthier Futures
+             {t("hero.title")}
             </h1>
             <p className="text-white/90 text-lg md:text-xl leading-relaxed">
-              Our mission is to reduce maternal and child mortality by raising
-              awareness, improving healthcare access, and providing essential
-              education. Together, we can ensure every mother and child receives
-              the care they need for a healthier, safer future.
+            {t("hero.subtitle")}
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <Button
@@ -104,7 +103,7 @@ const Home = () => {
                 className="bg-purple-600 hover:bg-purple-700"
                 onClick={() => navigate("/auth/signin")}
               >
-                Get Started
+                {t("button.getStarted")}
               </Button>
               {/* <button className="flex items-center px-6 py-4 text-white hover:text-purple-200 transition-colors duration-300">
                 <span className="mr-2">Learn more</span>
@@ -145,30 +144,6 @@ const Home = () => {
           </svg>
         </div>
       </Section>
-
-      {/* Partners Section */}
-      {/* <Section background="white" paddingY="py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Trusted by Leading Organizations
-          </h2>
-          <div className="w-20 h-1 bg-purple-500 mx-auto rounded-full"></div>
-        </div>
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
-          {["Company A", "Company B", "Company C", "Company D"].map(
-            (company) => (
-              <div
-                key={company}
-                className="flex items-center justify-center p-4 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
-              >
-                <span className="text-xl font-bold text-gray-500 hover:text-purple-600 transition-colors">
-                  {company}
-                </span>
-              </div>
-            )
-          )}
-        </div>
-      </Section> */}
 
       {/* About us Section */}
       <Section id="about" background="gradient" className="py-16 md:py-24">

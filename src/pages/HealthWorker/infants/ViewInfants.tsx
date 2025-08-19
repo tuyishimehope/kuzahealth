@@ -16,6 +16,7 @@ export type Child = {
   firstName: string;
   lastName: string;
   gender: string;
+  bloodGroup:string;
   dateOfBirth?: string;
   birthWeight?: number;
   birthHeight?: number;

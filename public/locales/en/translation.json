@@ -1,0 +1,10 @@
+{
+  "hero": {
+    "title": "A Path to Healthier Futures",
+    "subtitle": "Our mission is to reduce maternal and child mortality by raising awareness, improving healthcare access, and providing essential education. Together, we can ensure every mother and child receives the care they need for a healthier, safer future."
+  },
+  "button": {
+    "getStarted": "Get Started",
+    "exploreServices": "Explore Our Services"
+  }
+}
