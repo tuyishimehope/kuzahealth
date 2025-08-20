@@ -4,11 +4,13 @@ import {
   Badge,
   Box,
   Button,
+  Divider,
   Group,
   LoadingOverlay,
   Menu,
   Modal,
   Paper,
+  Skeleton,
   Stack,
   Table,
   Text,
@@ -401,56 +403,165 @@ const ViewSchedule = () => {
         </Stack>
 
         {/* View Modal */}
-        <Modal
-          opened={opened}
-          onClose={close}
-          title="Schedule Details"
-          size="lg"
-        >
-          {selectedSchedule && (
-            <Stack spacing="md">
-              <Text>Date: {selectedSchedule.actualStartTime || "N/A"}</Text>
-              <Text>Time: {selectedSchedule.scheduledTime}</Text>
-              <Text>Location: {selectedSchedule.location}</Text>
-              <Text>Status: {selectedSchedule.status}</Text>
-              <Text>Communication: {selectedSchedule.modeOfCommunication}</Text>
-              <Text>Summary: {selectedSchedule.summary}</Text>
-              {parentIsLoading && <Text>Loading parent info</Text> }
-              <Text>Parent: {parentInfo?.firstName} {parentInfo?.lastName}</Text>
+     <Modal
+  opened={opened}
+  onClose={close}
+  title="Schedule Details"
+  size="lg"
+  padding="xl"
+>
+  {selectedSchedule && (
+    <Stack spacing="lg">
+      {/* Schedule Overview */}
+      <Group position="apart" align="flex-start">
+        <Stack spacing="xs" style={{ flex: 1 }}>
+          <Group spacing="xs">
+            <Text size="sm" color="dimmed">Status:</Text>
+            <Badge 
+              size="sm" 
+              color={selectedSchedule.status?.toLowerCase() === 'completed' ? 'green' : 
+                     selectedSchedule.status?.toLowerCase() === 'pending' ? 'yellow' : 
+                     selectedSchedule.status?.toLowerCase() === 'cancelled' ? 'red' : 'gray'}
+              variant="light"
+            >
+              {selectedSchedule.status}
+            </Badge>
+          </Group>
+          <Text size="sm">
+            <Text component="span" color="dimmed">Date & Time:</Text>{' '}
+            {selectedSchedule.actualStartTime ? 
+              new Date(selectedSchedule.actualStartTime).toLocaleString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) : 'N/A'
+            }
+          </Text>
+          <Text size="sm">
+            <Text component="span" color="dimmed">Location:</Text>{' '}
+            {selectedSchedule.location || 'N/A'}
+          </Text>
+          <Text size="sm">
+            <Text component="span" color="dimmed">Communication:</Text>{' '}
+            {selectedSchedule.modeOfCommunication || 'N/A'}
+          </Text>
+        </Stack>
+      </Group>
 
-              <Title order={4}>Visit Notes</Title>
-              {isNotesLoading ? (
-                <Text>Loading visit notes...</Text>
-              ) : !visitNotes?.length ? (
-                <Text>No visit notes available.</Text>
-              ) : (
-                visitNotes.map((note) => (
-                  <Paper key={note.id} p="sm" shadow="xs" withBorder>
-                    <Text>
-                      <strong>Observation:</strong> {note.observation}
-                    </Text>
-                    <Text>
-                      <strong>Vital Signs:</strong> {note.vitalSigns}
-                    </Text>
-                    <Text>
-                      <strong>Recommendations:</strong> {note.recommendations}
-                    </Text>
-                    {note.attachments?.length > 0 && (
-                      <Text>
-                        <strong>Attachments:</strong>{" "}
-                        {note.attachments.join(", ")}
+      {/* Parent Information */}
+      <div>
+        <Text weight={500} size="sm" mb="xs">Parent Information</Text>
+        {parentIsLoading ? (
+          <Skeleton height={20} width="60%" />
+        ) : (
+          <Text size="sm">
+            {parentInfo?.firstName && parentInfo?.lastName 
+              ? `${parentInfo.firstName} ${parentInfo.lastName}`
+              : 'Information unavailable'
+            }
+          </Text>
+        )}
+      </div>
+
+      {/* Summary */}
+      {selectedSchedule.summary && (
+        <div>
+          <Text weight={500} size="sm" mb="xs">Summary</Text>
+          <Paper p="md" bg="gray.0" radius="md">
+            <Text size="sm">{selectedSchedule.summary}</Text>
+          </Paper>
+        </div>
+      )}
+
+      <Divider />
+
+      {/* Visit Notes */}
+      <div>
+        <Title order={4} mb="md">Visit Notes</Title>
+        
+        {isNotesLoading ? (
+          <Stack spacing="sm">
+            {[...Array(2)].map((_, i) => (
+              <Paper key={i} p="md" withBorder radius="md">
+                <Skeleton height={20} mb="sm" />
+                <Skeleton height={16} width="80%" mb="xs" />
+                <Skeleton height={16} width="90%" />
+              </Paper>
+            ))}
+          </Stack>
+        ) : !visitNotes?.length ? (
+          <Paper p="xl" bg="gray.0" radius="md" style={{ textAlign: 'center' }}>
+            <Text color="dimmed" size="sm">No visit notes available</Text>
+          </Paper>
+        ) : (
+          <Stack spacing="md">
+            {visitNotes.map((note, index) => (
+              <Paper 
+                key={note.id || index} 
+                p="md" 
+                withBorder 
+                radius="md"
+                style={{ borderLeft: '4px solid var(--mantine-color-blue-5)' }}
+              >
+                <Stack spacing="sm">
+                  {note.observation && (
+                    <div>
+                      <Text weight={500} size="sm" color="blue.7">
+                        Observation
                       </Text>
-                    )}
-                  </Paper>
-                ))
-              )}
-
-              {/* <Button color="green" size="sm" className="bg-purple-600 hover:bg-purple-500" onClick={() => handleAddVisitNote(selectedSchedule)}>
-                Add Visit Note
-              </Button> */}
-            </Stack>
-          )}
-        </Modal>
+                      <Text size="sm">{note.observation}</Text>
+                    </div>
+                  )}
+                  
+                  {note.vitalSigns && (
+                    <div>
+                      <Text weight={500} size="sm" color="green.7">
+                        Vital Signs
+                      </Text>
+                      <Text size="sm">{note.vitalSigns}</Text>
+                    </div>
+                  )}
+                  
+                  {note.recommendations && (
+                    <div>
+                      <Text weight={500} size="sm" color="orange.7">
+                        Recommendations
+                      </Text>
+                      <Text size="sm">{note.recommendations}</Text>
+                    </div>
+                  )}
+                  
+                  {note.attachments?.length > 0 && (
+                    <div>
+                      <Text weight={500} size="sm" color="purple.7">
+                        Attachments
+                      </Text>
+                      <Group spacing="xs">
+                        {note.attachments.map((attachment, i) => (
+                          <Badge 
+                            key={i} 
+                            size="sm" 
+                            variant="outline" 
+                            color="purple"
+                          >
+                            {attachment}
+                          </Badge>
+                        ))}
+                      </Group>
+                    </div>
+                  )}
+                </Stack>
+              </Paper>
+            ))}
+          </Stack>
+        )}
+      </div>
+    </Stack>
+  )}
+</Modal>
 
         {/* Edit Modal */}
         <Modal
