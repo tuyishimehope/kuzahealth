@@ -9,7 +9,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import {  IconEye, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconEye, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MantineReactTable,
@@ -18,6 +18,7 @@ import {
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next"; // ✅ translation hook
 
 export interface Patient {
   id: string;
@@ -44,6 +45,7 @@ const MaritimePatientDashboard = () => {
   const theme = useMantineTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useTranslation(); // ✅ init translation
 
   const [globalFilter] = useState("");
   const [selectedStatus] = useState<"all" | Patient["maritalStatus"]>("all");
@@ -63,35 +65,35 @@ const MaritimePatientDashboard = () => {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) => axiosInstance.delete(`/api/parents/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({queryKey:["patients"]}),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),
   });
 
   const columns = useMemo<MRT_ColumnDef<Patient>[]>(
     () => [
-      { accessorKey: "firstName", header: "First Name", size: 120 },
-      { accessorKey: "lastName", header: "Last Name", size: 120 },
-      { accessorKey: "phone", header: "Phone", size: 140 },
+      { accessorKey: "firstName", header: t("patient.firstName"), size: 120 },
+      { accessorKey: "lastName", header: t("patient.lastName"), size: 120 },
+      { accessorKey: "phone", header: t("patient.phone"), size: 140 },
       {
         accessorKey: "expectedDeliveryDate",
-        header: "EDD",
+        header: t("patient.edd"),
         size: 120,
         Cell: ({ cell }) =>
           new Date(cell.getValue<string>()).toLocaleDateString(),
       },
-      { accessorKey: "bloodGroup", header: "Blood Group", size: 100 },
+      { accessorKey: "bloodGroup", header: t("patient.bloodGroup"), size: 100 },
       {
         accessorKey: "highRisk",
-        header: "High Risk?",
+        header: t("patient.highRisk"),
         size: 100,
         Cell: ({ cell }) =>
           cell.getValue<boolean>() ? (
-            <Badge color="red">Yes</Badge>
+            <Badge color="red">{t("common.yes")}</Badge>
           ) : (
-            <Badge color="green">No</Badge>
+            <Badge color="green">{t("common.no")}</Badge>
           ),
       },
     ],
-    []
+    [t]
   );
 
   const filteredData = useMemo(() => {
@@ -112,7 +114,7 @@ const MaritimePatientDashboard = () => {
     state: { isLoading: isLoading, globalFilter, rowSelection },
     onRowSelectionChange: setRowSelection,
     displayColumnDefOptions: {
-      "mrt-row-actions": { header: "Actions", size: 140 },
+      "mrt-row-actions": { header: t("common.actions"), size: 140 },
     },
     renderRowActions: ({ row }) => (
       <Group spacing={4} position="center">
@@ -121,9 +123,11 @@ const MaritimePatientDashboard = () => {
           variant="subtle"
           color="purple"
           leftIcon={<IconEye size={14} />}
-          onClick={() => navigate(`/healthworker/view-patient/${row.original.id}`)}
+          onClick={() =>
+            navigate(`/healthworker/view-patient/${row.original.id}`)
+          }
         >
-          View
+          {t("common.view")}
         </Button>
         <Button
           size="xs"
@@ -131,31 +135,23 @@ const MaritimePatientDashboard = () => {
           color="red"
           leftIcon={<IconTrash size={14} />}
           onClick={() => {
-            if (window.confirm("Are you sure you want to delete this patient?")) {
+            if (window.confirm(t("patient.confirmDelete"))) {
               deleteMutation.mutate(row.original.id);
             }
           }}
         >
-          Delete
+          {t("common.delete")}
         </Button>
       </Group>
     ),
     renderTopToolbarCustomActions: () => (
       <Group ml="xs">
-        {/* <Button
-          leftIcon={<IconDownload size={20} />}
-          variant="light"
-          color="purple"
-          onClick={() => console.log("Export data")}
-        >
-          Export
-        </Button> */}
         <Button
           leftIcon={<IconPlus size={20} />}
           color="violet"
           onClick={() => navigate("/healthworker/patient")}
         >
-          New Mother
+          {t("patient.newMother")}
         </Button>
       </Group>
     ),
@@ -173,11 +169,11 @@ const MaritimePatientDashboard = () => {
       >
         <Paper p="xl" withBorder shadow="md" radius="md" sx={{ maxWidth: 500 }}>
           <Title order={3} color="red">
-            We've hit rough waters!
+            {t("errors.title")}
           </Title>
           <Text my="md">{isError}</Text>
           <Button color="red" onClick={() => window.location.reload()}>
-            Try Again
+            {t("errors.retry")}
           </Button>
         </Paper>
       </Box>

@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 
 ChartJS.register(
   CategoryScale,
@@ -244,6 +245,7 @@ const MaternalNutritionDashboard = () => {
       y: { grid: { color: "rgba(0,0,0,0.1)" } },
     },
   };
+  const {t} = useTranslation()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -257,9 +259,9 @@ const MaternalNutritionDashboard = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Nutrition Center
+                  {t("nutritionCenter")}
                 </h1>
-                <p className="text-sm text-gray-600">Health Worker Dashboard</p>
+                <p className="text-sm text-gray-600">{t("healthWorkerDashboard")}</p>
               </div>
             </div>
           </div>
@@ -324,20 +326,20 @@ const MaternalNutritionDashboard = () => {
               <div className="flex items-center space-x-2 mb-6">
                 <Stethoscope className="h-5 w-5 text-indigo-600" />
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Patient Communication
+                  {t("patientCommunication")}
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Patient
+                    {t("selectPatient")}
                   </label>
                   <select
                     value={selectedMother}
                     onChange={(e) => setSelectedMother(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   >
-                    <option value="">Choose a patient...</option>
+                    <option value="">{t("choosePatient")}</option>
                     {mothers.map((m) => (
                       <option key={m.id} value={m.id}>
                         {m.firstName} {m.lastName} - {m.bloodGroup}
@@ -350,7 +352,7 @@ const MaternalNutritionDashboard = () => {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Quick Message
+                        {t("quickMessage")}
                       </label>
                       <select
                         value={message}
@@ -375,7 +377,7 @@ const MaternalNutritionDashboard = () => {
                       }`}
                     >
                       <Send className="h-4 w-4" />
-                      <span>Send Message</span>
+                      <span>{t("sendMessage")}</span>
                     </button>
                   </div>
                 )}
@@ -386,7 +388,7 @@ const MaternalNutritionDashboard = () => {
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Nutritional Guidelines
+                  {t("nutritionalGuidelines")}
                 </h2>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -411,7 +413,7 @@ const MaternalNutritionDashboard = () => {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Risk Distribution
+                {t("riskDistribution")}
               </h3>
               <div className="h-48">
                 <Doughnut
@@ -432,7 +434,7 @@ const MaternalNutritionDashboard = () => {
 
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Compliance Trends
+                {t("complianceTrends")}
               </h3>
               <div className="h-48">
                 <Line
@@ -457,15 +459,15 @@ const MaternalNutritionDashboard = () => {
 
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Quick Actions
+                {t('quickActions')}
               </h3>
               <QuickActionButton
                 icon={<Calendar className="h-5 w-5 text-indigo-600" />}
-                label="Schedule Follow-up"
+                label={t("scheduleFollowUp")}
               />
               <QuickActionButton
                 icon={<AlertCircle className="h-5 w-5 text-orange-600" />}
-                label="Flag High Risk"
+                label={t("flagHighRisk")}
               />
               {/* <QuickActionButton
                 icon={<MessageCircle className="h-5 w-5 text-green-600" />}
@@ -478,7 +480,7 @@ const MaternalNutritionDashboard = () => {
         {/* Nutrition Chart */}
         <div className="mt-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">
-            Recommended Daily Nutrition Intake
+            {t("scheduleFollowUp")}
           </h3>
           <div className="h-80">
             <Bar

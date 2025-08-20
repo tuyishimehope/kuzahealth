@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import type { Patient } from "../Mother/ViewPatient";
+import { useTranslation } from "react-i18next";
 
 const infantSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -23,6 +24,7 @@ type InfantForm = z.infer<typeof infantSchema>;
 const AddInfant = () => {
   const [mothers, setMothers] = useState<Patient[]>([]);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const {
     register,
@@ -41,7 +43,7 @@ const AddInfant = () => {
 
   const onSubmit = async (data: InfantForm) => {
     try {
-      console.log("submitted")
+      console.log("submitted");
       await axiosInstance.post("/api/infants", data);
       navigate("/healthworker/view-infants");
     } catch (error) {
@@ -71,10 +73,10 @@ const AddInfant = () => {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Register New Infant
+            {t("Register New Infant")}
           </h1>
           <p className="text-gray-600">
-            Please fill in the infant's information below
+            {t("Please fill in the infant's information below")}
           </p>
         </div>
 
@@ -99,14 +101,14 @@ const AddInfant = () => {
                     />
                   </svg>
                   <h2 className="text-xl font-semibold text-gray-900">
-                    Personal Information
+                    {t("Personal Information")}
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      First Name <span className="text-red-500">*</span>
+                      {t("First Name")} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -142,7 +144,7 @@ const AddInfant = () => {
 
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Last Name <span className="text-red-500">*</span>
+                      {t("Last Name")} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -180,7 +182,8 @@ const AddInfant = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Date of Birth <span className="text-red-500">*</span>
+                      {t("Date of Birth")}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -216,7 +219,7 @@ const AddInfant = () => {
 
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Gender <span className="text-red-500">*</span>
+                      {t("Gender")} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
@@ -238,9 +241,9 @@ const AddInfant = () => {
                         {...register("gender")}
                         className="block w-full pl-10 pr-8 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none appearance-none bg-white cursor-pointer"
                       >
-                        <option value="">Select gender</option>
-                        <option value="FEMALE">Female</option>
-                        <option value="MALE">Male</option>
+                        <option value="">{t("Select gender")}</option>
+                        <option value="FEMALE">{t("Female")}</option>
+                        <option value="MALE">{t("Male")}</option>
                       </select>
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <svg
@@ -287,14 +290,15 @@ const AddInfant = () => {
                     />
                   </svg>
                   <h2 className="text-xl font-semibold text-gray-900">
-                    Birth Measurements
+                    {t("Birth Measurements")}
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Birth Weight (kg) <span className="text-red-500">*</span>
+                      {t("Birth Weight (kg)")}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -332,7 +336,8 @@ const AddInfant = () => {
 
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Birth Height (cm) <span className="text-red-500">*</span>
+                      {t("Birth Height (cm)")}
+                      <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -371,7 +376,7 @@ const AddInfant = () => {
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    Blood Group
+                    {t("Blood Group")}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -423,13 +428,13 @@ const AddInfant = () => {
                     />
                   </svg>
                   <h2 className="text-xl font-semibold text-gray-900">
-                    Additional Information
+                    {t("Additional Information")}
                   </h2>
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    Mother <span className="text-red-500">*</span>
+                    {t("Mother")} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
@@ -451,7 +456,7 @@ const AddInfant = () => {
                       {...register("motherId")}
                       className="block w-full pl-10 pr-8 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-400 focus:outline-none appearance-none bg-white cursor-pointer"
                     >
-                      <option value="">Select mother</option>
+                      <option value="">{t("Select mother")}</option>
                       {mothers.map((mother) => (
                         <option key={mother.id} value={mother.id}>
                           {mother.firstName} {mother.lastName}
@@ -486,7 +491,7 @@ const AddInfant = () => {
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    Special Conditions
+                    {t("Special Conditions")}
                   </label>
                   <div className="relative">
                     <div className="absolute top-3 left-3 pointer-events-none">
@@ -545,7 +550,7 @@ const AddInfant = () => {
                           d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
                         />
                       </svg>
-                      Submit Infant Information
+                      {t("Submit Infant Information")}
                     </>
                   )}
                 </button>
@@ -556,8 +561,7 @@ const AddInfant = () => {
 
         {/* Footer */}
         <div className="text-center mt-8 text-sm text-gray-500">
-          All fields marked with <span className="text-red-500">*</span> are
-          required
+          {t("All fields marked with * are required")}
         </div>
       </div>
     </div>

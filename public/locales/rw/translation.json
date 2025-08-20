@@ -107,7 +107,68 @@
     "save": "Bika",
     "processing": "Birakorwa..."
   }
-}
+},
+
+  "patient": {
+    "firstName": "Izina ry’ibanze",
+    "lastName": "Izina ry’umuryango",
+    "phone": "Telefoni",
+    "edd": "Itariki y’ukwibaruka iteganyijwe",
+    "bloodGroup": "Itsinda ry’amaraso",
+    "highRisk": "Icyago gikomeye?",
+    "newMother": "Umubyeyi mushya",
+    "confirmDelete": "Urashaka koko gusiba uyu mubyeyi?"
+  },
+  "common": {
+    "yes": "Yego",
+    "no": "Oya",
+    "actions": "Ibikorwa",
+    "view": "Reba",
+    "delete": "Siba"
+  },
+  "errors": {
+    "title": "Habaye ikibazo!",
+    "retry": "Ongera ugerageze"
+  }
+,
+
+  "nutritionCenter": "Ikigo cy'Imirire",
+  "healthWorkerDashboard": "Ibiro by’Umuganga",
+  "patientCommunication": "Itumanaho n’Abarwayi",
+  "selectPatient": "Hitamo Umurwayi",
+  "choosePatient": "Hitamo umurwayi...",
+  "quickMessage": "Ubutumwa Bwihuse",
+  "sendMessage": "Ohereza Ubutumwa",
+  "nutritionalGuidelines": "Amabwiriza y’Imirire",
+  "riskDistribution": "Ikwirakwizwa ry’Ibibazo",
+  "complianceTrends": "Imigendekere y’Is遵遵",
+  "quickActions": "Ibikorwa Byihuse",
+  "scheduleFollowUp": "Gushyiraho Isuzuma",
+  "flagHighRisk": "Shyira Ikimenyetso ku Muryango ufite Ibyago Byinshi",
+  "searchNutrients": "Shakisha intungamubiri...",
+  "recommendedDaily": "Intungamubiri Zisabwa Buri Munsi",
+
+   "Register New Infant": "Iyandikishe Umwana Mushya",
+      "Please fill in the infant's information below": "Nyamuneka wuzuze amakuru y'umwana munsi hano",
+      "Personal Information": "Amakuru y'umuntu",
+      "First Name": "Izina",
+      "Last Name": "Izina ry'umuryango",
+      "Date of Birth": "Itariki y'amavuko",
+      "Gender": "Igitsina",
+      "Select gender": "Hitamo igitsina",
+      "Female": "Igikobwa",
+      "Male": "Umuhungu",
+      "Birth Measurements": "Ibipimo by'amavuko",
+      "Birth Weight (kg)": "Ibiro ku gihe cyo kuvuka (kg)",
+      "Birth Height (cm)": "Uburebure ku gihe cyo kuvuka (cm)",
+      "Blood Group": "Itsinda ry'amaraso",
+      "Additional Information": "Amakuru y'inyongera",
+      "Mother": "Nyina",
+      "Select mother": "Hitamo nyina",
+      "Special Conditions": "Imimerere yihariye",
+      "Submit Infant Information": "Ohereza amakuru y'umwana",
+      "All fields marked with * are required": "Aho byose byerekanywe na * birakenewe"
+
 
 
 

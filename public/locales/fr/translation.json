@@ -107,7 +107,68 @@
       "save": "Enregistrer",
       "processing": "Traitement en cours..."
     }
-  }
+  },
+  
+  "patient": {
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "edd": "Date prévue d'accouchement",
+    "bloodGroup": "Groupe sanguin",
+    "highRisk": "À haut risque ?",
+    "newMother": "Nouvelle mère",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce patient ?"
+  },
+  "common": {
+    "yes": "Oui",
+    "no": "Non",
+    "actions": "Actions",
+    "view": "Voir",
+    "delete": "Supprimer"
+  },
+  "errors": {
+    "title": "Nous avons rencontré un problème !",
+    "retry": "Réessayer"
+  },
+  
+  "nutritionCenter": "Centre de Nutrition",
+  "healthWorkerDashboard": "Tableau de Bord du Personnel de Santé",
+  "patientCommunication": "Communication avec les Patients",
+  "selectPatient": "Sélectionner un patient",
+  "choosePatient": "Choisissez un patient...",
+  "quickMessage": "Message Rapide",
+  "sendMessage": "Envoyer le message",
+  "nutritionalGuidelines": "Directives Nutritionnelles",
+  "riskDistribution": "Répartition des Risques",
+  "complianceTrends": "Tendances de Conformité",
+  "quickActions": "Actions Rapides",
+  "scheduleFollowUp": "Programmer un Suivi",
+  "flagHighRisk": "Signaler à Haut Risque",
+  "searchNutrients": "Rechercher des nutriments...",
+  "recommendedDaily": "Apport Nutritionnel Quotidien Recommandé",
+
+  "Register New Infant": "Enregistrer un nouveau nourrisson",
+      "Please fill in the infant's information below": "Veuillez remplir les informations du nourrisson ci-dessous",
+      "Personal Information": "Informations personnelles",
+      "First Name": "Prénom",
+      "Last Name": "Nom de famille",
+      "Date of Birth": "Date de naissance",
+      "Gender": "Sexe",
+      "Select gender": "Sélectionnez le sexe",
+      "Female": "Femme",
+      "Male": "Homme",
+      "Birth Measurements": "Mesures à la naissance",
+      "Birth Weight (kg)": "Poids à la naissance (kg)",
+      "Birth Height (cm)": "Taille à la naissance (cm)",
+      "Blood Group": "Groupe sanguin",
+      "Additional Information": "Informations supplémentaires",
+      "Mother": "Mère",
+      "Select mother": "Sélectionnez la mère",
+      "Special Conditions": "Conditions particulières",
+      "Submit Infant Information": "Soumettre les informations du nourrisson",
+      "All fields marked with * are required": "Tous les champs marqués d'un * sont obligatoires"
+
+
 
 
 
