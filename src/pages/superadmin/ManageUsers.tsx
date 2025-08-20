@@ -15,9 +15,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Activity, Download, Edit, Shield, Users } from "lucide-react";
+import type {
+  MRT_Cell} from "mantine-react-table";
 import {
   MantineReactTable,
-  MRT_Cell,
   useMantineReactTable,
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
