@@ -23,7 +23,7 @@ import {
   Send,
   Stethoscope,
   TrendingUp,
-  Users
+  Users,
 } from "lucide-react";
 import React, { useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
@@ -257,7 +257,7 @@ const MaternalNutritionDashboard = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                   Nutrition Center
+                  Nutrition Center
                 </h1>
                 <p className="text-sm text-gray-600">Health Worker Dashboard</p>
               </div>
@@ -271,7 +271,7 @@ const MaternalNutritionDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <StatsCard
             title="Active Patients"
-            value={124}
+            value={mothers.length}
             subtitle={
               <>
                 <TrendingUp className="h-4 w-4 mr-1" /> +12% from last month
