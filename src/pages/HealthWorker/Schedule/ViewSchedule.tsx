@@ -29,6 +29,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Patient } from "../Dashboard";
 
 export interface Schedule {
   id: string;
@@ -39,7 +40,9 @@ export interface Schedule {
   location: string;
   modeOfCommunication: string;
   summary: string;
-  status: "Scheduled" | "Completed" | "Cancelled";
+
+  status: "Scheduled" | "Completed" | "Cancelled" | "No Show";
+  parentId: string;
   visitNoteIds: { id: string }[];
 }
 
@@ -53,14 +56,21 @@ interface VisitNote {
 
 const ViewSchedule = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
+    null
+  );
   const [opened, { open, close }] = useDisclosure(false);
-  const [deleteConfirmOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false);
-  const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
+  const [deleteConfirmOpened, { open: openDelete, close: closeDelete }] =
+    useDisclosure(false);
+  const [editOpened, { open: openEdit, close: closeEdit }] =
+    useDisclosure(false);
   const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
 
-  const [postNoteOpened, { open: openPostNote, close: closePostNote }] = useDisclosure(false);
-  const [newVisitNote, setNewVisitNote] = useState<Partial<VisitNote & { visitId: string }>>({
+  const [postNoteOpened, { open: openPostNote, close: closePostNote }] =
+    useDisclosure(false);
+  const [newVisitNote, setNewVisitNote] = useState<
+    Partial<VisitNote & { visitId: string }>
+  >({
     observation: "",
     vitalSigns: "",
     recommendations: "",
@@ -71,24 +81,49 @@ const ViewSchedule = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fetchVisitNotesByVisitId = async (visitId: string) => {
-  const { data } = await axiosInstance.get(`/api/visit-notes?visitId=${visitId}`);
-  return data;
-};
+    const { data } = await axiosInstance.get(
+      `/api/visit-notes?visitId=${visitId}`
+    );
+    return data;
+  };
 
-const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[], Error>({
-  queryKey: ["visitNotes", selectedSchedule?.id],
-  queryFn: () => fetchVisitNotesByVisitId(selectedSchedule!.id),
-  enabled: !!selectedSchedule,
-});
+  const {
+    data: parentInfo,
+    isLoading: parentIsLoading,
+    error: parentError,
+  } = useQuery<Patient>({
+    queryKey: ["parentInfo", selectedSchedule?.parentId], // include parentId for caching
+    queryFn: async () => {
+      if (!selectedSchedule) return null; // safeguard
+      const { data } = await axiosInstance.get(
+        `/api/parents/${selectedSchedule.parentId}`
+      );
+      return data;
+    },
+    enabled: !!selectedSchedule, // only run query if selectedSchedule exists
+  });
 
+  const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<
+    VisitNote[],
+    Error
+  >({
+    queryKey: ["visitNotes", selectedSchedule?.id],
+    queryFn: () => fetchVisitNotesByVisitId(selectedSchedule!.id),
+    enabled: !!selectedSchedule,
+  });
 
   const handleAddVisitNote = (schedule: Schedule) => {
     setSelectedSchedule(schedule);
     setNewVisitNote({ ...newVisitNote, visitId: schedule.id });
     openPostNote();
   };
-
-  const { data: schedules = [], isLoading, isError } = useQuery<Schedule[], Error>({
+  console.log(parentError);
+  console.log(parentIsLoading);
+  const {
+    data: schedules = [],
+    isLoading,
+    isError,
+  } = useQuery<Schedule[], Error>({
     queryKey: ["schedules"],
     queryFn: async () => {
       const { data } = await axiosInstance.get("/api/visits");
@@ -96,8 +131,6 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
     },
     staleTime: 1000 * 60 * 5,
   });
-
-  
 
   const filteredSchedules = schedules.filter((schedule) =>
     schedule.visitType.toLowerCase().includes(searchQuery.toLowerCase())
@@ -183,28 +216,53 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
         </Group>
 
         {/* Add Post Visit Note Modal */}
-        <Modal opened={postNoteOpened} onClose={closePostNote} title="Add Post Visit Note" size="lg">
+        <Modal
+          opened={postNoteOpened}
+          onClose={closePostNote}
+          title="Add Post Visit Note"
+          size="lg"
+        >
           <Stack spacing="md">
             <TextInput
               label="Observation"
               value={newVisitNote.observation}
-              onChange={(e) => setNewVisitNote({ ...newVisitNote, observation: e.currentTarget.value })}
+              onChange={(e) =>
+                setNewVisitNote({
+                  ...newVisitNote,
+                  observation: e.currentTarget.value,
+                })
+              }
             />
             <TextInput
               label="Vital Signs"
               value={newVisitNote.vitalSigns}
-              onChange={(e) => setNewVisitNote({ ...newVisitNote, vitalSigns: e.currentTarget.value })}
+              onChange={(e) =>
+                setNewVisitNote({
+                  ...newVisitNote,
+                  vitalSigns: e.currentTarget.value,
+                })
+              }
             />
             <TextInput
               label="Recommendations"
               value={newVisitNote.recommendations}
-              onChange={(e) => setNewVisitNote({ ...newVisitNote, recommendations: e.currentTarget.value })}
+              onChange={(e) =>
+                setNewVisitNote({
+                  ...newVisitNote,
+                  recommendations: e.currentTarget.value,
+                })
+              }
             />
             <TextInput
               label="Attachments (comma separated)"
               value={newVisitNote.attachments?.join(", ")}
               onChange={(e) =>
-                setNewVisitNote({ ...newVisitNote, attachments: e.currentTarget.value.split(",").map(a => a.trim()) })
+                setNewVisitNote({
+                  ...newVisitNote,
+                  attachments: e.currentTarget.value
+                    .split(",")
+                    .map((a) => a.trim()),
+                })
               }
             />
             <Button
@@ -212,7 +270,9 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
               onClick={async () => {
                 try {
                   await axiosInstance.post("/api/visit-notes", newVisitNote);
-                  queryClient.invalidateQueries({queryKey:["visitNotes", selectedSchedule?.id]});
+                  queryClient.invalidateQueries({
+                    queryKey: ["visitNotes", selectedSchedule?.id],
+                  });
                   closePostNote();
                 } catch (error) {
                   console.error(error);
@@ -252,7 +312,10 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
                 <AnimatePresence>
                   {filteredSchedules.length === 0 && !isLoading ? (
                     <tr>
-                      <td colSpan={6} style={{ textAlign: "center", padding: "20px" }}>
+                      <td
+                        colSpan={6}
+                        style={{ textAlign: "center", padding: "20px" }}
+                      >
                         No schedules found.
                       </td>
                     </tr>
@@ -266,23 +329,41 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
                         transition={{ duration: 0.2 }}
                       >
                         <td>{schedule.visitType}</td>
-                        <td>{new Date(schedule.scheduledTime).toLocaleDateString()}</td>
                         <td>
-                          {new Date(schedule.scheduledTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          {new Date(
+                            schedule.scheduledTime
+                          ).toLocaleDateString()}
+                        </td>
+                        <td>
+                          {new Date(schedule.scheduledTime).toLocaleTimeString(
+                            [],
+                            { hour: "2-digit", minute: "2-digit" }
+                          )}
                         </td>
                         <td>{schedule.location}</td>
                         <td>
-                          <Badge color={getStatusColor(schedule.status)} className="text-purple-500">
+                          <Badge
+                            color={getStatusColor(schedule.status)}
+                            className="text-purple-500"
+                          >
                             {schedule.status}
                           </Badge>
                         </td>
                         <td>
                           <Group spacing={4} position="right" noWrap>
-                            <ActionIcon color="violet" onClick={() => handleViewDetails(schedule)}>
+                            <ActionIcon
+                              color="violet"
+                              onClick={() => handleViewDetails(schedule)}
+                            >
                               <IconEye size={rem(16)} />
                             </ActionIcon>
 
-                            <Button size="xs" color="purple" className="bg-purple-600 hover:bg-purple-500" onClick={() => handleAddVisitNote(schedule)}>
+                            <Button
+                              size="xs"
+                              color="purple"
+                              className="bg-purple-600 hover:bg-purple-500"
+                              onClick={() => handleAddVisitNote(schedule)}
+                            >
                               Add Visit Note
                             </Button>
 
@@ -293,10 +374,17 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                <Menu.Item icon={<IconEdit size={rem(16)} />} onClick={() => handleEdit(schedule)}>
+                                <Menu.Item
+                                  icon={<IconEdit size={rem(16)} />}
+                                  onClick={() => handleEdit(schedule)}
+                                >
                                   Edit
                                 </Menu.Item>
-                                <Menu.Item icon={<IconTrash size={rem(16)} />} color="red" onClick={openDelete}>
+                                <Menu.Item
+                                  icon={<IconTrash size={rem(16)} />}
+                                  color="red"
+                                  onClick={openDelete}
+                                >
                                   Delete
                                 </Menu.Item>
                               </Menu.Dropdown>
@@ -313,14 +401,22 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
         </Stack>
 
         {/* View Modal */}
-        <Modal opened={opened} onClose={close} title="Schedule Details" size="lg">
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Schedule Details"
+          size="lg"
+        >
           {selectedSchedule && (
             <Stack spacing="md">
               <Text>Date: {selectedSchedule.actualStartTime || "N/A"}</Text>
               <Text>Time: {selectedSchedule.scheduledTime}</Text>
               <Text>Location: {selectedSchedule.location}</Text>
+              <Text>Status: {selectedSchedule.status}</Text>
               <Text>Communication: {selectedSchedule.modeOfCommunication}</Text>
               <Text>Summary: {selectedSchedule.summary}</Text>
+              {parentIsLoading && <Text>Loading parent info</Text> }
+              <Text>Parent: {parentInfo?.firstName} {parentInfo?.lastName}</Text>
 
               <Title order={4}>Visit Notes</Title>
               {isNotesLoading ? (
@@ -341,7 +437,8 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
                     </Text>
                     {note.attachments?.length > 0 && (
                       <Text>
-                        <strong>Attachments:</strong> {note.attachments.join(", ")}
+                        <strong>Attachments:</strong>{" "}
+                        {note.attachments.join(", ")}
                       </Text>
                     )}
                   </Paper>
@@ -356,7 +453,12 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
         </Modal>
 
         {/* Edit Modal */}
-        <Modal opened={editOpened} onClose={closeEdit} title="Edit Schedule" size="lg">
+        <Modal
+          opened={editOpened}
+          onClose={closeEdit}
+          title="Edit Schedule"
+          size="lg"
+        >
           {editingSchedule && (
             <Stack spacing="md">
               <TextInput
@@ -364,23 +466,56 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
                 type="datetime-local"
                 value={editingSchedule.scheduledTime}
                 onChange={(e) =>
-                  setEditingSchedule({ ...editingSchedule, scheduledTime: e.currentTarget.value })
+                  setEditingSchedule({
+                    ...editingSchedule,
+                    scheduledTime: e.currentTarget.value,
+                  })
                 }
               />
               <TextInput
                 label="Visit Type"
                 value={editingSchedule.visitType}
-                onChange={(e) => setEditingSchedule({ ...editingSchedule, visitType: e.currentTarget.value })}
+                onChange={(e) =>
+                  setEditingSchedule({
+                    ...editingSchedule,
+                    visitType: e.currentTarget.value,
+                  })
+                }
               />
+              <TextInput
+                label="Status"
+                value={editingSchedule.status}
+                onChange={(e) =>
+                  setEditingSchedule({
+                    ...editingSchedule,
+                    status: e.currentTarget.value as
+                      | "Scheduled"
+                      | "Completed"
+                      | "Cancelled"
+                      | "No Show",
+                  })
+                }
+              />
+
               <TextInput
                 label="Location"
                 value={editingSchedule.location}
-                onChange={(e) => setEditingSchedule({ ...editingSchedule, location: e.currentTarget.value })}
+                onChange={(e) =>
+                  setEditingSchedule({
+                    ...editingSchedule,
+                    location: e.currentTarget.value,
+                  })
+                }
               />
               <TextInput
                 label="Summary"
                 value={editingSchedule.summary || ""}
-                onChange={(e) => setEditingSchedule({ ...editingSchedule, summary: e.currentTarget.value })}
+                onChange={(e) =>
+                  setEditingSchedule({
+                    ...editingSchedule,
+                    summary: e.currentTarget.value,
+                  })
+                }
               />
 
               {editingSchedule.visitNoteIds?.length > 0 && (
@@ -388,7 +523,10 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
                   label="Visit Note ID"
                   value={editingSchedule.visitNoteIds[0].id}
                   onChange={(e) =>
-                    setEditingSchedule({ ...editingSchedule, visitNoteIds: [{ id: e.currentTarget.value }] })
+                    setEditingSchedule({
+                      ...editingSchedule,
+                      visitNoteIds: [{ id: e.currentTarget.value }],
+                    })
                   }
                 />
               )}
@@ -401,14 +539,26 @@ const { data: visitNotes = [], isLoading: isNotesLoading } = useQuery<VisitNote[
         </Modal>
 
         {/* Delete Confirmation Modal */}
-        <Modal opened={deleteConfirmOpened} onClose={closeDelete} title="Confirm Delete">
+        <Modal
+          opened={deleteConfirmOpened}
+          onClose={closeDelete}
+          title="Confirm Delete"
+        >
           <Stack spacing="md">
-            <Text>Are you sure you want to delete this schedule? This action cannot be undone.</Text>
+            <Text>
+              Are you sure you want to delete this schedule? This action cannot
+              be undone.
+            </Text>
             <Group position="right">
               <Button variant="outline" onClick={closeDelete}>
                 Cancel
               </Button>
-              <Button color="red" onClick={() => selectedSchedule && handleDelete(selectedSchedule.id)}>
+              <Button
+                color="red"
+                onClick={() =>
+                  selectedSchedule && handleDelete(selectedSchedule.id)
+                }
+              >
                 Delete
               </Button>
             </Group>

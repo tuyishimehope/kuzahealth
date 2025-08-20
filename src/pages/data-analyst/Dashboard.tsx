@@ -39,6 +39,7 @@ import {
   PieChart as IconPieChart,
   LineChart as IconLineChart,
 } from "lucide-react";
+import VisitTrends from "./VisitTrends";
 // Enhanced type definitions
 interface HealthWorker {
   id: string;
@@ -162,7 +163,7 @@ const StatCard: React.FC<StatCardProps> = ({
 );
 
 // Visit Trends Chart
-const VisitTrendsChart = ({
+export const VisitTrendsChart = ({
   data,
   loading,
 }: {
@@ -624,7 +625,7 @@ const Dashboard = () => {
             <>
               <StatCard
                 title="Active Health Workers"
-                value={analytics.activeHealthWorkers}
+                value={analytics.totalHealthWorkers}
                 subtitle={`${analytics.totalHealthWorkers} total`}
                 icon={UserCheck}
                 color="bg-blue-500"
@@ -700,10 +701,11 @@ const Dashboard = () => {
         {/* Advanced Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <VisitTrendsChart
+            {/* <VisitTrendsChart
               data={analytics?.visitsTrendData || []}
               loading={isLoading}
-            />
+            /> */}
+            <VisitTrends/>
           </div>
         </div>
 
