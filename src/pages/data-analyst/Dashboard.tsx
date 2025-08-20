@@ -1,30 +1,44 @@
 import { axiosInstance } from "@/utils/axiosInstance";
-import {
-  BarChart,
-  LineChart,
-  PieChart,
-  ScatterChart,
-  Gauge,
-} from "@mui/x-charts";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import {
   Activity,
-  Baby,
-  Calendar,
-  RefreshCw,
-  Users,
-  TrendingUp,
-  TrendingDown,
-  Heart,
   AlertTriangle,
+  Baby,
+  BarChart3,
+  Calendar,
   CheckCircle,
-  UserCheck,
+  Heart,
+  RefreshCw,
   Shield,
+  TrendingDown,
+  TrendingUp,
+  UserCheck,
+  Users,
 } from "lucide-react";
 import React from "react";
 import Map from "../../components/HealthWorker/Map";
-import { motion } from "framer-motion";
 
+
+import {
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
+
+// Import icons separately
+import {
+  PieChart as IconPieChart,
+  LineChart as IconLineChart,
+} from "lucide-react";
 // Enhanced type definitions
 interface HealthWorker {
   id: string;
@@ -147,15 +161,141 @@ const StatCard: React.FC<StatCardProps> = ({
   </div>
 );
 
-// Loading skeleton component
-const ChartSkeleton = () => (
+// Visit Trends Chart
+const VisitTrendsChart = ({
+  data,
+  loading,
+}: {
+  data: any[];
+  loading: boolean;
+}) => (
   <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-    <div className="animate-pulse">
-      <div className="h-6 bg-gray-200 rounded-lg w-48 mb-4"></div>
-      <div className="h-64 bg-gray-100 rounded-lg"></div>
+    <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center space-x-3">
+        <div className="p-2 bg-blue-100 rounded-lg">
+          <IconLineChart size={20} className="text-blue-600" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Visit Trends</h3>
+          <p className="text-sm text-gray-500">Monthly visit statistics</p>
+        </div>
+      </div>
     </div>
+
+    {loading ? (
+      <div className="h-80 bg-gray-100 rounded-lg animate-pulse"></div>
+    ) : (
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={data}>
+          <defs>
+            <linearGradient id="completedGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="scheduledGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+          <XAxis dataKey="month" stroke="#6B7280" fontSize={12} />
+          <YAxis stroke="#6B7280" fontSize={12} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "white",
+              border: "1px solid #E5E7EB",
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            }}
+          />
+          <Legend />
+          <Area
+            type="monotone"
+            dataKey="completed"
+            stroke="#10B981"
+            strokeWidth={2}
+            fill="url(#completedGradient)"
+            name="Completed Visits"
+          />
+          <Area
+            type="monotone"
+            dataKey="scheduled"
+            stroke="#3B82F6"
+            strokeWidth={2}
+            fill="url(#scheduledGradient)"
+            name="Scheduled Visits"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    )}
   </div>
 );
+
+// Risk Distribution Chart
+const RiskDistributionChart = ({
+  data,
+  loading,
+}: {
+  data: any[];
+  loading: boolean;
+}) => {
+  const COLORS = ["#EF4444", "#10B981", "#F59E0B", "#8B5CF6"];
+
+  return (
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-red-100 rounded-lg">
+            <IconPieChart size={20} className="text-red-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Risk Distribution
+            </h3>
+            <p className="text-sm text-gray-500">
+              Patient risk assessment breakdown
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="h-80 bg-gray-100 rounded-lg animate-pulse"></div>
+      ) : (
+        <ResponsiveContainer width="100%" height={300}>
+          <RechartsPieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={120}
+              paddingAngle={5}
+              dataKey="value"
+              nameKey="name"
+            >
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "white",
+                border: "1px solid #E5E7EB",
+                borderRadius: "8px",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+              }}
+            />
+            <Legend />
+          </RechartsPieChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+};
 
 // API fetcher with error handling
 const fetchDashboardData = async () => {
@@ -274,11 +414,17 @@ const Dashboard = () => {
 
     // Risk distribution
     const riskDistribution = [
-      { id: "high", value: highRiskParents.length, label: "High Risk" },
+      {
+        id: "high",
+        value: highRiskParents.length,
+        label: "High Risk",
+        name: "High Risk",
+      },
       {
         id: "low",
         value: parents.length - highRiskParents.length,
         label: "Low Risk",
+        name: "Low Risk",
       },
     ];
 
@@ -288,21 +434,25 @@ const Dashboard = () => {
         id: "prenatal",
         value: visits.filter((v) => v.visitType === "prenatal").length,
         label: "Prenatal",
+        name: "Prenatal",
       },
       {
         id: "postnatal",
         value: visits.filter((v) => v.visitType === "postnatal").length,
         label: "Postnatal",
+        name: "Postnatal",
       },
       {
         id: "vaccination",
         value: visits.filter((v) => v.visitType === "vaccination").length,
         label: "Vaccination",
+        name: "Vaccination",
       },
       {
         id: "checkup",
         value: visits.filter((v) => v.visitType === "checkup").length,
         label: "Checkup",
+        name: "Checkup",
       },
     ];
 
@@ -380,6 +530,7 @@ const Dashboard = () => {
       </div>
     );
   }
+
   const locationData = [
     { region: "Kigali City", percentage: 25, color: "bg-purple-500" },
     { region: "North Province", percentage: 20, color: "bg-pink-500" },
@@ -387,6 +538,7 @@ const Dashboard = () => {
     { region: "East Province", percentage: 32, color: "bg-green-500" },
     { region: "West Province", percentage: 18, color: "bg-lime-500" },
   ];
+
   type ProgressBarProps = { label: string; percentage: number; color: string };
 
   const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -423,10 +575,11 @@ const Dashboard = () => {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-1">
-                Healthcare Dashboard
+                Healthcare Analytics Dashboard
               </h1>
               <p className="text-lg text-gray-600">
-                Comprehensive maternal & infant care monitoring
+                Comprehensive maternal & infant care monitoring with advanced
+                analytics
               </p>
             </div>
           </div>
@@ -544,250 +697,39 @@ const Dashboard = () => {
           ) : null}
         </div>
 
-        {/* Enhanced Charts Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-          {/* Patient Satisfaction Gauge */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
-                Patient Satisfaction
-              </h2>
-              <Heart size={20} className="text-pink-500" />
-            </div>
-            {isLoading ? (
-              <div className="h-64 bg-gray-100 rounded-xl animate-pulse"></div>
-            ) : analytics ? (
-              <div className="flex justify-center">
-                <Gauge
-                  value={analytics.avgSatisfaction}
-                  startAngle={-90}
-                  endAngle={90}
-                  min={0}
-                  max={10}
-                  height={200}
-                  width={280}
-                  text={`${analytics.avgSatisfaction.toFixed(1)}/10`}
-                  innerRadius="60%"
-                  outerRadius="90%"
-                />
-              </div>
-            ) : (
-              <ChartSkeleton />
-            )}
-            <p className="text-sm text-gray-500 text-center mt-2">
-              Average satisfaction from completed visits
-            </p>
-          </div>
-
-          {/* Risk Distribution */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
-                Risk Distribution
-              </h2>
-              <Shield size={20} className="text-red-500" />
-            </div>
-            {isLoading ? (
-              <div className="h-64 bg-gray-100 rounded-xl animate-pulse"></div>
-            ) : analytics ? (
-              <PieChart
-                series={[
-                  {
-                    data: analytics.riskDistribution,
-                    innerRadius: 60,
-                    outerRadius: 100,
-                    paddingAngle: 2,
-                    cornerRadius: 4,
-                  },
-                ]}
-                height={240}
-                colors={["#ef4444", "#10b981"]}
-                slotProps={{
-                  legend: {
-                    direction: "horizontal",
-                    position: { vertical: "bottom", horizontal: "center" },
-                  },
-                }}
-              />
-            ) : (
-              <ChartSkeleton />
-            )}
-          </div>
-
-          {/* Visit Types */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Visit Types</h2>
-              <Activity size={20} className="text-blue-500" />
-            </div>
-            {isLoading ? (
-              <div className="h-64 bg-gray-100 rounded-xl animate-pulse"></div>
-            ) : analytics ? (
-              <PieChart
-                series={[
-                  {
-                    data: analytics.visitTypeData,
-                    highlightScope: { fade: "global", highlight: "item" },
-                    faded: { innerRadius: 30, additionalRadius: -30 },
-                  },
-                ]}
-                height={240}
-                colors={["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"]}
-                slotProps={{
-                  legend: {
-                    direction: "horizontal",
-                    position: { vertical: "bottom", horizontal: "center" },
-                  },
-                }}
-              />
-            ) : (
-              <ChartSkeleton />
-            )}
-          </div>
-        </div>
-
-        {/* Enhanced Charts - Second Row */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-          {/* Visits Trend */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
-                Visits Trend (6 months)
-              </h2>
-              <Calendar size={20} className="text-blue-500" />
-            </div>
-            {isLoading ? (
-              <div className="h-80 bg-gray-100 rounded-xl animate-pulse"></div>
-            ) : analytics ? (
-              <LineChart
-                xAxis={[
-                  {
-                    data: analytics.months,
-                    scaleType: "point",
-                  },
-                ]}
-                series={[
-                  {
-                    data: analytics.visitsTrendData.map((d) => d.scheduled),
-                    label: "Scheduled",
-                    color: "#3b82f6",
-                    curve: "monotoneX", // corrected
-                  },
-                  {
-                    data: analytics.visitsTrendData.map((d) => d.completed),
-                    label: "Completed",
-                    color: "#10b981",
-                    curve: "monotoneX", // corrected
-                  },
-                  {
-                    data: analytics.visitsTrendData.map((d) => d.cancelled),
-                    label: "Cancelled",
-                    color: "#ef4444",
-                    curve: "monotoneX", // corrected
-                  },
-                ]}
-                height={320}
-                margin={{ left: 60, right: 60, top: 20, bottom: 60 }}
-                grid={{ vertical: true, horizontal: true }}
-              />
-            ) : (
-              <ChartSkeleton />
-            )}
-          </div>
-
-          {/* Birth Trends */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Birth Trends</h2>
-              <Baby size={20} className="text-purple-500" />
-            </div>
-            {isLoading ? (
-              <div className="h-80 bg-gray-100 rounded-xl animate-pulse"></div>
-            ) : analytics ? (
-              <BarChart
-                xAxis={[
-                  {
-                    scaleType: "band",
-                    data: analytics.months,
-                  },
-                ]}
-                series={[
-                  {
-                    data: analytics.birthTrendsData.map((d) => d.births),
-                    label: "Total Births",
-                    color: "#8b5cf6",
-                  },
-                  {
-                    data: analytics.birthTrendsData.map((d) => d.highRisk),
-                    label: "High Risk",
-                    color: "#ef4444",
-                  },
-                ]}
-                height={320}
-                margin={{ left: 60, right: 60, top: 20, bottom: 60 }}
-              />
-            ) : (
-              <ChartSkeleton />
-            )}
-          </div>
-        </div>
-
-        {/* Worker Performance */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              Health Worker Performance vs Workload
-            </h2>
-            <UserCheck size={20} className="text-emerald-500" />
-          </div>
-          <p className="text-gray-600 mb-4">
-            Performance score vs current workload for active health workers
-          </p>
-          {isLoading ? (
-            <div className="h-96 bg-gray-100 rounded-xl animate-pulse"></div>
-          ) : analytics ? (
-            <ScatterChart
-              dataset={analytics.workerPerformance}
-              xAxis={[
-                {
-                  dataKey: "workload",
-                  label: "Current Workload",
-                  min: 0,
-                },
-              ]}
-              yAxis={[
-                {
-                  dataKey: "performance",
-                  label: "Performance Score",
-                  min: 0,
-                  max: 100,
-                },
-              ]}
-              series={[
-                {
-                  label: "Performance",
-                  color: "#06b6d4",
-                  datasetKeys: {
-                    x: "workload",
-                    y: "performance",
-                    id: "id", // Each data point must have a unique 'id'
-                  },
-                },
-              ]}
-              height={400}
-              margin={{ left: 80, right: 80, top: 40, bottom: 80 }}
-              grid={{ vertical: true, horizontal: true }}
+        {/* Advanced Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <VisitTrendsChart
+              data={analytics?.visitsTrendData || []}
+              loading={isLoading}
             />
-          ) : (
-            <ChartSkeleton />
-          )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <RiskDistributionChart
+            data={analytics?.riskDistribution || []}
+            loading={isLoading}
+          />
+        </div>
+
+        {/* Regional Coverage & Map */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Health Coverage by Region
-            </h2>
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <BarChart3 size={20} className="text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Health Coverage by Region
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Regional distribution analysis
+                </p>
+              </div>
+            </div>
             {locationData.map((loc, i) => (
               <ProgressBar
                 key={i}
@@ -797,8 +739,23 @@ const Dashboard = () => {
               />
             ))}
           </div>
-          <div className="h-80 rounded-xl overflow-hidden shadow-inner border border-gray-200 mt-6">
-            <Map />
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <Activity size={20} className="text-indigo-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Geographic Coverage
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Service area visualization
+                </p>
+              </div>
+            </div>
+            <div className="h-80 rounded-xl overflow-hidden shadow-inner border border-gray-200">
+              <Map />
+            </div>
           </div>
         </div>
       </div>

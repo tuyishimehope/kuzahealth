@@ -22,7 +22,7 @@ const sidebarLinks = [
   { href: "/data-analyst/dashboard", label: "Dashboard", icon: LayoutDashboard, description: "Overview & Analytics" },
   { href: "/data-analyst/health-workers", label: "View Health Workers", icon: Users, description: "Staff Management" },
   { href: "/data-analyst/schedules", label: "Schedules", icon: Calendar, description: "View All Schedules" },
-  { href: "/data-analyst/parents", label: "Mothers", icon: Users2, description: "View Mothers" },
+  { href: "/data-analyst/parents", label: "Mothers", icon: Users2, description: "View Mothers & Infants" },
   { href: "/data-analyst/reports", label: "Reports", icon: BarChart3, description: "Analytics & Insights" },
   { href: "/data-analyst/settings", label: "Settings", icon: Settings, description: "System Configuration" },
 ];

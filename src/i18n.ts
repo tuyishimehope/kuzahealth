@@ -10,6 +10,7 @@ i18n
   .init({
     fallbackLng: "en",
     debug: true,
+    supportedLngs: ["en", "rw", "fr"],
     interpolation: {
       escapeValue: false, // react already safes from xss
     },

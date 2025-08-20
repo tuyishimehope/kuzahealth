@@ -12,6 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import type { IconType } from "react-icons";
 import SystemMonitor from "./SystemMonitor";
+import { useNavigate } from "react-router-dom";
 
 const axiosInstance = {
   get: async (url: any) => {
@@ -263,6 +264,7 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const navigate = useNavigate();
 
   const fetchDashboardData = async () => {
     try {
@@ -368,65 +370,63 @@ const Dashboard = () => {
             Quick Actions
           </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  <QuickActionCard
-    title="Manage Health Workers"
-    description="Add, update, or remove health worker accounts"
-    icon={Users}
-    color="bg-green-600"
-    onClick={() => console.log("Manage workers")}
-  />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <QuickActionCard
+              title="Manage Health Workers"
+              description="Add, update, or remove health worker accounts"
+              icon={Users}
+              color="bg-green-600"
+              onClick={() => navigate("/superadmin/health-workers")}
+            />
 
-  <QuickActionCard
-    title="Audit Logs"
-    description="Review all system activity for compliance & HIPAA"
-    icon={Activity}
-    color="bg-blue-600"
-    onClick={() => console.log("Open audit logs")}
-  />
+            <QuickActionCard
+              title="Audit Logs"
+              description="Review all system activity for compliance & HIPAA"
+              icon={Activity}
+              color="bg-blue-600"
+              onClick={() => navigate("/superadmin/audit")}
+            />
 
-  <QuickActionCard
-    title="Access Control"
-    description="Assign roles, permissions, and security policies"
-    icon={UserPlus}
-    color="bg-purple-600"
-    onClick={() => console.log("Manage access control")}
-  />
+            <QuickActionCard
+              title="Access Control"
+              description="Assign roles, permissions, and security policies"
+              icon={UserPlus}
+              color="bg-purple-600"
+              onClick={() => navigate("/superadmin/users")}
+            />
 
-  <QuickActionCard
-    title="Analytics & Reports"
-    description="Generate insights on visits, workers, and patients"
-    icon={BarChart3}
-    color="bg-orange-600"
-    onClick={() => console.log("Generate analytics")}
-  />
+            {/* <QuickActionCard
+              title="Analytics & Reports"
+              description="Generate insights on visits, workers, and patients"
+              icon={BarChart3}
+              color="bg-orange-600"
+              onClick={() => console.log("Generate analytics")}
+            />
 
-  <QuickActionCard
-    title="Emergency Broadcast"
-    description="Send alerts to all health workers instantly"
-    icon={AlertCircle}
-    color="bg-red-600"
-    onClick={() => console.log("Send broadcast")}
-  />
+            <QuickActionCard
+              title="Emergency Broadcast"
+              description="Send alerts to all health workers instantly"
+              icon={AlertCircle}
+              color="bg-red-600"
+              onClick={() => console.log("Send broadcast")}
+            />
 
-  <QuickActionCard
-    title="System Settings"
-    description="Configure integrations, backups, and policies"
-    icon={CheckCircle2}
-    color="bg-gray-700"
-    onClick={() => console.log("System settings")}
-  />
-</div>
-
-
+            <QuickActionCard
+              title="System Settings"
+              description="Configure integrations, backups, and policies"
+              icon={CheckCircle2}
+              color="bg-gray-700"
+              onClick={() => console.log("System settings")}
+            /> */}
+          </div>
         </div>
 
         <SystemMonitor />
         {/* Activity and Visits */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RecentActivities activities={activities} loading={loading} />
           <UpcomingVisitsCard visits={upcomingVisits} loading={loading} />
-        </div>
+        </div> */}
       </div>
     </div>
   );

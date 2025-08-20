@@ -68,6 +68,11 @@ const fetchHealthWorkers = async (): Promise<HealthWorker[]> => {
   const res = await axiosInstance.get("/api/health-workers");
   return res.data;
 };
+  export const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName?.[0]?.toUpperCase() || ""}${
+      lastName?.[0]?.toUpperCase() || ""
+    }`;
+  };
 
 const ViewHealthWorkers = () => {
   const [selectedWorker, setSelectedWorker] = useState<HealthWorker | null>(
@@ -112,11 +117,7 @@ const ViewHealthWorkers = () => {
     );
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName?.[0]?.toUpperCase() || ""}${
-      lastName?.[0]?.toUpperCase() || ""
-    }`;
-  };
+
 
   const getWorkerStats = () => {
     const total = healthWorkers.length;
@@ -149,17 +150,18 @@ const ViewHealthWorkers = () => {
 
   const columns = useMemo<MRT_ColumnDef<HealthWorker>[]>(
     () => [
+      // Health Professional (Avatar + Name + Email)
       {
-        accessorKey: "fullName",
         header: "Health Professional",
         size: 300,
+        accessorFn: (row) => `${row.first_name} ${row.last_name} ${row.email}`, // used for global search
         Cell: ({ row }) => (
-          <Group spacing="md" py="xs">
+          <Group spacing="md" py="xs" align="center">
             <Avatar
               size={44}
               radius="xl"
               variant="gradient"
-              gradient={{ from: "#7C3AED", to: "#8B5CF6", deg: 135 }} // purple → violet
+              gradient={{ from: "#7C3AED", to: "#8B5CF6", deg: 135 }}
               styles={{
                 root: {
                   boxShadow: "0 4px 12px rgba(147, 51, 234, 0.25)",
@@ -200,7 +202,18 @@ const ViewHealthWorkers = () => {
             </Box>
           </Group>
         ),
+        filterFn: (row, _id, filterValue) => {
+          const fullName =
+            `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
+          const email = row.original.email.toLowerCase();
+          return (
+            fullName.includes(filterValue.toLowerCase()) ||
+            email.includes(filterValue.toLowerCase())
+          );
+        },
       },
+
+      // Qualification
       {
         accessorKey: "qualification",
         header: "Qualification",
@@ -213,12 +226,7 @@ const ViewHealthWorkers = () => {
               color={getQualificationColor(qualification)}
               size="md"
               radius="lg"
-              styles={{
-                root: {
-                  textTransform: "none",
-                  fontWeight: 500,
-                },
-              }}
+              styles={{ root: { textTransform: "none", fontWeight: 500 } }}
               leftSection={<IconStethoscope size={12} />}
             >
               {qualification}
@@ -226,12 +234,14 @@ const ViewHealthWorkers = () => {
           );
         },
       },
+
+      // Service Area
       {
         accessorKey: "service_area",
         header: "Service Area",
         size: 180,
         Cell: ({ cell }) => (
-          <Group spacing={8}>
+          <Group spacing={8} align="center">
             <ThemeIcon size={20} variant="light" color="purple" radius="md">
               <IconMapPin size={12} />
             </ThemeIcon>
@@ -241,6 +251,8 @@ const ViewHealthWorkers = () => {
           </Group>
         ),
       },
+
+      // Contact / Phone
       {
         accessorKey: "phone_number",
         header: "Contact",
@@ -248,7 +260,7 @@ const ViewHealthWorkers = () => {
         Cell: ({ cell }) => {
           const phone = cell.getValue<string>();
           return phone ? (
-            <Group spacing={8}>
+            <Group spacing={8} align="center">
               <ThemeIcon size={20} variant="light" color="green" radius="md">
                 <IconPhone size={12} />
               </ThemeIcon>
@@ -263,27 +275,34 @@ const ViewHealthWorkers = () => {
           );
         },
       },
+
+      // Joined Date
       {
         accessorKey: "createdAt",
         header: "Joined",
         size: 140,
         Cell: ({ cell }) => (
-          <Group spacing={8}>
+          <Group spacing={8} align="center">
             <ThemeIcon size={20} variant="light" color="blue" radius="md">
               <IconCalendar size={12} />
             </ThemeIcon>
-            <Box>
-              <Text size="sm" fw={500}>
-                {new Date(cell.getValue<string>()).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </Text>
-            </Box>
+            <Text size="sm" fw={500}>
+              {cell.getValue<string>()
+                ? new Date(cell.getValue<string>()).toLocaleDateString(
+                    "en-US",
+                    {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    }
+                  )
+                : "N/A"}
+            </Text>
           </Group>
         ),
       },
+
+      // Actions
       {
         accessorKey: "actions",
         header: "Actions",

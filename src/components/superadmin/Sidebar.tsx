@@ -13,11 +13,13 @@ import {
   Settings,
   Shield,
   UserPlus,
+  Users2,
   X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo1.png";
+import { RiAdminFill } from "react-icons/ri";
 
 const sidebarLinks = [
   {
@@ -44,12 +46,24 @@ const sidebarLinks = [
     icon: Baby,
     description: "View Mothers",
   },
+  {
+    href: "/superadmin/add-data-analyst",
+    label: "Data analyst",
+    icon: RiAdminFill,
+    description: "Add data analyst",
+  },
   // {
   //   href: "/superadmin/reports",
   //   label: "Reports",
   //   icon: FileText,
   //   description: "Analytics & Insights",
   // },
+  {
+    href: "/superadmin/users",
+    label: "Users",
+    icon: Users2,
+    description: "Manage users",
+  },
   {
     href: "/superadmin/audit",
     label: "Audit",

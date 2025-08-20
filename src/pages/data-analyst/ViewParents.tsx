@@ -1,66 +1,73 @@
 import { axiosInstance } from "@/utils/axiosInstance";
 import {
+  Avatar,
   Badge,
   Box,
   Button,
+  Card,
+  Center,
+  Divider,
   Group,
+  Loader,
+  Modal,
   Paper,
+  SimpleGrid,
+  Stack,
   Text,
+  ThemeIcon,
   Title,
   useMantineTheme,
-  Loader,
-  Stack,
-  ActionIcon,
-  Tooltip,
-  ThemeIcon,
 } from "@mantine/core";
 import {
+  IconAlertTriangle,
+  IconBabyCarriage,
+  IconCalendar,
+  IconClock,
   IconDownload,
   IconRefresh,
-  IconUsers,
-  IconAlertTriangle,
+  IconRuler,
+  IconScale,
   IconUserPlus,
+  IconUsers,
 } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import type { Child } from "../HealthWorker/infants/ViewInfants";
 
 export interface Patient {
   id: string;
   firstName: string;
   lastName: string;
-  email?: string;
   phone: string;
   expectedDeliveryDate: string;
   bloodGroup: string;
-  maritalStatus: string;
-  emergencyContactFullName: string;
-  emergencyContactNumber: string;
-  emergencyContactRelationship: string;
-  district: string;
-  sector: string;
-  cell: string;
-  village: string;
   highRisk: boolean;
-  createdAt: string;
-  updatedAt: string;
 }
 
 const fetchPatients = async (): Promise<Patient[]> => {
-  const response = await axiosInstance.get("/api/parents");
-  return response.data;
+  const { data } = await axiosInstance.get("/api/parents");
+  return data;
+};
+
+const fetchInfant = async (parentId: string): Promise<Child[] | null> => {
+  try {
+    const { data } = await axiosInstance.get(`/api/infants/mother/${parentId}`);
+    return data || null;
+  } catch {
+    return null;
+  }
 };
 
 const ViewParents = () => {
   const theme = useMantineTheme();
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedParent, setSelectedParent] = useState<Patient | null>(null);
+  const [infant, setInfant] = useState<Child[] | null>(null);
 
   const {
     data: patients = [],
@@ -72,7 +79,7 @@ const ViewParents = () => {
   } = useQuery<Patient[]>({
     queryKey: ["patients"],
     queryFn: fetchPatients,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
     retry: 2,
   });
 
@@ -83,37 +90,57 @@ const ViewParents = () => {
     const upcomingDeliveries = patients.filter((p) => {
       if (!p.expectedDeliveryDate) return false;
       const edd = new Date(p.expectedDeliveryDate);
-      const now = new Date();
-      const diffTime = edd.getTime() - now.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const diffDays = Math.ceil(
+        (edd.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+      );
       return diffDays >= 0 && diffDays <= 30;
     }).length;
-
     return { totalPatients, highRiskCount, upcomingDeliveries };
   }, [patients]);
 
+  const handleViewInfant = async (parent: Patient) => {
+    setSelectedParent(parent);
+    const data = await fetchInfant(parent.id);
+    setInfant(data);
+    setModalOpen(true);
+  };
+  {
+    /* Helper function - place this outside the component */
+  }
+  const calculateAge = (birthDate: string): string => {
+    try {
+      const birth = new Date(birthDate);
+      const today = new Date();
+      const months =
+        (today.getFullYear() - birth.getFullYear()) * 12 +
+        (today.getMonth() - birth.getMonth());
+
+      if (months < 1) {
+        const days = Math.floor(
+          (today.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        return `${days} ${days === 1 ? "day" : "days"} old`;
+      } else if (months < 12) {
+        return `${months} ${months === 1 ? "month" : "months"} old`;
+      } else {
+        const years = Math.floor(months / 12);
+        const remainingMonths = months % 12;
+        if (remainingMonths === 0) {
+          return `${years} ${years === 1 ? "year" : "years"} old`;
+        } else {
+          return `${years}y ${remainingMonths}m old`;
+        }
+      }
+    } catch {
+      return "Unknown";
+    }
+  };
+
   const columns = useMemo<MRT_ColumnDef<Patient>[]>(
     () => [
-      {
-        accessorKey: "firstName",
-        header: "First Name",
-        size: 120,
-      },
-      {
-        accessorKey: "lastName",
-        header: "Last Name",
-        size: 120,
-      },
-      {
-        accessorKey: "phone",
-        header: "Phone",
-        size: 130,
-        Cell: ({ cell }) => (
-          <Text size="sm" color="dimmed">
-            {cell.getValue<string>()}
-          </Text>
-        ),
-      },
+      { accessorKey: "firstName", header: "First Name", size: 120 },
+      { accessorKey: "lastName", header: "Last Name", size: 120 },
+      { accessorKey: "phone", header: "Phone", size: 130 },
       {
         accessorKey: "expectedDeliveryDate",
         header: "Expected Delivery",
@@ -128,14 +155,17 @@ const ViewParents = () => {
             );
 
           const edd = new Date(date);
-          const now = new Date();
-          const diffTime = edd.getTime() - now.getTime();
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-          let color = "gray";
-          if (diffDays < 0) color = "red";
-          else if (diffDays <= 7) color = "orange";
-          else if (diffDays <= 30) color = "yellow";
+          const diffDays = Math.ceil(
+            (edd.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+          );
+          const color =
+            diffDays < 0
+              ? "red"
+              : diffDays <= 7
+              ? "orange"
+              : diffDays <= 30
+              ? "yellow"
+              : "gray";
 
           return (
             <Stack spacing={2}>
@@ -181,61 +211,24 @@ const ViewParents = () => {
           );
         },
       },
+      {
+        id: "actions",
+        header: "Actions",
+        size: 100,
+        Cell: ({ row }) => (
+          <Button
+            size="xs"
+            color="violet"
+            variant="outline"
+            onClick={() => handleViewInfant(row.original)}
+          >
+            View Infant
+          </Button>
+        ),
+      },
     ],
     []
   );
-
-  const handleExportPDF = () => {
-    const doc = new jsPDF();
-
-    // Header
-    doc.setFontSize(18);
-    doc.setTextColor(102, 51, 153); // Purple color
-    doc.text("Parents Report", 14, 20);
-
-    // Stats
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text(
-      `Total Patients: ${stats.totalPatients} | High Risk: ${stats.highRiskCount} | Upcoming Deliveries: ${stats.upcomingDeliveries}`,
-      14,
-      30
-    );
-
-    const tableData = patients.map((p) => [
-      p.firstName,
-      p.lastName,
-      p.phone,
-      p.expectedDeliveryDate
-        ? new Date(p.expectedDeliveryDate).toLocaleDateString()
-        : "-",
-      p.bloodGroup,
-      p.highRisk ? "High Risk" : "Normal",
-    ]);
-
-    autoTable(doc, {
-      startY: 40,
-      head: [
-        [
-          "First Name",
-          "Last Name",
-          "Phone",
-          "Expected Delivery",
-          "Blood Group",
-          "Risk Level",
-        ],
-      ],
-      body: tableData,
-      theme: "striped",
-      headStyles: {
-        fillColor: [102, 51, 153], // Purple header
-        textColor: 255,
-      },
-      alternateRowStyles: { fillColor: [249, 246, 255] }, // Light purple
-    });
-
-    doc.save(`parents-report-${new Date().toISOString().split("T")[0]}.pdf`);
-  };
 
   const table = useMantineReactTable({
     columns,
@@ -247,75 +240,11 @@ const ViewParents = () => {
     enableDensityToggle: true,
     enableFullScreenToggle: true,
     positionActionsColumn: "last",
-    globalFilterFn: "fuzzy",
-    initialState: {
-      density: "md",
-      // pagination: { pageSize: 25 },
-    },
-    state: {
-      isLoading,
-      globalFilter,
-      rowSelection,
-      showProgressBars: isFetching,
-    },
-    onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    mantineTableContainerProps: {
-      sx: {
-        borderRadius: theme.radius.lg,
-        overflow: "hidden",
-      },
-    },
-    mantineTableHeadCellProps: {
-      sx: {
-        backgroundColor: theme.colors.violet[0],
-        color: theme.colors.violet[8],
-        fontWeight: 600,
-        borderBottom: `2px solid ${theme.colors.violet[2]}`,
-      },
-    },
-    mantineTableBodyRowProps: ({ row }) => ({
-      sx: {
-        backgroundColor:
-          row.index % 2 === 0 ? theme.white : theme.colors.gray[0],
-        "&:hover": {
-          backgroundColor: theme.colors.violet[0],
-        },
-      },
-    }),
-    renderTopToolbarCustomActions: () => (
-      <Group spacing="sm">
-        <Button
-          leftIcon={<IconDownload size={18} />}
-          variant="filled"
-          color="violet"
-          onClick={handleExportPDF}
-          disabled={patients.length === 0}
-          sx={
-            {
-              // background: theme.fn.linearGradient(45, theme.colors.violet[6], theme.colors.purple[6]),
-            }
-          }
-        >
-          Export PDF
-        </Button>
-        <Tooltip label="Refresh data">
-          <ActionIcon
-            variant="light"
-            color="violet"
-            onClick={() => refetch()}
-            loading={isFetching}
-            size="lg"
-          >
-            <IconRefresh size={18} />
-          </ActionIcon>
-        </Tooltip>
-      </Group>
-    ),
+    state: { isLoading, showProgressBars: isFetching },
+    onRowSelectionChange: () => {},
   });
 
-  // Loading state
-  if (isLoading) {
+  if (isLoading)
     return (
       <Box
         sx={{
@@ -323,10 +252,9 @@ const ViewParents = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          // background: theme.fn.linearGradient(135, theme.colors.violet[0], theme.colors.purple[0]),
         }}
       >
-        <Stack align="center" spacing="md">
+        <Stack align="center">
           <Loader size="lg" color="violet" />
           <Text size="lg" color="violet.7">
             Loading parents data...
@@ -334,10 +262,8 @@ const ViewParents = () => {
         </Stack>
       </Box>
     );
-  }
 
-  // Error state
-  if (isError) {
+  if (isError)
     return (
       <Box
         sx={{
@@ -345,11 +271,6 @@ const ViewParents = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          background: theme.fn.linearGradient(
-            135,
-            theme.colors.red[0],
-            theme.colors.orange[0]
-          ),
           padding: theme.spacing.md,
         }}
       >
@@ -358,46 +279,33 @@ const ViewParents = () => {
           withBorder
           shadow="lg"
           radius="lg"
-          sx={{
-            maxWidth: 500,
-            background: theme.white,
-          }}
+          sx={{ maxWidth: 500, background: theme.white }}
         >
           <Stack align="center" spacing="md">
             <ThemeIcon size="xl" color="red" variant="light">
               <IconAlertTriangle size={32} />
             </ThemeIcon>
-            <Title order={3} color="red.7" align="center">
+            <Title order={3} color="red.7">
               Oops! Something went wrong
             </Title>
-            <Text color="dimmed" align="center">
+            <Text color="dimmed">
               {(error as Error)?.message || "Failed to fetch patients data"}
             </Text>
-            <Group>
-              <Button
-                color="red"
-                variant="filled"
-                leftIcon={<IconRefresh size={16} />}
-                onClick={() => refetch()}
-                loading={isFetching}
-              >
-                Try Again
-              </Button>
-            </Group>
+            <Button
+              color="red"
+              leftIcon={<IconRefresh size={16} />}
+              onClick={() => refetch()}
+              loading={isFetching}
+            >
+              Try Again
+            </Button>
           </Stack>
         </Paper>
       </Box>
     );
-  }
 
   return (
-    <Box
-      p="lg"
-      sx={{
-        // background: theme.fn.linearGradient(135, theme.colors.violet[0], theme.colors.purple[0]),
-        minHeight: "100vh",
-      }}
-    >
+    <Box p="lg" sx={{ minHeight: "100vh" }}>
       <Stack spacing="lg">
         {/* Header */}
         <Group position="apart" align="center">
@@ -421,7 +329,7 @@ const ViewParents = () => {
           </Group>
         </Group>
 
-        {/* Stats Cards */}
+        {/* Stats */}
         <Group grow>
           <Paper p="md" radius="lg" withBorder shadow="sm">
             <Group position="apart">
@@ -487,36 +395,267 @@ const ViewParents = () => {
           </Paper>
         </Group>
 
-        {/* Main Table */}
+        {/* Table */}
         <Paper
           shadow="lg"
           radius="lg"
-          sx={{
-            overflow: "hidden",
-            background: theme.white,
-          }}
+          sx={{ overflow: "hidden", background: theme.white }}
         >
           {patients.length === 0 ? (
-            <Box p="xl">
-              <Stack align="center" spacing="md">
-                <ThemeIcon size="xl" color="violet" variant="light">
-                  <IconUsers size={32} />
-                </ThemeIcon>
-                <Title order={3} color="violet.7">
-                  No patients found
-                </Title>
-                <Text color="dimmed" align="center">
-                  Get started by adding your first patient to the system
-                </Text>
-                <Button color="violet" leftIcon={<IconUserPlus size={16} />}>
-                  Add First Patient
-                </Button>
-              </Stack>
-            </Box>
+            <Stack align="center" spacing="md" p="xl">
+              <ThemeIcon size="xl" color="violet" variant="light">
+                <IconUsers size={32} />
+              </ThemeIcon>
+              <Title order={3} color="violet.7">
+                No patients found
+              </Title>
+              <Text color="dimmed" align="center">
+                Get started by adding your first patient to the system
+              </Text>
+              <Button color="violet" leftIcon={<IconUserPlus size={16} />}>
+                Add First Patient
+              </Button>
+            </Stack>
           ) : (
             <MantineReactTable table={table} />
           )}
         </Paper>
+
+        {/* Infant Modal */}
+        <Modal
+          opened={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedParent(null);
+            setInfant(null);
+          }}
+          title={
+            <Group spacing="xs" align="center">
+              <IconUsers size={20} />
+              <Text weight={600}>
+                Infants for {selectedParent?.firstName}{" "}
+                {selectedParent?.lastName}
+              </Text>
+              {Array.isArray(infant) && infant.length > 0 && (
+                <Badge size="sm" variant="light" color="blue">
+                  {infant.length} {infant.length === 1 ? "Child" : "Children"}
+                </Badge>
+              )}
+            </Group>
+          }
+          size="lg"
+          centered
+          padding="lg"
+          radius="md"
+          closeButtonProps={{ "aria-label": "Close infants modal" }}
+          styles={{
+            header: {
+              borderBottom: "1px solid #e9ecef",
+              paddingBottom: "1rem",
+            },
+            body: { paddingTop: "1rem" },
+          }}
+        >
+          {infant && infant.length > 0 ? (
+            <Stack spacing="lg">
+              {infant.map((info, index) => (
+                <Card
+                  key={info.id}
+                  shadow="sm"
+                  padding="lg"
+                  radius="md"
+                  withBorder
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%)",
+                    border: "1px solid #e3f2fd",
+                  }}
+                >
+                  <Stack spacing="md">
+                    {/* Header with name and gender */}
+                    <Group position="apart" align="center">
+                      <Group spacing="sm" align="center">
+                        <Avatar
+                          size="sm"
+                          radius="xl"
+                          color={
+                            info.gender?.toLowerCase() === "male"
+                              ? "blue"
+                              : info.gender?.toLowerCase() === "female"
+                              ? "pink"
+                              : "gray"
+                          }
+                        >
+                          <IconBabyCarriage size={16} />
+                        </Avatar>
+                        <div>
+                          <Text size="lg" weight={600} color="dark">
+                            {info.firstName || `Child ${index + 1}`}
+                          </Text>
+                          <Text size="xs" color="dimmed">
+                            Infant #{index + 1}
+                          </Text>
+                        </div>
+                      </Group>
+                      {info.gender && (
+                        <Badge
+                          variant="light"
+                          color={
+                            info.gender.toLowerCase() === "male"
+                              ? "blue"
+                              : info.gender.toLowerCase() === "female"
+                              ? "pink"
+                              : "gray"
+                          }
+                          size="md"
+                          radius="sm"
+                        >
+                          {info.gender}
+                        </Badge>
+                      )}
+                    </Group>
+
+                    <Divider variant="dashed" />
+
+                    {/* Details Grid */}
+                    <SimpleGrid
+                      cols={2}
+                      spacing="md"
+                      breakpoints={[{ maxWidth: "sm", cols: 1 }]}
+                    >
+                      <Group spacing="xs" align="flex-start" noWrap>
+                        <ThemeIcon
+                          size="sm"
+                          variant="light"
+                          color="blue"
+                          radius="sm"
+                        >
+                          <IconCalendar size={14} />
+                        </ThemeIcon>
+                        <div style={{ flex: 1 }}>
+                          <Text
+                            size="xs"
+                            weight={500}
+                            color="dimmed"
+                            transform="uppercase"
+                          >
+                            Birth Date
+                          </Text>
+                          <Text size="sm" weight={500}>
+                            {info.dateOfBirth
+                              ? new Date(info.dateOfBirth).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  }
+                                )
+                              : "Not recorded"}
+                          </Text>
+                        </div>
+                      </Group>
+
+                      <Group spacing="xs" align="flex-start" noWrap>
+                        <ThemeIcon
+                          size="sm"
+                          variant="light"
+                          color="green"
+                          radius="sm"
+                        >
+                          <IconScale size={14} />
+                        </ThemeIcon>
+                        <div style={{ flex: 1 }}>
+                          <Text
+                            size="xs"
+                            weight={500}
+                            color="dimmed"
+                            transform="uppercase"
+                          >
+                            Birth Weight
+                          </Text>
+                          <Text size="sm" weight={500}>
+                            {info.birthWeight != null
+                              ? `${Number(info.birthWeight).toFixed(1)} kg`
+                              : "Not recorded"}
+                          </Text>
+                        </div>
+                      </Group>
+
+                      <Group spacing="xs" align="flex-start" noWrap>
+                        <ThemeIcon
+                          size="sm"
+                          variant="light"
+                          color="orange"
+                          radius="sm"
+                        >
+                          <IconRuler size={14} />
+                        </ThemeIcon>
+                        <div style={{ flex: 1 }}>
+                          <Text
+                            size="xs"
+                            weight={500}
+                            color="dimmed"
+                            transform="uppercase"
+                          >
+                            Birth Height
+                          </Text>
+                          <Text size="sm" weight={500}>
+                            {info.birthHeight != null
+                              ? `${Number(info.birthHeight).toFixed(1)} cm`
+                              : "Not recorded"}
+                          </Text>
+                        </div>
+                      </Group>
+
+                      <Group spacing="xs" align="flex-start" noWrap>
+                        <ThemeIcon
+                          size="sm"
+                          variant="light"
+                          color="violet"
+                          radius="sm"
+                        >
+                          <IconClock size={14} />
+                        </ThemeIcon>
+                        <div style={{ flex: 1 }}>
+                          <Text
+                            size="xs"
+                            weight={500}
+                            color="dimmed"
+                            transform="uppercase"
+                          >
+                            Age
+                          </Text>
+                          <Text size="sm" weight={500}>
+                            {info.dateOfBirth
+                              ? calculateAge(info.dateOfBirth)
+                              : "Unknown"}
+                          </Text>
+                        </div>
+                      </Group>
+                    </SimpleGrid>
+                  </Stack>
+                </Card>
+              ))}
+            </Stack>
+          ) : (
+            <Center py={60}>
+              <Stack align="center" spacing="md">
+                <ThemeIcon size={64} variant="light" color="gray" radius="xl">
+                  <IconBabyCarriage size={32} />
+                </ThemeIcon>
+                <div style={{ textAlign: "center" }}>
+                  <Text size="md" weight={500} color="dark" mb="xs">
+                    No Infant Records
+                  </Text>
+                  <Text size="sm" color="dimmed">
+                    No infant information is available for this parent.
+                  </Text>
+                </div>
+              </Stack>
+            </Center>
+          )}
+        </Modal>
       </Stack>
     </Box>
   );

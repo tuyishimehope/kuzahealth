@@ -257,7 +257,7 @@ const MaternalNutritionDashboard = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Maternal Nutrition Center
+                   Nutrition Center
                 </h1>
                 <p className="text-sm text-gray-600">Health Worker Dashboard</p>
               </div>
@@ -467,10 +467,10 @@ const MaternalNutritionDashboard = () => {
                 icon={<AlertCircle className="h-5 w-5 text-orange-600" />}
                 label="Flag High Risk"
               />
-              <QuickActionButton
+              {/* <QuickActionButton
                 icon={<MessageCircle className="h-5 w-5 text-green-600" />}
                 label="Bulk Messaging"
-              />
+              /> */}
             </div>
           </div>
         </div>

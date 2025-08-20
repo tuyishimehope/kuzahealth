@@ -18,7 +18,7 @@ import {
   ThemeIcon,
   Timeline,
   Title,
-  Tooltip
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -37,7 +37,7 @@ import {
   IconRefresh,
   IconStethoscope,
   IconVideo,
-  IconX
+  IconX,
 } from "@tabler/icons-react";
 
 import { useQuery } from "@tanstack/react-query";
@@ -50,6 +50,8 @@ import {
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { RiCalendarScheduleLine } from "react-icons/ri";
+import { Patient } from "./ViewParents";
+import { HealthWorker } from "../superadmin/ViewHealthWorkers";
 
 export interface Schedule {
   id: string;
@@ -59,6 +61,8 @@ export interface Schedule {
   visitType: string;
   location: string;
   modeOfCommunication: string;
+  parentId: string;
+  healthWorkerId: string;
   status: "Scheduled" | "Completed" | "Cancelled";
   visitNotes: {
     id: string;
@@ -73,10 +77,20 @@ const fetchSchedules = async (): Promise<Schedule[]> => {
   const res = await axiosInstance.get("/api/visits");
   return res.data;
 };
+const fetchParent = async (id: string): Promise<Patient> => {
+  const res = await axiosInstance.get(`/api/parents/${id}`);
+  return res.data; // should be a single object
+};
+const fetchHealthWorker = async (id: string): Promise<HealthWorker> => {
+  const res = await axiosInstance.get(`/api/health-workers/${id}`);
+  return res.data; // single object
+};
 
 const Schedule = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
+    null
+  );
   const [modalOpened, { open, close }] = useDisclosure(false);
 
   const {
@@ -89,15 +103,31 @@ const Schedule = () => {
     queryKey: ["schedules"],
     queryFn: fetchSchedules,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
+  // Fetch selected parent when a schedule is selected
+  const { data: parent } = useQuery<Patient>({
+    queryKey: ["parent", selectedSchedule?.parentId],
+    queryFn: () => fetchParent(selectedSchedule!.parentId),
+    enabled: !!selectedSchedule?.parentId, // only run if ID exists
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch selected health worker
+  const { data: healthWorker } = useQuery<HealthWorker>({
+    queryKey: ["healthWorker", selectedSchedule?.healthWorkerId],
+    queryFn: () => fetchHealthWorker(selectedSchedule!.healthWorkerId),
+    enabled: !!selectedSchedule?.healthWorkerId, // only run if ID exists
+    staleTime: 5 * 60 * 1000,
   });
 
   const filteredSchedules = useMemo(
     () =>
-      schedules.filter((s) =>
-        s.visitType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.status.toLowerCase().includes(searchQuery.toLowerCase())
+      schedules.filter(
+        (s) =>
+          s.visitType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.status.toLowerCase().includes(searchQuery.toLowerCase())
       ),
     [schedules, searchQuery]
   );
@@ -130,17 +160,19 @@ const Schedule = () => {
 
   const getCommunicationIcon = (mode: string) => {
     const lowerMode = mode.toLowerCase();
-    if (lowerMode.includes('video')) return <IconVideo size={16} />;
-    if (lowerMode.includes('phone') || lowerMode.includes('call')) return <IconPhone size={16} />;
-    if (lowerMode.includes('message') || lowerMode.includes('text')) return <IconMessage size={16} />;
+    if (lowerMode.includes("video")) return <IconVideo size={16} />;
+    if (lowerMode.includes("phone") || lowerMode.includes("call"))
+      return <IconPhone size={16} />;
+    if (lowerMode.includes("message") || lowerMode.includes("text"))
+      return <IconMessage size={16} />;
     return <IconDeviceMobile size={16} />;
   };
 
   const getScheduleStats = () => {
     const total = schedules.length;
-    const scheduled = schedules.filter(s => s.status === 'Scheduled').length;
-    const completed = schedules.filter(s => s.status === 'Completed').length;
-    const cancelled = schedules.filter(s => s.status === 'Cancelled').length;
+    const scheduled = schedules.filter((s) => s.status === "Scheduled").length;
+    const completed = schedules.filter((s) => s.status === "Completed").length;
+    const cancelled = schedules.filter((s) => s.status === "Cancelled").length;
     return { total, scheduled, completed, cancelled };
   };
 
@@ -153,12 +185,12 @@ const Schedule = () => {
 
   const handleExportToPDF = () => {
     const doc = new jsPDF();
-    
+
     // Header
     doc.setFontSize(20);
     doc.setTextColor(107, 33, 168); // Purple color
     doc.text("Medical Schedules Report", 14, 20);
-    
+
     // Date
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
@@ -182,7 +214,7 @@ const Schedule = () => {
         ["Visit Type", "Date", "Time", "Location", "Communication", "Status"],
       ],
       body: tableData,
-      theme: 'striped',
+      theme: "striped",
       headStyles: {
         fillColor: [147, 51, 234], // Purple
         textColor: [255, 255, 255],
@@ -196,7 +228,7 @@ const Schedule = () => {
       },
     });
 
-    doc.save(`medical_schedules_${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`medical_schedules_${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
   const columns = useMemo<MRT_ColumnDef<Schedule>[]>(
@@ -227,10 +259,10 @@ const Schedule = () => {
               <Group spacing={4}>
                 <IconCalendar size={14} color="gray" />
                 <Text size="sm" fw={500}>
-                  {date.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
+                  {date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
                   })}
                 </Text>
               </Group>
@@ -324,42 +356,42 @@ const Schedule = () => {
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enableHiding: false,
-    initialState: { 
+    initialState: {
       pagination: { pageSize: 15, pageIndex: 0 },
-      density: 'md'
+      density: "md",
     },
     mantineTableProps: {
       striped: true,
       highlightOnHover: true,
       withBorder: false,
       sx: {
-        '& thead tr th': {
-          backgroundColor: '#f8f4ff',
-          color: '#6b21a8',
+        "& thead tr th": {
+          backgroundColor: "#f8f4ff",
+          color: "#6b21a8",
           fontWeight: 600,
         },
-        '& tbody tr:hover': {
-          backgroundColor: '#faf5ff',
+        "& tbody tr:hover": {
+          backgroundColor: "#faf5ff",
         },
       },
     },
     mantinePaperProps: {
-      shadow: 'sm',
-      radius: 'md',
+      shadow: "sm",
+      radius: "md",
       sx: {
-        overflow: 'hidden',
+        overflow: "hidden",
       },
     },
     mantineTopToolbarProps: {
       sx: {
-        backgroundColor: '#fafafa',
-        borderBottom: '1px solid #e5e5e5',
+        backgroundColor: "#fafafa",
+        borderBottom: "1px solid #e5e5e5",
       },
     },
     mantineBottomToolbarProps: {
       sx: {
-        backgroundColor: '#fafafa',
-        borderTop: '1px solid #e5e5e5',
+        backgroundColor: "#fafafa",
+        borderTop: "1px solid #e5e5e5",
       },
     },
   });
@@ -375,7 +407,9 @@ const Schedule = () => {
         >
           <Group position="apart">
             <Text size="sm">
-              {error instanceof Error ? error.message : "Failed to load schedules data"}
+              {error instanceof Error
+                ? error.message
+                : "Failed to load schedules data"}
             </Text>
             <Button
               variant="light"
@@ -406,12 +440,12 @@ const Schedule = () => {
                 Manage and track all medical visit schedules
               </Text>
             </div>
-            
+
             <Button
               leftIcon={<IconFileExport size={16} />}
               onClick={handleExportToPDF}
               variant="gradient"
-              gradient={{ from: 'purple', to: 'violet', deg: 45 }}
+              gradient={{ from: "purple", to: "violet", deg: 45 }}
               disabled={filteredSchedules.length === 0}
               loading={isLoading}
             >
@@ -465,10 +499,10 @@ const Schedule = () => {
           size="md"
           radius="md"
           sx={{
-            '& .mantine-TextInput-input': {
-              border: '2px solid #e5e7eb',
-              '&:focus': {
-                borderColor: '#9333ea',
+            "& .mantine-TextInput-input": {
+              border: "2px solid #e5e7eb",
+              "&:focus": {
+                borderColor: "#9333ea",
               },
             },
           }}
@@ -487,7 +521,9 @@ const Schedule = () => {
           title={
             <Group spacing="sm">
               <RiCalendarScheduleLine size={24} color="purple" />
-              <Title order={3} c="purple.8">Schedule Details</Title>
+              <Title order={3} c="purple.8">
+                Schedule Details
+              </Title>
             </Group>
           }
           size="lg"
@@ -519,19 +555,63 @@ const Schedule = () => {
                 </Group>
               </Card>
 
+              {/* Parent Information */}
+              {parent && (
+                <Card withBorder radius="md" p="md">
+                  <Title order={4} c="purple.7" mb="md">
+                    Parent Information
+                  </Title>
+                  <Stack spacing="sm">
+                    <Text>
+                      <b>Name:</b> {parent?.firstName}
+                    </Text>
+                    <Text>
+                      <b>Phone:</b> {parent.phone}
+                    </Text>
+                    <Text>
+                      <b>Address:</b> {parent.lastName}
+                    </Text>
+                  </Stack>
+                </Card>
+              )}
+
+              {/* Health Worker Information */}
+              {healthWorker && (
+                <Card withBorder radius="md" p="md">
+                  <Title order={4} c="purple.7" mb="md">
+                    Health Worker Information
+                  </Title>
+                  <Stack spacing="sm">
+                    <Text>
+                      <b>Name:</b> {healthWorker.first_name}
+                    </Text>
+                    <Text>
+                      <b>Phone:</b> {healthWorker.phone_number}
+                    </Text>
+                    <Text>
+                      <b>Last Name:</b> {healthWorker.last_name}
+                    </Text>
+                  </Stack>
+                </Card>
+              )}
+
               {/* Schedule Information */}
               <Card withBorder radius="md" p="md">
-                <Title order={4} c="purple.7" mb="md">Schedule Information</Title>
+                <Title order={4} c="purple.7" mb="md">
+                  Schedule Information
+                </Title>
                 <Stack spacing="md">
                   <Group spacing="sm">
                     <IconCalendar size={18} color="purple" />
                     <Text fw={500}>Date:</Text>
                     <Text c="dimmed">
-                      {new Date(selectedSchedule.scheduledTime).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                      {new Date(
+                        selectedSchedule.scheduledTime
+                      ).toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </Text>
                   </Group>
@@ -539,10 +619,12 @@ const Schedule = () => {
                     <IconClock size={18} color="purple" />
                     <Text fw={500}>Time:</Text>
                     <Text c="dimmed">
-                      {new Date(selectedSchedule.scheduledTime).toLocaleTimeString([], {
+                      {new Date(
+                        selectedSchedule.scheduledTime
+                      ).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
-                        hour12: true
+                        hour12: true,
                       })}
                     </Text>
                   </Group>
@@ -554,29 +636,40 @@ const Schedule = () => {
                   <Group spacing="sm">
                     {getCommunicationIcon(selectedSchedule.modeOfCommunication)}
                     <Text fw={500}>Communication:</Text>
-                    <Text c="dimmed">{selectedSchedule.modeOfCommunication}</Text>
+                    <Text c="dimmed">
+                      {selectedSchedule.modeOfCommunication}
+                    </Text>
                   </Group>
                 </Stack>
               </Card>
 
               {/* Timeline for actual times */}
-              {(selectedSchedule.actualStartTime || selectedSchedule.actualEndTime) && (
+              {(selectedSchedule.actualStartTime ||
+                selectedSchedule.actualEndTime) && (
                 <Card withBorder radius="md" p="md">
-                  <Title order={4} c="purple.7" mb="md">Visit Timeline</Title>
-                  <Timeline active={selectedSchedule.actualEndTime ? 2 : 1} bulletSize={24} lineWidth={2}>
+                  <Title order={4} c="purple.7" mb="md">
+                    Visit Timeline
+                  </Title>
+                  <Timeline
+                    active={selectedSchedule.actualEndTime ? 2 : 1}
+                    bulletSize={24}
+                    lineWidth={2}
+                  >
                     <Timeline.Item
                       bullet={<IconClock size={12} />}
                       title="Scheduled"
                       c="purple"
                     >
                       <Text c="dimmed" size="sm">
-                        {new Date(selectedSchedule.scheduledTime).toLocaleTimeString([], {
+                        {new Date(
+                          selectedSchedule.scheduledTime
+                        ).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
                       </Text>
                     </Timeline.Item>
-                    
+
                     {selectedSchedule.actualStartTime && (
                       <Timeline.Item
                         bullet={<IconCheck size={12} />}
@@ -584,14 +677,16 @@ const Schedule = () => {
                         c="green"
                       >
                         <Text c="dimmed" size="sm">
-                          {new Date(selectedSchedule.actualStartTime).toLocaleTimeString([], {
+                          {new Date(
+                            selectedSchedule.actualStartTime
+                          ).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
                         </Text>
                       </Timeline.Item>
                     )}
-                    
+
                     {selectedSchedule.actualEndTime && (
                       <Timeline.Item
                         bullet={<IconCheck size={12} />}
@@ -599,7 +694,9 @@ const Schedule = () => {
                         c="green"
                       >
                         <Text c="dimmed" size="sm">
-                          {new Date(selectedSchedule.actualEndTime).toLocaleTimeString([], {
+                          {new Date(
+                            selectedSchedule.actualEndTime
+                          ).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -621,23 +718,29 @@ const Schedule = () => {
                   </Title>
                   <Stack spacing="md">
                     {selectedSchedule.visitNotes.map((note) => (
-                      <Box key={note.id} p="sm" bg="gray.0" >
+                      <Box key={note.id} p="sm" bg="gray.0">
                         <Stack spacing="xs">
                           {note.observation && (
                             <div>
-                              <Text size="sm" fw={500} c="purple.7">Observation:</Text>
+                              <Text size="sm" fw={500} c="purple.7">
+                                Observation:
+                              </Text>
                               <Text size="sm">{note.observation}</Text>
                             </div>
                           )}
                           {note.vitalSigns && (
                             <div>
-                              <Text size="sm" fw={500} c="purple.7">Vital Signs:</Text>
+                              <Text size="sm" fw={500} c="purple.7">
+                                Vital Signs:
+                              </Text>
                               <Text size="sm">{note.vitalSigns}</Text>
                             </div>
                           )}
                           {note.recommendations && (
                             <div>
-                              <Text size="sm" fw={500} c="purple.7">Recommendations:</Text>
+                              <Text size="sm" fw={500} c="purple.7">
+                                Recommendations:
+                              </Text>
                               <Text size="sm">{note.recommendations}</Text>
                             </div>
                           )}
