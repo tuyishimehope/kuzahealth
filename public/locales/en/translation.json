@@ -6,5 +6,109 @@
   "button": {
     "getStarted": "Get Started",
     "exploreServices": "Explore Our Services"
+  },
+  "signin":{
+    "title":"Welcome Back",
+    "description":" Sign in to access your healthcare dashboard and continue providing excellent patient care.",
+    "subtitle":"Sign In",
+    "subdescription":"Enter your credentials to access your healthcare dashboard",
+    "email-address":"Email Address",
+    "password":"Password",
+    "forgot-password":"Forgot password?",
+    "back-to-home":"Back to Home"
+  },
+  "sidebar":{
+    "mother-information":"Mother Information",
+    "infant-information":"Infant Information",
+    "schedules":"Schedules",
+    "settings":"Settings",
+    "logout":"Logout"
+  },
+  
+  "menu": {
+    "dashboard": "Dashboard",
+    "analytics": "Analytics",
+    "addMother": "Add Mother",
+    "viewMothers": "View Mothers",
+    "nutritionInfo": "Nutrition Info",
+    "addInfant": "Add Infant",
+    "viewInfants": "View Infants",
+    "vaccinations": "Vaccinations",
+    "addSchedule": "Add Schedule",
+    "viewSchedules": "View Schedules",
+    "updateProfile": "Update Profile"
+  
+},
+"dashboard":{
+  "mother-information-overview":"Mother Information Overview",
+  "alerts":"Alerts",
+  "mothers":"Mothers",
+  "ongoing-pregnancies":"Ongoing Pregnancies",
+  "overview":"overview"
+},
+  "analytics": {
+    "stats": {
+      "totalMothers": "Total Mothers",
+      "totalInfants": "Total Infants",
+      "avgPerMother": "Avg. per Mother"
+    },
+    "charts": {
+      "genderDistribution": "Gender Distribution",
+      "bloodGroupDistribution": "Blood Group Distribution",
+      "birthTrendsOverTime": "Birth Trends Over Time"
+    },
+    "tooltip": {
+      "count": "Count"
+    }
+  },
+  
+  "motherForm": {
+    "title": "Add Mother",
+    "breadcrumb": {
+      "management": "Patient Management",
+      "addMother": "Add Mother"
+    },
+    "success": "Patient information has been successfully saved!",
+    "sections": {
+      "personalInfo": "Personal Information",
+      "emergencyContact": "Emergency Contact",
+      "locationInfo": "Location Information"
+    },
+    "labels": {
+      "email": "Email",
+      "bloodGroup": "Blood Group",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone Number",
+      "maritalStatus": "Marital Status",
+      "expectedDeliveryDate": "Expected Delivery Date",
+      "isHighRisk": "High Risk Pregnancy",
+      "emergencyContactFullName": "Emergency Contact Full Name",
+      "emergencyContactRelationship": "Emergency Contact Relation",
+      "emergencyContactNumber": "Emergency Contact Phone Number",
+      "district": "District",
+      "sector": "Sector",
+      "cell": "Cell",
+      "village": "Village"
+    },
+    "placeholders": {
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "phone": "+250 XXXXXXXX",
+      "maritalStatus": "Enter marital status",
+      "expectedDeliveryDate": "YYYY-MM-DD",
+      "emergencyContactRelationship": "e.g., Spouse, Parent, Sibling",
+      "district": "e.g., Kicukiro",
+      "sector": "e.g., Nyarugunga",
+      "cell": "e.g., Nonko",
+      "village": "e.g., Kavumu"
+    },
+    "actions": {
+      "save": "Save",
+      "processing": "Processing..."
+    }
   }
+
+
+
 }

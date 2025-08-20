@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "../common/Button";
 import { useTranslation } from "react-i18next";
 import { t } from "i18next";
+import { ModernDropdownSelector } from "./useLanguageSelector";
 
 interface NavLink {
   name: string;
@@ -89,7 +90,7 @@ const Navbar = () => {
           </Button>
 
           {/* Language Selector */}
-          <select
+          {/* <select
             value={lang}
             onChange={(e) => changeLanguage(e.target.value)}
             className="px-2 py-1 rounded bg-white text-gray-800"
@@ -98,7 +99,9 @@ const Navbar = () => {
             <option value="rw">Kinyarwanda</option>
             <option value="fr">French</option>
           </select>
-        </div>
+          */}
+        </div> 
+        <ModernDropdownSelector lang={lang} changeLanguage={changeLanguage}/>
 
         {/* Mobile Menu Button */}
         <button

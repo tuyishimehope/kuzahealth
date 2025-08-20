@@ -2,6 +2,8 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { RiMenuLine } from "react-icons/ri";
 import profile from "../../assets/profile.png";
+import { ModernDropdownSelector } from "../layout/useLanguageSelector";
+import { useTranslation } from "react-i18next";
 
 interface DecodedToken {
   email: string;
@@ -13,9 +15,20 @@ interface NavbarProps {
   title?: string;
 }
 
-const Navbar = ({ toggleSidebar, title = "Dashboard" }: NavbarProps): JSX.Element => {
+const Navbar = ({
+  toggleSidebar,
+  title = "Dashboard",
+}: NavbarProps): JSX.Element => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const { i18n } = useTranslation();
+  const [lang, setLang] = useState(i18n.language);
+
+  // Language change handler
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    setLang(lng);
+  };
 
   useEffect(() => {
     // Get the token from localStorage
@@ -26,12 +39,12 @@ const Navbar = ({ toggleSidebar, title = "Dashboard" }: NavbarProps): JSX.Elemen
         const decoded = jwtDecode<DecodedToken>(token);
         // Set the email from the decoded token
         setEmail(decoded.email);
-        
+
         // If name exists in token, use it, otherwise use email username
         if (decoded.name) {
           setName(decoded.name);
         } else {
-          const username = decoded.email.split('@')[0];
+          const username = decoded.email.split("@")[0];
           setName(username.charAt(0).toUpperCase() + username.slice(1));
         }
       } catch (error) {
@@ -44,7 +57,7 @@ const Navbar = ({ toggleSidebar, title = "Dashboard" }: NavbarProps): JSX.Elemen
     <div className="bg-white border-b border-gray-100 py-4 px-6 flex justify-between items-center w-full">
       <div className="flex items-center gap-4">
         {toggleSidebar && (
-          <button 
+          <button
             onClick={toggleSidebar}
             className="p-2 rounded-full hover:bg-gray-100"
           >
@@ -53,7 +66,7 @@ const Navbar = ({ toggleSidebar, title = "Dashboard" }: NavbarProps): JSX.Elemen
         )}
         <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
       </div>
-      
+
       <div className="flex items-center gap-5">
         <div className="relative">
           <button className="p-2 rounded-full hover:bg-gray-100 relative">
@@ -61,13 +74,13 @@ const Navbar = ({ toggleSidebar, title = "Dashboard" }: NavbarProps): JSX.Elemen
             {/* <span className="absolute top-0 right-0 w-2 h-2 bg-purple-500 rounded-full"></span> */}
           </button>
         </div>
-        
+        <ModernDropdownSelector lang={lang} changeLanguage={changeLanguage} />
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-purple-100">
-            <img 
-              src={profile} 
-              alt="profile" 
-              className="w-full h-full object-cover" 
+            <img
+              src={profile}
+              alt="profile"
+              className="w-full h-full object-cover"
             />
           </div>
           <div>

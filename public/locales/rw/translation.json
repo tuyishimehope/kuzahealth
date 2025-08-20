@@ -1,10 +1,116 @@
 {
   "hero": {
     "title": "Inzira y’ahazaza harushijeho kuba heza",
-    "subtitle": "Intego yacu ni ugutuma abagore n’abana bapfa ari bake binyuze mu kongera ubukangurambaga, kunoza uburyo bwo kubona serivisi z’ubuvuzi, no gutanga uburezi bukenewe. Dufatanyije, dushobora kwemeza ko buri mubyeyi n’umwana bahabwa ubuvuzi bukwiye kugira ngo bagire ubuzima bwiza kandi buzira umutekano."
+    "subtitle": "Intego yacu ni ukugabanya urupfu rw’abagore n’abana binyuze mu bukangurambaga, kunoza uburyo bwo kubona serivisi z’ubuvuzi, no gutanga uburezi bukenewe. Dufatanyije, dushobora kwemeza ko buri mubyeyi n’umwana bahabwa ubuvuzi bukwiye kugira ngo bagire ubuzima bwiza kandi buzira umutekano."
   },
   "button": {
     "getStarted": "Tangira",
     "exploreServices": "Reba serivisi zacu"
+  },
+  "signin": {
+    "title": "Murakaza Neza",
+    "description": "Injira kugira ngo ubone dashboard y’ubuzima bwawe kandi ukomeze gutanga serivisi nziza ku barwayi.",
+    "subtitle": "Injira",
+    "subdescription": "Shyiramo amakuru yawe kugira ngo ubone dashboard y’ubuzima bwawe",
+    "email-address": "Imeyili",
+    "password": "Ijambo ry’ibanga",
+    "forgot-password": "Wibagiwe ijambo ry’ibanga?",
+    "back-to-home": "Subira ku rukuta rw’itangiriro"
+  },
+   "sidebar":{
+    "mother-information":"Amakuru y’umubyeyi",
+    "infant-information":"Amakuru y’umwana",
+    "schedules":"Amatariki y’inama",
+    "settings":"Impostazioni",
+    "logout":"Gusohoka"
+  },
+  
+  "menu": {
+    "dashboard": "Ibibaho by'ibanze",
+    "analytics": "Isesengura",
+    "addMother": "Ongeramo umubyeyi",
+    "viewMothers": "Reba ababyeyi",
+    "nutritionInfo": "Amakuru ku mirire",
+    "addInfant": "Ongeramo umwana",
+    "viewInfants": "Reba abana",
+    "vaccinations": "Inkingo",
+    "addSchedule": "Ongeramo gahunda",
+    "viewSchedules": "Reba gahunda",
+    "updateProfile": "Hindura umwirondoro"
+  },
+
+  "dashboard": {
+  "mother-information-overview": "Incamake ku makuru y’umubyeyi",
+    "alerts": "Amakuru atunguranye",
+    "mothers": "Ababyeyi",
+    "ongoing-pregnancies": "Inda zikomeje",
+    "overview": "Incamake"
+  },
+  
+  "analytics": {
+    "stats": {
+      "totalMothers": "Ababyeyi bose",
+      "totalInfants": "Abana bose",
+      "avgPerMother": "Impuzandengo ku mubyeyi"
+    },
+    "charts": {
+      "genderDistribution": "Ikwirakwizwa ry'igitsina",
+      "bloodGroupDistribution": "Ikwirakwizwa ry’amatsinda y’amaraso",
+      "birthTrendsOverTime": "Imigendekere y’amavuko mu gihe"
+    },
+    "tooltip": {
+      "count": "Umubare"
+    }
+  },
+ "motherForm": {
+  "title": "Ongeramo Umubyeyi",
+  "breadcrumb": {
+    "management": "Igenzura ry’Abarwayi",
+    "addMother": "Ongeramo Umubyeyi"
+  },
+  "success": "Amakuru y’umubyeyi yabitswe neza!",
+  "sections": {
+    "personalInfo": "Amakuru ku giti cye",
+    "emergencyContact": "Umuntu wo guhamagara byihutirwa",
+    "locationInfo": "Amakuru y’aho atuye"
+  },
+  "labels": {
+    "email": "Imeyili",
+    "bloodGroup": "Itsinda ry’amaraso",
+    "firstName": "Izina rya mbere",
+    "lastName": "Izina ry’umuryango",
+    "phone": "Numero ya telefone",
+    "maritalStatus": "Imiterere y’ubushyingirane",
+    "expectedDeliveryDate": "Itariki y’itwite iteganyijwe",
+    "isHighRisk": "Afite ibyago byinshi mu gutwita",
+    "emergencyContactFullName": "Amazina y’uwo guhamagara byihutirwa",
+    "emergencyContactRelationship": "Uburyo bahanye isano",
+    "emergencyContactNumber": "Numero ya telefone y’uwo guhamagara",
+    "district": "Akarere",
+    "sector": "Umurenge",
+    "cell": "Akagari",
+    "village": "Umudugudu"
+  },
+  "placeholders": {
+    "firstName": "Injiza izina rya mbere",
+    "lastName": "Injiza izina ry’umuryango",
+    "phone": "+250 XXXXXXXX",
+    "maritalStatus": "Injiza imiterere y’ubushyingirane",
+    "expectedDeliveryDate": "YYYY-MM-JJ",
+    "emergencyContactRelationship": "Urugero: Umugabo/Umugore, Umubyeyi, Uwo bavukana",
+    "district": "Urugero: Kicukiro",
+    "sector": "Urugero: Nyarugunga",
+    "cell": "Urugero: Nonko",
+    "village": "Urugero: Kavumu"
+  },
+  "actions": {
+    "save": "Bika",
+    "processing": "Birakorwa..."
   }
+}
+
+
+
+
+
 }

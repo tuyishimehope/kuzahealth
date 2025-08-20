@@ -3,6 +3,7 @@ import { IoEyeOutline, IoAddOutline } from "react-icons/io5";
 import { TbVaccine } from "react-icons/tb";
 import { FaInfoCircle } from "react-icons/fa";
 
+
 export const ROUTES = {
   DASHBOARD: "/healthworker/dashboard",
   ANALYTICS: "/healthworker/analytics",
@@ -18,36 +19,36 @@ export const ROUTES = {
   LOGOUT: "/auth/signin",
 };
 
-export const MENU_ITEMS = [
+export const MENU_ITEMS = (t: any) => [
   {
-    title: "Dashboard",
+    title: t("menu.dashboard"),
     icon: <RiDashboardLine className="w-5 h-5" />,
     href: ROUTES.DASHBOARD,
   },
   {
-    title: "Analytics",
+    title: t("menu.analytics"),
     icon: <div className="flex items-center justify-center w-5 h-5 text-lg">📊</div>,
     href: ROUTES.ANALYTICS,
   },
 ];
 
-export const MOTHER_INFO_MENU = [
-  { label: "Add Mother", icon: <IoAddOutline className="w-5 h-5" />, href: ROUTES.ADD_MOTHER },
-  { label: "View Mothers", icon: <IoEyeOutline className="w-5 h-5" />, href: ROUTES.VIEW_MOTHERS },
-  { label: "Nutrition Info", icon: <FaInfoCircle className="w-5 h-5" />, href: ROUTES.NUTRITION },
+export const MOTHER_INFO_MENU = (t: any) => [
+  { label: t("menu.addMother"), icon: <IoAddOutline className="w-5 h-5" />, href: ROUTES.ADD_MOTHER },
+  { label: t("menu.viewMothers"), icon: <IoEyeOutline className="w-5 h-5" />, href: ROUTES.VIEW_MOTHERS },
+  { label: t("menu.nutritionInfo"), icon: <FaInfoCircle className="w-5 h-5" />, href: ROUTES.NUTRITION },
 ];
 
-export const INFANT_INFO_MENU = [
-  { label: "Add Infant", icon: <IoAddOutline className="w-5 h-5" />, href: ROUTES.ADD_INFANT },
-  { label: "View Infants", icon: <IoEyeOutline className="w-5 h-5" />, href: ROUTES.VIEW_INFANTS },
-  { label: "Vaccinations", icon: <TbVaccine className="w-5 h-5" />, href: ROUTES.INFANT_VACCINATION },
+export const INFANT_INFO_MENU = (t: any) => [
+  { label: t("menu.addInfant"), icon: <IoAddOutline className="w-5 h-5" />, href: ROUTES.ADD_INFANT },
+  { label: t("menu.viewInfants"), icon: <IoEyeOutline className="w-5 h-5" />, href: ROUTES.VIEW_INFANTS },
+  { label: t("menu.vaccinations"), icon: <TbVaccine className="w-5 h-5" />, href: ROUTES.INFANT_VACCINATION },
 ];
 
-export const SCHEDULE_MENU = [
-  { label: "Add Schedule", icon: <IoAddOutline className="w-5 h-5" />, href: ROUTES.ADD_SCHEDULE },
-  { label: "View Schedules", icon: <IoEyeOutline className="w-5 h-5" />, href: ROUTES.VIEW_SCHEDULE },
+export const SCHEDULE_MENU = (t: any) => [
+  { label: t("menu.addSchedule"), icon: <IoAddOutline className="w-5 h-5" />, href: ROUTES.ADD_SCHEDULE },
+  { label: t("menu.viewSchedules"), icon: <IoEyeOutline className="w-5 h-5" />, href: ROUTES.VIEW_SCHEDULE },
 ];
 
-export const SETTINGS_MENU = [
-  { label: "Update Profile", icon: <RiSettings4Line className="w-5 h-5" />, href: ROUTES.PROFILE },
+export const SETTINGS_MENU = (t: any) => [
+  { label: t("menu.updateProfile"), icon: <RiSettings4Line className="w-5 h-5" />, href: ROUTES.PROFILE },
 ];

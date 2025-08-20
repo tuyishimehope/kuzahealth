@@ -10,9 +10,10 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle2 } from "lucide-react
 import image from "../../assets/signin.png";
 import { Toaster, toast } from "sonner";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 const api = import.meta.env.VITE_API_BASE_URL_DEV;
 const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email address").min(1, "Email is required"),
+  email: z.string().min(1, "Please enter email address or phone number"),
   password: z
     .string()
     .min(4, "Password must be at least 4 characters")
@@ -62,6 +63,7 @@ const SignIn = () => {
   const [formStep, setFormStep] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   
   const navigate = useNavigate();
+  const {t}= useTranslation()
 
   const {
     register,
@@ -183,9 +185,9 @@ const SignIn = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
         >
-          <h2 className="text-4xl font-bold drop-shadow-lg mb-3">Welcome Back</h2>
+          <h2 className="text-4xl font-bold drop-shadow-lg mb-3">{t("signin.title")}</h2>
           <p className="text-lg drop-shadow-lg opacity-90 leading-relaxed">
-            Sign in to access your healthcare dashboard and continue providing excellent patient care.
+            {t("signin.description")}
           </p>
         </motion.div>
       </motion.div>
@@ -236,9 +238,9 @@ const SignIn = () => {
             >
               <Lock className="w-8 h-8 text-indigo-600" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Sign In</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">{t("signin.subtitle")}</h1>
             <p className="text-gray-500 leading-relaxed">
-              Enter your credentials to access your healthcare dashboard
+              {t("signin.subdescription")}
             </p>
           </motion.div>
 
@@ -251,12 +253,12 @@ const SignIn = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                Email Address
+               {t("signin.email-address")}
               </label>
               <div className="relative">
                 <input
                   {...register("email")}
-                  type="email"
+                  type="text"
                   placeholder="you@example.com"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-white/50 backdrop-blur-sm ${
                     errors.email 
@@ -288,7 +290,7 @@ const SignIn = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <Lock className="w-4 h-4" />
-                Password
+                {t("signin.password")}
               </label>
               <div className="relative">
                 <input
@@ -334,7 +336,7 @@ const SignIn = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Forgot password?
+                {t("signin.forgot-password")}
               </motion.a>
             </motion.div>
 
@@ -377,7 +379,7 @@ const SignIn = () => {
               whileHover={!isSubmitting ? { scale: 1.02 } : {}}
               whileTap={!isSubmitting ? { scale: 0.98 } : {}}
             >
-              Back to Home
+              {t("signin.back-to-home")}
             </motion.button>
           </motion.form>
 
@@ -407,3 +409,5 @@ const SignIn = () => {
 };
 
 export default SignIn;
+
+

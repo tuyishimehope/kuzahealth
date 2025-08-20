@@ -15,6 +15,7 @@ import {
   SCHEDULE_MENU,
   SETTINGS_MENU,
 } from "./sidebarConstants";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
   desktopCollapsed?: boolean;
@@ -30,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ desktopCollapsed = false }) => {
   const [infantInfoExpanded, setInfantInfoExpanded] = useState(true);
   const [schedulesExpanded, setSchedulesExpanded] = useState(true);
   const [settingsExpanded, setSettingsExpanded] = useState(true);
+  const {t} = useTranslation()
 
   // Detect mobile screen
   useEffect(() => {
@@ -104,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ desktopCollapsed = false }) => {
 
               {/* Menu */}
               <div className="flex-1 flex flex-col overflow-y-auto px-2">
-                {MENU_ITEMS.map((item) => (
+                {MENU_ITEMS(t).map((item) => (
                   <SidebarItem
                     key={item.href}
                     {...item}
@@ -115,12 +117,12 @@ const Sidebar: React.FC<SidebarProps> = ({ desktopCollapsed = false }) => {
                 ))}
 
                 <MenuSection
-                  title="Mother Information"
+                  title={t("sidebar.mother-information")}
                   expanded={motherInfoExpanded}
                   toggleExpanded={() => setMotherInfoExpanded(!motherInfoExpanded)}
                   isCollapsed={isCollapsed}
                 >
-                  {MOTHER_INFO_MENU.map((item) => (
+                  {MOTHER_INFO_MENU(t).map((item) => (
                     <SidebarItem
                       key={item.href}
                       {...item}
@@ -131,12 +133,12 @@ const Sidebar: React.FC<SidebarProps> = ({ desktopCollapsed = false }) => {
                 </MenuSection>
 
                 <MenuSection
-                  title="Infant Information"
+                  title={t("sidebar.infant-information")}
                   expanded={infantInfoExpanded}
                   toggleExpanded={() => setInfantInfoExpanded(!infantInfoExpanded)}
                   isCollapsed={isCollapsed}
                 >
-                  {INFANT_INFO_MENU.map((item) => (
+                  {INFANT_INFO_MENU(t).map((item) => (
                     <SidebarItem
                       key={item.href}
                       {...item}
@@ -147,12 +149,12 @@ const Sidebar: React.FC<SidebarProps> = ({ desktopCollapsed = false }) => {
                 </MenuSection>
 
                 <MenuSection
-                  title="Schedules"
+                  title={t("sidebar.schedules")}
                   expanded={schedulesExpanded}
                   toggleExpanded={() => setSchedulesExpanded(!schedulesExpanded)}
                   isCollapsed={isCollapsed}
                 >
-                  {SCHEDULE_MENU.map((item) => (
+                  {SCHEDULE_MENU(t).map((item) => (
                     <SidebarItem
                       key={item.href}
                       {...item}
@@ -163,12 +165,12 @@ const Sidebar: React.FC<SidebarProps> = ({ desktopCollapsed = false }) => {
                 </MenuSection>
 
                 <MenuSection
-                  title="Settings"
+                  title={t("sidebar.settings")}
                   expanded={settingsExpanded}
                   toggleExpanded={() => setSettingsExpanded(!settingsExpanded)}
                   isCollapsed={isCollapsed}
                 >
-                  {SETTINGS_MENU.map((item) => (
+                  {SETTINGS_MENU(t).map((item) => (
                     <SidebarItem
                       key={item.href}
                       {...item}
@@ -190,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({ desktopCollapsed = false }) => {
                   }`}
                 >
                   <IoMdLogOut className="w-5 h-5" />
-                  {!isCollapsed && <span className="ml-2">Logout</span>}
+                  {!isCollapsed && <span className="ml-2">{t("sidebar.logout")}</span>}
                 </motion.button>
               </div>
             </motion.div>

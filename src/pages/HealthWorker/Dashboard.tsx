@@ -12,6 +12,7 @@ import { Area, Line, LineChart, ResponsiveContainer } from "recharts";
 import { axiosInstance } from "@/utils/axiosInstance";
 import type { ApexOptions } from "apexcharts";
 import PatientChart from "../../components/HealthWorker/PatientChart";
+import { useTranslation } from "react-i18next";
 
 // ---------- Types ----------
 export interface Patient {
@@ -122,6 +123,7 @@ const Dashboard: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   });
   const safePatients = Array.isArray(patients) ? patients : [];
+  const {t} = useTranslation();
 
 
   const series = [
@@ -179,15 +181,15 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Mother Information Overview</h1>
+        <h1 className="text-3xl font-bold text-gray-800">{t("dashboard.overview")}</h1>
       </div>
 
       {/* Stat Cards */}
       <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
           icon={<RiNotification3Line className="w-6 h-6 text-white" />}
-          title="Alerts"
-          count={13}
+          title={t("dashboard.alerts")}
+          count={124}
           period="This Month"
           color="bg-purple-500"
           chartData={[
@@ -201,7 +203,7 @@ const Dashboard: React.FC = () => {
         />
         <StatCard
           icon={<RiUserHeartLine className="w-6 h-6 text-white" />}
-          title="Mothers"
+          title={t("dashboard.mothers")}
           count={safePatients.length}
           period="This Month"
           color="bg-green-500"
@@ -212,8 +214,9 @@ const Dashboard: React.FC = () => {
 
         <StatCard
           icon={<RiCalendarCheckLine className="w-6 h-6 text-white" />}
-          title="Ongoing Pregnancies"
-          count={safePatients.filter((p) => p.highRisk).length}
+          title={t("dashboard.ongoing-pregnancies")}
+          // count={safePatients.filter((p) => p.highRisk).length}
+          count={2}
           period="This Month"
           color="bg-purple-400"
           chartData={safePatients

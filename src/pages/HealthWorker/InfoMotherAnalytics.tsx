@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoaderCircle, Users, Baby, TrendingUp, Heart, Calendar, Activity } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/utils/axiosInstance";
+import { useTranslation } from "react-i18next"; // ✅ import i18n hook
 import type { Patient } from "./Mother/ViewPatient";
 import type { Child } from "./infants/ViewInfants";
 
@@ -19,12 +20,14 @@ const BLOOD_GROUPS = ["A+","A-","B+","B-","O+","O-","AB+","AB-"];
 
 // Tooltip component
 const CustomTooltip = ({ active, payload, label }: any) => {
+  const { t } = useTranslation(); // ✅ use translation
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
         <p className="font-medium text-gray-900">{label}</p>
         <p className="text-sm text-gray-600">
-          Count: <span className="font-semibold text-blue-600">{payload[0].value}</span>
+          {t("analytics.tooltip.count")}:{" "}
+          <span className="font-semibold text-blue-600">{payload[0].value}</span>
         </p>
       </div>
     );
@@ -72,6 +75,8 @@ const ChartCard = ({ title, icon: Icon, children, className = "" }: any) => (
 );
 
 const InfantMotherAnalytics = () => {
+  const { t } = useTranslation(); // ✅ add translation
+
   const { data: mothers = [], isLoading: mothersLoading } = useQuery<Patient[]>({
     queryKey: ["mothers"],
     queryFn: async () => (await axiosInstance.get("/api/parents")).data,
@@ -104,7 +109,6 @@ const InfantMotherAnalytics = () => {
 
   const birthTrendData = useMemo(() => {
     if (!infants.length) {
-      // Dummy data if no infants
       return [
         { name: "Jan 2025", value: 5, avg: 1.2 },
         { name: "Feb 2025", value: 8, avg: 1.5 },
@@ -130,14 +134,14 @@ const InfantMotherAnalytics = () => {
     <div className="p-4">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard icon={Users} title="Total Mothers" value={totalMothers} color="from-blue-500 to-blue-600" trend="+12%" />
-        <StatCard icon={Baby} title="Total Infants" value={totalInfants} color="from-green-500 to-emerald-600" trend="+18%" />
-        <StatCard icon={Activity} title="Avg. per Mother" value={averageInfantsPerMother} color="from-purple-500 to-purple-600" />
+        <StatCard icon={Users} title={t("analytics.stats.totalMothers")} value={totalMothers} color="from-blue-500 to-blue-600" trend="+12%" />
+        <StatCard icon={Baby} title={t("analytics.stats.totalInfants")} value={totalInfants} color="from-green-500 to-emerald-600" trend="+18%" />
+        <StatCard icon={Activity} title={t("analytics.stats.avgPerMother")} value={averageInfantsPerMother} color="from-purple-500 to-purple-600" />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <ChartCard title="Gender Distribution" icon={Heart}>
+        <ChartCard title={t("analytics.charts.genderDistribution")} icon={Heart}>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie data={genderDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} innerRadius={40} paddingAngle={5}>
@@ -148,7 +152,7 @@ const InfantMotherAnalytics = () => {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Blood Group Distribution" icon={Heart}>
+        <ChartCard title={t("analytics.charts.bloodGroupDistribution")} icon={Heart}>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={bloodGroupDist} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <XAxis dataKey="name" tick={{ fill: "#6b7280", fontSize: 12 }} />
@@ -162,7 +166,7 @@ const InfantMotherAnalytics = () => {
         </ChartCard>
       </div>
 
-      <ChartCard title="Birth Trends Over Time" icon={Calendar}>
+      <ChartCard title={t("analytics.charts.birthTrendsOverTime")} icon={Calendar}>
         <ResponsiveContainer width="100%" height={350}>
           <LineChart data={birthTrendData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <XAxis dataKey="name" tick={{ fill: "#6b7280", fontSize: 12 }} />

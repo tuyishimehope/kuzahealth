@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { FaInfoCircle } from "react-icons/fa";
 import { IoChevronForwardOutline, IoSaveOutline } from "react-icons/io5";
 import { z } from "zod";
@@ -71,7 +72,7 @@ const AddMotherForm: React.FC = () => {
       village: "",
     },
   });
-
+  const { t } = useTranslation();
   // Blood group options
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -154,11 +155,15 @@ const AddMotherForm: React.FC = () => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto">
       <div className="flex items-center mb-6">
-        <h1 className="text-2xl font-bold text-purple-800">Add Mother</h1>
+        <h1 className="text-2xl font-bold text-purple-800">
+          {t("motherForm.title")}
+        </h1>
         <div className="ml-4 flex items-center text-gray-500 text-sm">
-          <span>Patient Management</span>
+          <span>{t("motherForm.breadcrumb.management")}</span>
           <IoChevronForwardOutline className="mx-1" />
-          <span className="text-purple-600">Add Mother</span>
+          <span className="text-purple-600">
+            {t("motherForm.breadcrumb.addMother")}
+          </span>
         </div>
       </div>
 
@@ -169,7 +174,7 @@ const AddMotherForm: React.FC = () => {
           className="mb-6 bg-green-100 text-green-700 p-4 rounded-md flex items-center"
         >
           <IoSaveOutline size={20} className="mr-2" />
-          Patient information has been successfully saved!
+          {t("motherForm.success")}
         </motion.div>
       )}
 
@@ -177,135 +182,140 @@ const AddMotherForm: React.FC = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 md:grid-cols-2 gap-x-6"
       >
+        {/* Section: Personal Info */}
         <div className="md:col-span-2 p-4 bg-purple-50 rounded-md mb-6">
           <h2 className="text-lg font-semibold text-purple-700 mb-4">
-            Personal Information
+            {t("motherForm.sections.personalInfo")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
             <FormInput
-              label="Email"
+              label={t("motherForm.labels.email")}
               name="email"
               register={register}
               error={errors.email?.message}
-              placeholder="Email"
+              placeholder={t("motherForm.placeholders.email")}
             />
             <FormInput
-              label="Blood Group"
+              label={t("motherForm.labels.bloodGroup")}
               name="bloodGroup"
               register={register}
               error={errors.bloodGroup?.message}
               options={bloodGroups}
             />
             <FormInput
-              label="First Name"
+              label={t("motherForm.labels.firstName")}
               name="firstName"
               register={register}
               error={errors.firstName?.message}
-              placeholder="First name"
+              placeholder={t("motherForm.placeholders.firstName")}
             />
             <FormInput
-              label="Last Name"
+              label={t("motherForm.labels.lastName")}
               name="lastName"
               register={register}
               error={errors.lastName?.message}
-              placeholder="Last name"
+              placeholder={t("motherForm.placeholders.lastName")}
             />
             <FormInput
-              label="Phone Number"
+              label={t("motherForm.labels.phone")}
               name="phone"
               register={register}
               error={errors.phone?.message}
-              placeholder="+250 XXXXXXXX"
+              placeholder={t("motherForm.placeholders.phone")}
             />
             <FormInput
-              label="Marital status"
+              label={t("motherForm.labels.maritalStatus")}
               name="maritalStatus"
               register={register}
               error={errors.maritalStatus?.message}
-              placeholder="marital status"
+              placeholder={t("motherForm.placeholders.maritalStatus")}
             />
             <FormInput
-              label="Expected delivery date"
+              label={t("motherForm.labels.expectedDeliveryDate")}
               name="expectedDeliveryDate"
               register={register}
               error={errors.expectedDeliveryDate?.message}
-              placeholder="Expected Delivery Date"
+              placeholder={t("motherForm.placeholders.expectedDeliveryDate")}
             />
             <FormInput
-              label="isHighRisk"
+              label={t("motherForm.labels.isHighRisk")}
               name="isHighRisk"
               register={register}
               error={errors.isHighRisk?.message}
-              placeholder="isHighRisk"
             />
           </div>
         </div>
 
+        {/* Section: Emergency Contact */}
         <div className="md:col-span-2 p-4 bg-purple-50 rounded-md mb-6">
           <h2 className="text-lg font-semibold text-purple-700 mb-4">
-            Emergency Contact
+            {t("motherForm.sections.emergencyContact")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
             <FormInput
-              label="Emergency Contact Full Name"
+              label={t("motherForm.labels.emergencyContactFullName")}
               name="emergencyContactFullName"
               register={register}
               error={errors.emergencyContactFullName?.message}
-              placeholder="Full name"
+              placeholder={t("motherForm.placeholders.firstName")}
             />
             <FormInput
-              label="Emergency Contact Relation"
+              label={t("motherForm.labels.emergencyContactRelationship")}
               name="emergencyContactRelationship"
               register={register}
               error={errors.emergencyContactRelationship?.message}
-              placeholder="e.g., Spouse, Parent, Sibling"
+              placeholder={t(
+                "motherForm.placeholders.emergencyContactRelationship"
+              )}
             />
             <FormInput
-              label="Emergency Contact Phone Number"
+              label={t("motherForm.labels.emergencyContactNumber")}
               name="emergencyContactNumber"
               register={register}
               error={errors.emergencyContactNumber?.message}
-              placeholder="+250 XXXXXXXX"
+              placeholder={t("motherForm.placeholders.phone")}
             />
           </div>
         </div>
 
+        {/* Section: Location Info */}
         <div className="md:col-span-2 p-4 bg-purple-50 rounded-md mb-6">
           <h2 className="text-lg font-semibold text-purple-700 mb-4">
-            Location Information
+            {t("motherForm.sections.locationInfo")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
             <FormInput
-              label="District"
+              label={t("motherForm.labels.district")}
               name="district"
               register={register}
               error={errors.district?.message}
-              placeholder="e.g., Kicukiro"
+              placeholder={t("motherForm.placeholders.district")}
             />
             <FormInput
-              label="Sector"
+              label={t("motherForm.labels.sector")}
               name="sector"
               register={register}
               error={errors.sector?.message}
-              placeholder="e.g., Nyarugunga"
+              placeholder={t("motherForm.placeholders.sector")}
             />
             <FormInput
-              label="Cell"
+              label={t("motherForm.labels.cell")}
               name="cell"
               register={register}
               error={errors.cell?.message}
-              placeholder="e.g., Nonko"
+              placeholder={t("motherForm.placeholders.cell")}
             />
             <FormInput
-              label="Village"
+              label={t("motherForm.labels.village")}
               name="village"
               register={register}
               error={errors.village?.message}
-              placeholder="e.g., Kavumu"
+              placeholder={t("motherForm.placeholders.village")}
             />
           </div>
         </div>
 
+        {/* Save Button */}
         <div className="md:col-span-2 flex justify-end">
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -340,12 +350,12 @@ const AddMotherForm: React.FC = () => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Processing...
+                {t("motherForm.actions.processing")}
               </>
             ) : (
               <>
                 <IoSaveOutline className="mr-2" size={20} />
-                Save
+                {t("motherForm.actions.save")}
               </>
             )}
           </motion.button>

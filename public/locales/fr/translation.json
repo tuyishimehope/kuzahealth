@@ -6,5 +6,113 @@
   "button": {
     "getStarted": "Commencer",
     "exploreServices": "Explorer nos services"
+  },
+  "signin": {
+    "title": "Bon retour",
+    "description": "Connectez-vous pour accéder à votre tableau de bord de santé et continuer à fournir des soins de qualité aux patients.",
+    "subtitle": "Se connecter",
+    "subdescription": "Entrez vos identifiants pour accéder à votre tableau de bord de santé",
+    "email-address": "Adresse e-mail",
+    "password": "Mot de passe",
+    "forgot-password": "Mot de passe oublié ?",
+    "back-to-home": "Retour à l'accueil"
+  },
+   "sidebar":{
+    "mother-information":"Informations sur la mère",
+    "infant-information":"Informations sur le nourrisson",
+    "schedules":"Calendriers",
+    "settings":"Calendriers",
+    "logout":"Se déconnecter"
+  },
+  
+  "menu": {
+    "dashboard": "Tableau de bord",
+    "analytics": "Analytique",
+    "addMother": "Ajouter une mère",
+    "viewMothers": "Voir les mères",
+    "nutritionInfo": "Informations nutritionnelles",
+    "addInfant": "Ajouter un nourrisson",
+    "viewInfants": "Voir les nourrissons",
+    "vaccinations": "Vaccinations",
+    "addSchedule": "Ajouter un calendrier",
+    "viewSchedules": "Voir les calendriers",
+    "updateProfile": "Mettre à jour le profil"
+  },
+
+  "dashboard": {
+  "mother-information-overview": "Aperçu des informations sur la mère",
+    "alerts": "Alertes",
+    "mothers": "Mères",
+    "ongoing-pregnancies": "Grossesses en cours",
+    "overview": "Aperçu"
+  },
+  
+  "analytics": {
+    "stats": {
+      "totalMothers": "Nombre total de mères",
+      "totalInfants": "Nombre total de nourrissons",
+      "avgPerMother": "Moyenne par mère"
+    },
+    "charts": {
+      "genderDistribution": "Répartition par sexe",
+      "bloodGroupDistribution": "Répartition par groupe sanguin",
+      "birthTrendsOverTime": "Tendances des naissances au fil du temps"
+    },
+    "tooltip": {
+      "count": "Nombre"
+    }
+  },
+  "motherForm": {
+    "title": "Ajouter une Mère",
+    "breadcrumb": {
+      "management": "Gestion des Patients",
+      "addMother": "Ajouter une Mère"
+    },
+    "success": "Les informations de la patiente ont été enregistrées avec succès !",
+    "sections": {
+      "personalInfo": "Informations Personnelles",
+      "emergencyContact": "Contact d'Urgence",
+      "locationInfo": "Informations de Localisation"
+    },
+    "labels": {
+      "email": "Email",
+      "bloodGroup": "Groupe Sanguin",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Numéro de Téléphone",
+      "maritalStatus": "État Civil",
+      "expectedDeliveryDate": "Date Prévue d’Accouchement",
+      "isHighRisk": "Grossesse à Risque",
+      "emergencyContactFullName": "Nom Complet du Contact d'Urgence",
+      "emergencyContactRelationship": "Relation du Contact d'Urgence",
+      "emergencyContactNumber": "Téléphone du Contact d'Urgence",
+      "district": "District",
+      "sector": "Secteur",
+      "cell": "Cellule",
+      "village": "Village"
+    },
+    "placeholders": {
+      "firstName": "Entrez le prénom",
+      "lastName": "Entrez le nom",
+      "phone": "+250 XXXXXXXX",
+      "maritalStatus": "Entrez l'état civil",
+      "expectedDeliveryDate": "AAAA-MM-JJ",
+      "emergencyContactRelationship": "ex. Époux(se), Parent, Frère/Sœur",
+      "district": "ex. Kicukiro",
+      "sector": "ex. Nyarugunga",
+      "cell": "ex. Nonko",
+      "village": "ex. Kavumu"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "processing": "Traitement en cours..."
+    }
   }
+
+
+
+
+
+
+
 }
