@@ -100,8 +100,8 @@ const Navbar = () => {
             <option value="fr">French</option>
           </select>
           */}
-        </div> 
         <ModernDropdownSelector lang={lang} changeLanguage={changeLanguage}/>
+        </div> 
 
         {/* Mobile Menu Button */}
         <button

@@ -312,7 +312,7 @@ const AddSchedule = () => {
                   render={({ field }) => (
                     <Select
                       {...field}
-                      label="Patient Name"
+                      label="Mother Name"
                       placeholder="Search and select patient"
                       data={parentOptions}
                       searchable
@@ -320,7 +320,7 @@ const AddSchedule = () => {
                       required
                       radius="md"
                       size="md"
-                      nothingFound="No matching patient"
+                      nothingFound="No matching mother"
                       maxDropdownHeight={200} // sets max height for dropdown
                       withinPortal // ensures dropdown overlays correctly
                       classNames={{ input: "bg-gray-50 hover:bg-gray-100" }}
