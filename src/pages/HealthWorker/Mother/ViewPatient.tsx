@@ -9,7 +9,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { IconDownload, IconEye, IconPlus, IconTrash } from "@tabler/icons-react";
+import {  IconEye, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MantineReactTable,
@@ -142,14 +142,14 @@ const MaritimePatientDashboard = () => {
     ),
     renderTopToolbarCustomActions: () => (
       <Group ml="xs">
-        <Button
+        {/* <Button
           leftIcon={<IconDownload size={20} />}
           variant="light"
           color="purple"
           onClick={() => console.log("Export data")}
         >
           Export
-        </Button>
+        </Button> */}
         <Button
           leftIcon={<IconPlus size={20} />}
           color="violet"
