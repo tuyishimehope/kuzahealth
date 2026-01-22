@@ -22,6 +22,8 @@ import {
   useMantineReactTable,
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
+import logo1 from "@/assets/logo1.png"; 
+
 
 export interface User {
   id: string;
@@ -77,23 +79,56 @@ const ManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [opened, setOpened] = useState(false);
 
-  const handleExportPdf = () => {
-    const doc = new jsPDF();
-    doc.text("Users Export", 14, 15);
-    autoTable(doc, {
-      startY: 20,
-      head: [["First Name", "Last Name", "Email", "Role", "Phone", "Status"]],
-      body: users.map((u) => [
-        u.firstName,
-        u.lastName,
-        u.email,
-        u.role,
-        u.phoneNumber,
-        u.enabled ? "Active" : "Disabled",
-      ]),
-    });
-    doc.save("users-export.pdf");
-  };
+
+const handleExportPdf = () => {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.width;
+
+  // === Header Background ===
+  doc.setFillColor(124, 58, 237); // Purple (or any color you like)
+  doc.rect(0, 0, pageWidth, 30, "F");
+
+  // White circle background for logo
+  const centerX = 20;
+  const centerY = 15;
+  const radius = 12;
+
+  doc.setFillColor(255, 255, 255); // White
+  doc.circle(centerX, centerY, radius, "F");
+
+  // Logo inside circle
+  doc.addImage(logo1, "PNG", centerX - 10, centerY - 10, 20, 20);
+
+  // Header text
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.text("Users Report", 45, 20);
+
+  // === Table ===
+  autoTable(doc, {
+    startY: 40, // pushed down below header
+    head: [["First Name", "Last Name", "Email", "Role", "Phone", "Status"]],
+    body: users.map((u) => [
+      u.firstName,
+      u.lastName,
+      u.email,
+      u.role,
+      u.phoneNumber,
+      u.enabled ? "Active" : "Disabled",
+    ]),
+    theme: "grid",
+    headStyles: {
+      fillColor: [124, 58, 237],
+      textColor: [255, 255, 255],
+      halign: "center",
+    },
+    styles: { fontSize: 9 },
+    alternateRowStyles: { fillColor: [245, 243, 255] },
+  });
+
+  doc.save("users-export.pdf");
+};
+
 
   // Stats calculation
   const stats = useMemo(() => {

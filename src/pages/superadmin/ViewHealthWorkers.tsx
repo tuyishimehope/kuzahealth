@@ -40,6 +40,7 @@ import {
   type MRT_ColumnDef,
 } from "mantine-react-table";
 import { useMemo, useState } from "react";
+import logo1 from "@/assets/logo1.png"
 
 export interface HealthWorker {
   id: string;
@@ -155,58 +156,61 @@ const ViewHealthWorkers = () => {
 
   // PDF Export Function
   const handlePDFExport = () => {
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.width;
+  const pdf = new jsPDF();
+  const pageWidth = pdf.internal.pageSize.width;
 
-    // Header
-    pdf.setFillColor(37, 99, 235);
-    pdf.rect(0, 0, pageWidth, 30, "F");
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(20);
-    pdf.text("Health Workers Report", 20, 20);
+  // Header background
+  pdf.setFillColor(37, 99, 235);
+  pdf.rect(0, 0, pageWidth, 30, "F");
 
-    // Summary
-    pdf.setTextColor(0, 0, 0);
-    pdf.setFontSize(12);
-    const currentY = 45;
-    pdf.text(`Total Health Workers: ${stats.total}`, 20, currentY);
-    pdf.text(
-      `Unique Qualifications: ${stats.qualifications}`,
-      20,
-      currentY + 10
-    );
-    pdf.text(`Service Areas: ${stats.serviceAreas}`, 20, currentY + 20);
-    pdf.text(
-      `Report Generated: ${new Date().toLocaleDateString()}`,
-      20,
-      currentY + 30
-    );
+  // Add logo image (left side)
+  // Format: pdf.addImage(imageData, format, x, y, width, height)
+  pdf.addImage(logo1, "PNG", 10, 5, 20, 20); // 👈 Adjust width/height if needed
 
-    // Table Data
-    const tableData = healthWorkers.map((worker) => [
-      getFullName(worker),
-      getDisplayValue(worker.email),
-      getDisplayValue(worker.qualification),
-      getDisplayValue(worker.service_area),
-      getDisplayValue(worker.phone_number),
-      worker.createdAt
-        ? new Date(worker.createdAt).toLocaleDateString()
-        : "Not available",
-    ]);
+  // Header text (shifted right so it doesn’t overlap logo)
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(20);
+  pdf.text("Health Workers Report", 40, 20);
 
-    autoTable(pdf, {
-      head: [
-        ["Name", "Email", "Qualification", "Service Area", "Phone", "Created"],
-      ],
-      body: tableData,
-      startY: currentY + 45,
-      theme: "grid",
-      headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
-      styles: { fontSize: 8 },
-    });
+  // Summary
+  pdf.setTextColor(0, 0, 0);
+  pdf.setFontSize(12);
+  const currentY = 45;
+  pdf.text(`Total Health Workers: ${stats.total}`, 20, currentY);
+  pdf.text(`Unique Qualifications: ${stats.qualifications}`, 20, currentY + 10);
+  pdf.text(`Service Areas: ${stats.serviceAreas}`, 20, currentY + 20);
+  pdf.text(
+    `Report Generated: ${new Date().toLocaleDateString()}`,
+    20,
+    currentY + 30
+  );
 
-    pdf.save("health-workers-report.pdf");
-  };
+  // Table Data
+  const tableData = healthWorkers.map((worker) => [
+    getFullName(worker),
+    getDisplayValue(worker.email),
+    getDisplayValue(worker.qualification),
+    getDisplayValue(worker.service_area),
+    getDisplayValue(worker.phone_number),
+    worker.createdAt
+      ? new Date(worker.createdAt).toLocaleDateString()
+      : "Not available",
+  ]);
+
+  autoTable(pdf, {
+    head: [
+      ["Name", "Email", "Qualification", "Service Area", "Phone", "Created"],
+    ],
+    body: tableData,
+    startY: currentY + 45,
+    theme: "grid",
+    headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
+    styles: { fontSize: 8 },
+  });
+
+  pdf.save("health-workers-report.pdf");
+};
+
 
   // Table Columns Definition
   const columns = useMemo<MRT_ColumnDef<HealthWorker>[]>(

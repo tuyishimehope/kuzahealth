@@ -19,6 +19,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import logo1 from "@/assets/logo1.png";
 
 export interface Patient {
   id: string;
@@ -102,9 +103,23 @@ const ViewParents = () => {
     // === Header ===
     doc.setFillColor(124, 58, 237); // Purple
     doc.rect(0, 0, pageWidth, 30, "F");
+
+     // White circle background for logo
+  const centerX = 20; // circle center X
+  const centerY = 15; // circle center Y
+  const radius = 12;  // circle radius
+
+  doc.setFillColor(255, 255, 255); // white
+  doc.circle(centerX, centerY, radius, "F"); // "F" = fill only
+
+  // Logo (drawn on top of circle)
+  doc.addImage(logo1, "PNG", centerX - 10, centerY - 10, 20, 20);
+
+
+    // Header text (shifted right so it doesn’t overlap logo)
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
-    doc.text("Parents Report", 14, 20);
+    doc.text("Parents Report", 40, 20);
 
     // === Summary Section ===
     doc.setTextColor(0, 0, 0);
@@ -157,16 +172,15 @@ const ViewParents = () => {
       body: tableData,
       theme: "grid",
       headStyles: {
-        fillColor: [124, 58, 237], // Purple header
+        fillColor: [124, 58, 237],
         textColor: [255, 255, 255],
         halign: "center",
       },
       styles: { fontSize: 9 },
-      alternateRowStyles: { fillColor: [245, 243, 255] }, // light purple background
+      alternateRowStyles: { fillColor: [245, 243, 255] },
     });
 
     // === Footer (Page Number) ===
-    // const pageCount = doc.internal.getNumberOfPages();
     const pageCount = (doc as any).internal.getNumberOfPages();
 
     for (let i = 1; i <= pageCount; i++) {
